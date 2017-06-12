@@ -29,6 +29,5 @@ public class FogEvents {
 	public static final int INITIALIZE_SENSOR = BASE+24;
 	public static final int EMIT_TUPLE = BASE+25;
 	//additional for east/west
-	public static final int UPDATE_WEST_TUPLE_QUEUE = BASE+26; 
-	public static final int UPDATE_EAST_TUPLE_QUEUE = BASE+27; 
+	public static final int UPDATE_EAST_WEST_TUPLE_QUEUE = BASE+26;  
 }

@@ -41,8 +41,7 @@ import org.fog.utils.TimeKeeper;
 public class FogDevice extends PowerDatacenter {
 	protected Queue<Tuple> northTupleQueue;
 	protected Queue<Pair<Tuple, Integer>> southTupleQueue;
-	protected Queue<Pair<Tuple, Integer>> EWTupleQueue;
-	protected Queue<Pair<Tuple, Integer>> eastTupleQueue;
+	protected Queue<Pair<Tuple, Integer>> eastWestTupleQueue;
 	
 	protected List<String> activeApplications;
 	
@@ -70,8 +69,17 @@ public class FogDevice extends PowerDatacenter {
 	 * IDs of the children Fog devices
 	 */
 	protected List<Integer> childrenIds;
-
+	
+	/**
+	 * IDs of all the cousin Fog devices
+	 * added east/west capability 
+	 */
+	protected List<Integer> cousinIds;
+	
+	
 	protected Map<Integer, List<String>> childToOperatorsMap;
+	//added east/west cousins
+	protected Map<Integer, List<String>> cousinToOperatorsMap; 
 	
 	/**
 	 * Flag denoting whether the link southwards from this FogDevice is busy
@@ -83,9 +91,8 @@ public class FogDevice extends PowerDatacenter {
 	 */
 	protected boolean isNorthLinkBusy;
 	
-	//Addtional links for west and east
-	protected boolean isWestLinkBusy; 
-	protected boolean isEastLinkBusy;
+	//Additional links for west and east
+	protected boolean isEastWestLinkBusy; 
 	
 	
 	protected double uplinkBandwidth;
@@ -94,7 +101,7 @@ public class FogDevice extends PowerDatacenter {
 	protected List<Pair<Integer, Double>> associatedActuatorIds;
 	
 	//adding for east/west
-	protected double EWlinkBandwidth; 
+	protected double eastWestLinkBandwidth; 
 	
 	protected double energyConsumption;
 	protected double lastUtilizationUpdateTime;
@@ -146,15 +153,17 @@ public class FogDevice extends PowerDatacenter {
 		setSouthLinkBusy(false);
 		
 		//east/west additions
-		setEWlinkBandwidth(uplinkBandwidth, downlinkBandwidth);
-		westTupleQueue = new LinkedList<Pair<Tuple, Integer>>();
-		eastTupleQueue = new LinkedList<Pair<Tuple, Integer>>(); 
-		setWestLinkBusy(false);
-		setEastLinkBusy(false);
+		setEastWestLinkBandwidth(uplinkBandwidth, downlinkBandwidth);
+		eastWestTupleQueue = new LinkedList<Pair<Tuple, Integer>>(); 
+		setEastWestLinkBusy(false);
 		
 		
 		setChildrenIds(new ArrayList<Integer>());
 		setChildToOperatorsMap(new HashMap<Integer, List<String>>());
+		
+		//added east/west cousin
+		setCousinIds(new ArrayList<Integer>());
+		setCousinToOperatorsMap(new HashMap<Integer, List<String>>());
 		
 		this.cloudTrafficMap = new HashMap<Integer, Integer>();
 		
@@ -176,7 +185,7 @@ public class FogDevice extends PowerDatacenter {
 			VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList,
 			double schedulingInterval,
-			double uplinkBandwidth, double downlinkBandwidth, double uplinkLatency, double ratePerMips, double EWlinkBandwidth) throws Exception {
+			double uplinkBandwidth, double downlinkBandwidth, double uplinkLatency, double ratePerMips, double eastWestLinkBandwidth) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval);
 		setCharacteristics(characteristics);
 		setVmAllocationPolicy(vmAllocationPolicy);
@@ -188,7 +197,7 @@ public class FogDevice extends PowerDatacenter {
 		setDownlinkBandwidth(downlinkBandwidth);
 		setUplinkLatency(uplinkLatency);
 		setRatePerMips(ratePerMips);
-		setEWlinkBandwidth(EWlinkBandwidth);
+		setEastWestLinkBandwidth(eastWestLinkBandwidth);
 		setAssociatedActuatorIds(new ArrayList<Pair<Integer, Double>>());
 		for (Host host : getCharacteristics().getHostList()) {
 			host.setDatacenter(this);
@@ -210,14 +219,16 @@ public class FogDevice extends PowerDatacenter {
 		setSouthLinkBusy(false);
 		
 		//east/west additions
-		westTupleQueue = new LinkedList<Pair<Tuple, Integer>>();
-		eastTupleQueue = new LinkedList<Pair<Tuple, Integer>>(); 
-		setWestLinkBusy(false);
-		setEastLinkBusy(false);
+		eastWestTupleQueue = new LinkedList<Pair<Tuple, Integer>>(); 
+		setEastWestLinkBusy(false);
 		
 		
 		setChildrenIds(new ArrayList<Integer>());
 		setChildToOperatorsMap(new HashMap<Integer, List<String>>());
+		
+		//added east/west cousin
+		setCousinIds(new ArrayList<Integer>());
+		setCousinToOperatorsMap(new HashMap<Integer, List<String>>());
 		
 		this.cloudTrafficMap = new HashMap<Integer, Integer>();
 		
@@ -301,15 +312,17 @@ public class FogDevice extends PowerDatacenter {
 		setSouthLinkBusy(false);
 		
 		//east/west additions
-		setEWlinkBandwidth(uplinkBandwidth, downlinkBandwidth);
-		westTupleQueue = new LinkedList<Pair<Tuple, Integer>>();
-		eastTupleQueue = new LinkedList<Pair<Tuple, Integer>>(); 
-		setWestLinkBusy(false);
-		setEastLinkBusy(false);
+		setEastWestLinkBandwidth(uplinkBandwidth, downlinkBandwidth);
+		eastWestTupleQueue = new LinkedList<Pair<Tuple, Integer>>(); 
+		setEastWestLinkBusy(false);
 		
 		
 		setChildrenIds(new ArrayList<Integer>());
 		setChildToOperatorsMap(new HashMap<Integer, List<String>>());
+		
+		//added east/west cousin
+		setCousinIds(new ArrayList<Integer>());
+		setCousinToOperatorsMap(new HashMap<Integer, List<String>>());
 		
 		this.cloudTrafficMap = new HashMap<Integer, Integer>();
 		
@@ -325,7 +338,7 @@ public class FogDevice extends PowerDatacenter {
 	
 	public FogDevice(
 			String name, long mips, int ram, 
-			double uplinkBandwidth, double downlinkBandwidth, double ratePerMips, PowerModel powerModel, double EWlinkBandwidth) throws Exception {
+			double uplinkBandwidth, double downlinkBandwidth, double ratePerMips, PowerModel powerModel, double eastWestLinkBandwidth) throws Exception {
 		super(name, null, null, new LinkedList<Storage>(), 0);
 		
 		List<Pe> peList = new ArrayList<Pe>();
@@ -371,7 +384,7 @@ public class FogDevice extends PowerDatacenter {
 		setVmList(new ArrayList<Vm>());
 		setUplinkBandwidth(uplinkBandwidth);
 		setDownlinkBandwidth(downlinkBandwidth);
-		setEWlinkBandwidth(EWlinkBandwidth);
+		setEastWestLinkBandwidth(eastWestLinkBandwidth);
 		setUplinkLatency(uplinkLatency);
 		setAssociatedActuatorIds(new ArrayList<Pair<Integer, Double>>());
 		for (Host host1 : getCharacteristics().getHostList()) {
@@ -394,15 +407,16 @@ public class FogDevice extends PowerDatacenter {
 		setSouthLinkBusy(false);
 		
 		//east/west additions
-		westTupleQueue = new LinkedList<Pair<Tuple, Integer>>();
-		eastTupleQueue = new LinkedList<Pair<Tuple, Integer>>(); 
-		setWestLinkBusy(false);
-		setEastLinkBusy(false);
-		
-		
+		eastWestTupleQueue = new LinkedList<Pair<Tuple, Integer>>(); 
+		setEastWestLinkBusy(false);
+
 		setChildrenIds(new ArrayList<Integer>());
 		setChildToOperatorsMap(new HashMap<Integer, List<String>>());
 		
+		//added east/west cousin
+		setCousinIds(new ArrayList<Integer>());
+		setCousinToOperatorsMap(new HashMap<Integer, List<String>>());
+
 		this.cloudTrafficMap = new HashMap<Integer, Integer>();
 		
 		this.lockTime = 0;
@@ -466,11 +480,8 @@ public class FogDevice extends PowerDatacenter {
 		case FogEvents.RESOURCE_MGMT:
 			manageResources(ev);
 			break; 
-		case FogEvents.UPDATE_WEST_TUPLE_QUEUE: 
-			updateWestTupleQueue(); 
-			break;
-		case FogEvents.UPDATE_EAST_TUPLE_QUEUE:
-			updateEastTupleQueue();
+		case FogEvents.UPDATE_EAST_WEST_TUPLE_QUEUE:
+			updateEastWestTupleQueue();
 			break;
 		default:
 			break;
@@ -771,6 +782,16 @@ public class FogDevice extends PowerDatacenter {
 			getChildToOperatorsMap().put(childId, new ArrayList<String>());
 	}
 	
+	//added east/west capability
+	protected void addCousin(int cousinId){
+		if(CloudSim.getEntityName(cousinId).toLowerCase().contains("sensor"))
+			return;
+		if(!getCousinIds().contains(cousinId) && cousinId != getId())
+			getCousinIds().add(cousinId);
+		if(!getCousinToOperatorsMap().containsKey(cousinId))
+			getCousinToOperatorsMap().put(cousinId, new ArrayList<String>()); 
+	}
+	
 	protected void updateCloudTraffic(){
 		int time = (int)CloudSim.clock()/1000;
 		if(!cloudTrafficMap.containsKey(time))
@@ -1028,59 +1049,30 @@ public class FogDevice extends PowerDatacenter {
 	}
 	
 	//additional east/west functions
-	
-	protected void updateWestTupleQueue(){
-		if(!getWestTupleQueue().isEmpty()){
-			Pair<Tuple, Integer> pair = getWestTupleQueue().poll();
-			sendWestFreeLink(pair.getFirst(), pair.getSecond());
+	protected void updateEastWestTupleQueue(){
+		if(!getEastWestTupleQueue().isEmpty()){
+			Pair<Tuple, Integer> pair = getEastWestTupleQueue().poll();
+			sendEastWestFreeLink(pair.getFirst(), pair.getSecond());
 		}else{
-			setWestFreeLink(false);
+			setEastWestLinkBusy(false);
 		}
 	}
 	
-	protected void sendWestFreeLink(Tuple tuple, int cousinId){
-		double networkDelay = tuple.getCloudletFileSize()/getEWlinkBandwidth();
-		setWestLinkBusy(true);
+	protected void sendEastWestFreeLink(Tuple tuple, int cousinId){
+		double networkDelay = tuple.getCloudletFileSize()/getEastWestLinkBandwidth();
+		setEastWestLinkBusy(true);
 		double latency = getCousinToLatencyMap().get(cousinId);
-		send(getId(), networkDelay, FogEvents.UPDATE_WEST_TUPLE_QUEUE);
+		send(getId(), networkDelay, FogEvents.UPDATE_EAST_WEST_TUPLE_QUEUE);
 		send(cousinId, networkDelay+latency, FogEvents.TUPLE_ARRIVAL, tuple);
 		NetworkUsageMonitor.sendingTuple(latency, tuple.getCloudletFileSize());
 	}
 	
-	protected void sendWest(Tuple tuple, int cousinId){
+	protected void sendEastWest(Tuple tuple, int cousinId){
 		if(getCousinIds().contains(cousinId)){
-			if(!isWestLinkBusy()){
-				sendWestFreeLink(tuple, cousinId);
+			if(!isEastWestLinkBusy()){
+				sendEastWestFreeLink(tuple, cousinId);
 			}else{
-				westTupleQueue.add(new Pair<Tuple, Integer>(tuple, cousinId));
-			}
-		}
-	}
-	
-	protected void updateEastTupleQueue(){
-		if(!getEastTupleQueue().isEmpty()){
-			Pair<Tuple, Integer> pair = getEastTupleQueue().poll();
-			sendEastFreeLink(pair.getFirst(), pair.getSecond());
-		}else{
-			setEastFreeLink(false);
-		}
-	}
-	
-	protected void sendEastFreeLink(Tuple tuple, int cousinId){
-		double networkDelay = tuple.getCloudletFileSize()/getEWlinkBandwidth();
-		setEastLinkBusy(true);
-		double latency = getCousinToLatencyMap().get(cousinId);
-		send(getId(), networkDelay, FogEvents.UPDATE_EAST_TUPLE_QUEUE);
-		send(cousinId, networkDelay+latency, FogEvents.TUPLE_ARRIVAL, tuple);
-		NetworkUsageMonitor.sendingTuple(latency, tuple.getCloudletFileSize());
-	}
-	
-	protected void sendEast(Tuple tuple, int cousinId){
-		if(getCousinIds().contains(cousinId)){
-			if(!isEastLinkBusy()){
-				sendEastFreeLink(tuple, cousinId);
-			}else{
-				eastTupleQueue.add(new Pair<Tuple, Integer>(tuple, cousinId));
+				eastWestTupleQueue.add(new Pair<Tuple, Integer>(tuple, cousinId));
 			}
 		}
 	}
@@ -1100,8 +1092,16 @@ public class FogDevice extends PowerDatacenter {
 	public List<Integer> getChildrenIds() {
 		return childrenIds;
 	}
+	//added east/west(cousins)
+	public List<Integer> getCousinIds() {
+		return cousinIds; 
+	}
 	public void setChildrenIds(List<Integer> childrenIds) {
 		this.childrenIds = childrenIds;
+	}
+	//added east/west (cousins)
+	public void setCousinIds(List<Integer> cousinIds){
+		this.cousinIds = cousinIds; 
 	}
 	public double getUplinkBandwidth() {
 		return uplinkBandwidth;
@@ -1122,11 +1122,8 @@ public class FogDevice extends PowerDatacenter {
 		return isNorthLinkBusy;
 	}
 	//additional east/west
-	public boolean isWestLinkBusy() {
-		return isWestLinkBusy;
-	}
-	public boolean isEastLinkBusy() {
-		return isEastLinkBusy;
+	public boolean isEastWestLinkBusy() {
+		return isEastWestLinkBusy;
 	}
 	public void setSouthLinkBusy(boolean isSouthLinkBusy) {
 		this.isSouthLinkBusy = isSouthLinkBusy;
@@ -1135,11 +1132,8 @@ public class FogDevice extends PowerDatacenter {
 		this.isNorthLinkBusy = isNorthLinkBusy;
 	}
 	//additional east/west
-	public void setWestLinkBusy(boolean isWestLinkBusy) {
-		this.isWestLinkBusy = isWestLinkBusy;
-	}
-	public void setEastLinkBusy(boolean isEastLinkBusy) {
-		this.isEastLinkBusy = isEastLinkBusy;
+	public void setEastWestLinkBusy(boolean isEastWestLinkBusy) {
+		this.isEastWestLinkBusy = isEastWestLinkBusy;
 	}
 	public int getControllerId() {
 		return controllerId;
@@ -1158,6 +1152,14 @@ public class FogDevice extends PowerDatacenter {
 	}
 	public void setChildToOperatorsMap(Map<Integer, List<String>> childToOperatorsMap) {
 		this.childToOperatorsMap = childToOperatorsMap;
+	}
+	
+	//added east/west cousin
+	public Map<Integer, List<String>> getCousinToOperatorsMap(){
+		return cousinToOperatorsMap;
+	}
+	public void setCousinToOperatorsMap(Map<Integer, List<String>> cousinToOperatorsMap) {
+		this.childToOperatorsMap = cousinToOperatorsMap; 
 	}
 
 	public Map<String, Application> getApplicationMap() {
@@ -1184,9 +1186,13 @@ public class FogDevice extends PowerDatacenter {
 		this.southTupleQueue = southTupleQueue;
 	}
 	
-	//addtional east/west
-	public Queue<Pair<Tuple, Integer>> getWestTupleQueue() {
-		return west
+	//additional east/west
+	public Queue<Pair<Tuple, Integer>> getEastWestTupleQueue() {
+		return eastWestTupleQueue;
+	}
+	
+	public void setEastWestTupleQueue(Queue<Pair<Tuple, Integer>> eastWestTupleQueue){
+		this.eastWestTupleQueue = eastWestTupleQueue; 
 	}
 
 	public double getDownlinkBandwidth() {
@@ -1195,6 +1201,19 @@ public class FogDevice extends PowerDatacenter {
 
 	public void setDownlinkBandwidth(double downlinkBandwidth) {
 		this.downlinkBandwidth = downlinkBandwidth;
+	}
+	
+	//additional east/west
+	public double getEastWestLinkBandwidth(){
+		return eastWestLinkBandwidth;
+	}
+	
+	public void setEastWestLinkBandwidth(double eastWestLinkBandwidth){
+		this.eastWestLinkBandwidth = eastWestLinkBandwidth;
+	}
+	
+	public void setEastWestLinkBandwidth(double uplinkBandwidth, double downlinkBandwidth){
+		this.eastWestLinkBandwidth = (uplinkBandwidth + downlinkBandwidth)/2;
 	}
 
 	public List<Pair<Integer, Double>> getAssociatedActuatorIds() {
@@ -1218,6 +1237,15 @@ public class FogDevice extends PowerDatacenter {
 
 	public void setChildToLatencyMap(Map<Integer, Double> childToLatencyMap) {
 		this.childToLatencyMap = childToLatencyMap;
+	}
+	
+	//additional east/west (cousins)
+	public Map<Integer, Double> getCousinToLatencyMap(){
+		return cousinToLatencyMap;
+	}
+	
+	public void setCousinToLatencyMap(Map<Integer, Double> cousinToLatencyMap){
+		this.cousinToLatencyMap = cousinToLatencyMap;
 	}
 
 	public int getLevel() {
