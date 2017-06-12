@@ -12,6 +12,9 @@ public class Tuple extends Cloudlet{
 	public static final int DOWN = 2;
 	public static final int ACTUATOR = 3;
 	
+	//adding east/west capabilities for devices
+	public static final int SIDE = 4; 
+	
 	private String appId;
 	
 	private String tupleType;
