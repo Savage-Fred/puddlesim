@@ -235,7 +235,7 @@ public class FogGui extends JFrame {
         btnRun = new JButton(run);
         btnRun.setToolTipText("Start simulation");
         JButton btnExit = new JButton(exit);
-        btnExit.setToolTipText("Exit CloudSim");
+        btnExit.setToolTipText("Exit iFogSim");
         toolbar.setAlignmentX(0);
         
         
