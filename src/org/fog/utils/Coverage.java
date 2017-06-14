@@ -51,9 +51,9 @@ public class Coverage {
 
 	/**
 	 * <b>Coverage Constructor</b> 
-	 * Takes a 2d array that defines the cartesion coordinates as follows 
-	 * 	[x coordinate 1][y coordinate 1]
-	 * 	[x coordinate 2][y coordinate 2]...
+	 * <p>Takes a 2d array that defines the cartesion coordinates as follows 
+	 * <p>[x coordinate 1][y coordinate 1]
+	 * <p>[x coordinate 2][y coordinate 2]...
 	 *
 	 * @param xyin 2d array of cartestion coordinates 
 	 */ 
@@ -68,9 +68,10 @@ public class Coverage {
 	////////////////////////////////////////////////////////
 
 	/**
-	 * Method to check if a point is contined within a polygon 
-	 * See: https://stackoverflow.com/questions/8721406/how-to-determine-if-a-point-is-inside-a-2d-convex-polygon
-	 * See: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
+	 * <b>Contains</b>
+	 * <p>Method to check if a point is contined within a polygon 
+	 * <p>See: https://stackoverflow.com/questions/8721406/how-to-determine-if-a-point-is-inside-a-2d-convex-polygon
+	 * <p>See: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
 	 *
 	 * @param test the point to check 
 	 * 
@@ -90,6 +91,7 @@ public class Coverage {
 	}
 
 	/**
+	 * <b>Contains</b>
 	 * Overloaded contains method using x and y coordinates instead of a point object 
 	 * 
 	 * @param 	xin 	the x value of the test point 
