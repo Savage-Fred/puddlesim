@@ -12,33 +12,6 @@ import java.io.*;		/* Error Handling */
  * @since 	June 14, 2017
  */
 public class Coverage {
-
-
-	/**
-	 * <h1> Point Class </h1>
-	 * Defines a point in cartesion space 
-	 */ 
-	private class Point {
-		////////////// 	POINT FIELDS ///////////////////
-		public double x;
-		public double y;
-
-		////////////// POINT CONSTRUCTORS //////////////
-		public Point(double x, double y) {
-			this.setx(x);
-			this.sety(y);
-		}
-
-		////////////// POINT GETTERS AND SETTERS ///////
-		public void 	setx(double input) {this.x = input;}
-		public void 	sety(double input) {this.y = input;}
-
-		public double 	getx() {return this.x;}
-		public double 	gety() {return this.y;}
-	}
-
-
-
 	///////////////////////////////////////////////////////
 	/////////////////// COVERAGE FIELDS 
 	///////////////////////////////////////////////////////
