@@ -12,18 +12,43 @@ import org.cloudbus.cloudsim.core.CloudSim;
  * @since NSF REU 2017 - Parallel and Distributed Computing
  */
 public class Mobility {
-	private static final boolean DEBUG = true; 
+	/**
+	 * Turns on or off the debug outputs. 
+	 */
+	private static final boolean DEBUG = true;
+	/**
+	 * Holds the current longitude of the device.
+	 */
 	private double longitude;
+	/**
+	 * Holds the current latitude of the device.
+	 */
 	private double latitude;
-	// Vectors to denote movement per second of device.
+	/**
+	 * x-component of the vector used to denote movement per second of device.
+	 */
 	private double xVector;
+	/**
+	 * y-component of the vector used to denote movement per second of device.
+	 */
 	private double yVector;
-	// Determines the moveability of the device
+	/**
+	 *  Boolean that determines the moveability of the device. False means immobile, True means mobile.
+	 */
 	private boolean isMobile;
-	// Keep track of last update time. When updateLocation() is called, this will be compared
-	// with the current clock value and the total movement adjustment calculated 
+	/**
+	 *  Keep track of last update time. When updateLocation() is called, this will be compared
+	 *  with the current clock value and the total movement adjustment calculated.
+	 */ 
 	private double counter;
-	
+	/**
+	 * 
+	 * @param latitude Latitude of the device.
+	 * @param longitude Longitude of the device.
+	 * @param xVector x-component of the movement vector, meters/second.
+	 * @param yVector y-component of the movement vector, meters/second.
+	 * @param isMobile determines whether or not the device changes location.
+	 */
 	public Mobility(double latitude, double longitude, double xVector, double yVector, boolean isMobile){
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -33,7 +58,9 @@ public class Mobility {
 		counter = CloudSim.clock();
 	}
 	
-	// Updates the device location
+	/**
+	 *  Updates the device location.
+	 */
 	private void updateLocation(){
 		boolean logStatus = Log.isDisabled();
 		if(DEBUG){
@@ -55,11 +82,19 @@ public class Mobility {
 				Log.disable();
 		}
 	} 
+	/**
+	 * Calculates the magnitude of the vector.
+	 * @return Velocity of the node.
+	 */
 	public double getVelocity() {
 		double velocity;
 		velocity = Math.sqrt(this.latitude*this.latitude + this.longitude*this.longitude);
 		return velocity;
 	}
+	/**
+	 * Calculates the angle at which the object is moving.
+	 * @return The direction of movement as a radian unit. 
+	 */
 	public double getAngleRad() {
 		return Math.atan2(xVector, yVector);
 	}
