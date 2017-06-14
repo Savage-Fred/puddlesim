@@ -2,14 +2,21 @@ package org.fog.utils;
 import java.io.*;		/* Error Handling */
 
 /**
+ * <h1> Coverage Class </h1>
  * Defines the area of coverage for a clusterhead 
  * Contains methods to check if a point is within the area of coverage for a clusterhead 
  * Works on any set of points that form a polygon. 
+ * 
+ * @author 	William McCarty
+ * @version 1.0.0
+ * @since 	June 14, 2017
  */
 public class Coverage {
 
+
 	/**
-	 * Nested class for Cartesian coordinates of a point
+	 * <h1> Point Class </h1>
+	 * Defines a point in cartesion space 
 	 */ 
 	private class Point {
 		////////////// 	POINT FIELDS ///////////////////
@@ -25,24 +32,28 @@ public class Coverage {
 		////////////// POINT GETTERS AND SETTERS ///////
 		public void 	setx(double input) {this.x = input;}
 		public void 	sety(double input) {this.y = input;}
+
 		public double 	getx() {return this.x;}
 		public double 	gety() {return this.y;}
 	}
 
 
 
+	///////////////////////////////////////////////////////
+	/////////////////// COVERAGE FIELDS 
+	///////////////////////////////////////////////////////
 
+	
+	private final 	Point[]  points; 	/* A collection of points defines the boundaries of a polygon */
+	private 		double[] xvals;		/* array of the x values that define the polygon */
+	private 		double[] yvals; 	/* array of the y values that define the polygon */
+
+
+	/////////////////////////////////////////////////////////////
+	/////////////////// COVERAGE CONSTRUCTORS 
+	/////////////////////////////////////////////////////////////
 	/**
-	 * Array to hold the points of the polygon
-	 * A collection of points defines the boundaries of a polygon 
-	 */
-	private final Point[] points; 
-
-	private double[] xvals;
-	private double[] yvals;
-
-	/**
-	 * Coverage Constructor 
+	 * <b>Coverage Constructor</b>
 	 * Fills an array with points that define the boundary of the polygon. 
 	 * 
 	 * @param xin double array of the x values 
@@ -50,7 +61,7 @@ public class Coverage {
 	 * 		note: xin[i],yin[i] become point i. The arrays must match
 	 * @throws IllegalArgumentException if the arrays do not match 
 	 */ 
-	public Coverage(double[] xin, double[] yin) throws IOException{
+	public Coverage(double[] xin, double[] yin) throws IOException {
 		if (xin.length > yin.length) {
 			throw new IllegalArgumentException ("Error: More x values than y values");
 		}
@@ -65,15 +76,31 @@ public class Coverage {
 		}
 	}
 
+	/**
+	 * <b>Coverage Constructor</b> 
+	 * Takes a 2d array that defines the cartesion coordinates as follows 
+	 * 	[x coordinate 1][y coordinate 1]
+	 * 	[x coordinate 2][y coordinate 2]...
+	 *
+	 * @param xyin 2d array of cartestion coordinates 
+	 */ 
+	public Coverage(double[][] xyin) {
+		int numelements = xyin[0].length;
+		points = new Point[numelements];
+	}
 
 
+	////////////////////////////////////////////////////////
+	/////////////////// COVERAGE METHODS 
+	////////////////////////////////////////////////////////
 
 	/**
 	 * Method to check if a point is contined within a polygon 
 	 * See: https://stackoverflow.com/questions/8721406/how-to-determine-if-a-point-is-inside-a-2d-convex-polygon
 	 * See: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
 	 *
-	 * @param test The point to check 
+	 * @param test the point to check 
+	 * 
 	 * @return True if the point is inside the polygon 
 	 */
 	public boolean contains(Point test) {
@@ -83,10 +110,23 @@ public class Coverage {
 		for (i = 0, j = points.length-1; i < points.length; j = i++) {
 			if ((points[i].y > test.y) != (points[j].y > test.y) &&
 				(test.x < (points[j].x - points[i].x) * (test.y - points[i].y) / (points[j].y -points[i].y) + points[i].x)) {
-				result = !result;
-			}
+					result = !result;
+				}
 		}
 		return result;
+	}
+
+	/**
+	 * Overloaded contains method using x and y coordinates instead of a point object 
+	 * 
+	 * @param 	xin 	the x value of the test point 
+	 * @param 	yin	the y value of the test point 
+	 * 
+	 * @return `true if the point is contained within the polygon. False otherwise
+	 */ 
+	public boolean contains(double xin, double yin)
+	{
+		return contains (new Point(xin, yin));
 	}
 
 
