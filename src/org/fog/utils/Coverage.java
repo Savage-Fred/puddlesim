@@ -3,8 +3,8 @@ import java.io.*;		/* Error Handling */
 import java.util.Arrays;
 /**
  * <h1> Coverage Class </h1>
- * Defines the area of coverage for a clusterhead 
- * Contains methods to check if a point is within the area of coverage for a clusterhead 
+ * Defines the area of coverage for a clusterhead.
+ * Contains methods to check if a point is within the area of coverage for a clusterhead.
  * Works on any set of points that form a polygon. 
  * 
  * @author 	William McCarty
@@ -15,13 +15,9 @@ public class Coverage {
 	///////////////////////////////////////////////////////
 	/////////////////// COVERAGE FIELDS 
 	///////////////////////////////////////////////////////
-
-	
 	private 		Point[]  points; 	/* A collection of points defines the boundaries of a polygon */
-	private 		double[] xvals;		/* array of the x values that define the polygon */
-	private 		double[] yvals; 	/* array of the y values that define the polygon */
-
-
+	
+	
 	/////////////////////////////////////////////////////////////
 	/////////////////// COVERAGE CONSTRUCTORS 
 	/////////////////////////////////////////////////////////////
