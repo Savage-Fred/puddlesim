@@ -89,7 +89,7 @@ public class Coverage {
 
 	/**
 	 * <b>Contains</b>
-	 * <p>Method to check if a point is contined within a polygon 
+	 * <p>Method to check if a point is contained within a polygon 
 	 * <p>See: https://stackoverflow.com/questions/8721406/how-to-determine-if-a-point-is-inside-a-2d-convex-polygon
 	 * <p>See: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
 	 *
