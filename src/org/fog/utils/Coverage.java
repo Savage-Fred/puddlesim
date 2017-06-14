@@ -1,6 +1,6 @@
 package org.fog.utils;
 import java.io.*;		/* Error Handling */
-
+import java.util.Arrays;
 /**
  * <h1> Coverage Class </h1>
  * Defines the area of coverage for a clusterhead 
@@ -17,7 +17,7 @@ public class Coverage {
 	///////////////////////////////////////////////////////
 
 	
-	private final 	Point[]  points; 	/* A collection of points defines the boundaries of a polygon */
+	private 		Point[]  points; 	/* A collection of points defines the boundaries of a polygon */
 	private 		double[] xvals;		/* array of the x values that define the polygon */
 	private 		double[] yvals; 	/* array of the y values that define the polygon */
 
@@ -27,7 +27,7 @@ public class Coverage {
 	/////////////////////////////////////////////////////////////
 	/**
 	 * <b>Coverage Constructor</b>
-	 * Fills an array with points that define the boundary of the polygon. 
+	 * <p>Fills an array with points that define the boundary of the polygon. 
 	 * 
 	 * @param xin double array of the x values 
 	 * @param yin double array of the y values 
@@ -61,7 +61,27 @@ public class Coverage {
 		int numelements = xyin[0].length;
 		points = new Point[numelements];
 	}
+	/**
+	 * <b>Coverage Constructor</b> 
+	 * <p>Takes an array of points 
+	 * <p>[x coordinate 1][y coordinate 1]
+	 * <p>[x coordinate 2][y coordinate 2]...
+	 *
+	 * @param points_in array of points
+	 */
+	public Coverage(Point[] points_in)
+	{
+		setPoints(points_in);
+	}
 
+	////////////////////////////////////////////////////////
+	/////////////////// GETTERS AND SETTERS
+	/////////////////////////////////////////////////////////
+
+	public void setPoints(Point[] points_in)
+	{
+		this.points = Arrays.copyOf(points_in, points_in.length);
+	}
 
 	////////////////////////////////////////////////////////
 	/////////////////// COVERAGE METHODS 
@@ -92,7 +112,7 @@ public class Coverage {
 
 	/**
 	 * <b>Contains</b>
-	 * Overloaded contains method using x and y coordinates instead of a point object 
+	 * <p>Overloaded contains method using x and y coordinates instead of a point object 
 	 * 
 	 * @param 	xin 	the x value of the test point 
 	 * @param 	yin	the y value of the test point 
@@ -102,6 +122,21 @@ public class Coverage {
 	public boolean contains(double xin, double yin)
 	{
 		return contains (new Point(xin, yin));
+	}
+
+	/**
+	 * <b>Contains</b>
+	 * <p>Overloaded method to check within a different polygon
+	 * 
+	 * @param 	test 	Point value to be checked 
+	 * @param 	points 	new polygon to be checked 
+	 * 
+	 * @return `true if the point is contained within the polygon. False otherwise
+	 */ 
+	public boolean contains(Point test, Point[] points)
+	{
+		setPoints(points);
+		return contains(test);
 	}
 
 
