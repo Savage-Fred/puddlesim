@@ -31,7 +31,7 @@ public class Coverage {
 	 * 
 	 * @param xin double array of the x values 
 	 * @param yin double array of the y values 
-	 * 		note: xin[i],yin[i] become point i. The arrays must match
+	 * 		<p><i>note: xin[i],yin[i] become point i. The arrays must match</i>
 	 * @throws IllegalArgumentException if the arrays do not match 
 	 */ 
 	public Coverage(double[] xin, double[] yin) throws IOException {
@@ -94,7 +94,6 @@ public class Coverage {
 	 * <p>See: https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
 	 *
 	 * @param test the point to check 
-	 * 
 	 * @return True if the point is inside the polygon 
 	 */
 	public boolean contains(Point test) {
