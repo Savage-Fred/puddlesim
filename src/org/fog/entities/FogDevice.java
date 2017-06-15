@@ -71,10 +71,19 @@ public class FogDevice extends PowerDatacenter {
 	protected List<Integer> childrenIds;
 	
 	/**
-	 * IDs of all the cousin Fog devices
-	 * added east/west capability 
+	 * IDs of all the cousin Fog devices, lateral neighbors in the same puddle
 	 */
 	protected List<Integer> cousinIds;
+	
+	//THIS IS MY NEW PLAYGROUND
+	//map of ids (ints) and types (String, choices are parent, child, cousin) of existing connections
+	protected Map<Integer, String> connectionsMap;
+	//pair to denote the parent connection and whether it is active
+	protected Pair<Integer, Boolean> parentConnectionsMap; 
+	//maps to denote if child and cousin connections are active 
+	protected Map<Integer, Boolean> childConnectionsMap; 
+	protected Map<Integer, Boolean> cousinConnectionsMap; 
+	
 	
 	
 	protected Map<Integer, List<String>> childToOperatorsMap;
@@ -92,6 +101,9 @@ public class FogDevice extends PowerDatacenter {
 	protected boolean isNorthLinkBusy;
 	
 	//Additional links for west and east
+	/**
+	 * Flag denoting whether the link east and west from this FogDevice is busy
+	 */
 	protected boolean isEastWestLinkBusy; 
 	
 	
@@ -175,6 +187,13 @@ public class FogDevice extends PowerDatacenter {
 		setModuleInstanceCount(new HashMap<String, Map<String, Integer>>());
 		setChildToLatencyMap(new HashMap<Integer, Double>());
 		setCousinToLatencyMap(new HashMap<Integer, Double>());
+		
+		//PLAYGROUND ADDITIONS for connections mapping
+		setConnectionsMap(new HashMap<Integer, String>());
+		//TODO create these functions
+		//setParentConnection(new Pair<Integer, Boolean>(-1, false));
+		//setChildConnectionsMap(new HashMap<Integer, Boolean>());
+		//setCousinConnectionsMap(new HashMap<Integer, Boolean>()); 
 	}
 
 	
@@ -240,6 +259,12 @@ public class FogDevice extends PowerDatacenter {
 		setModuleInstanceCount(new HashMap<String, Map<String, Integer>>());
 		setChildToLatencyMap(new HashMap<Integer, Double>());
 		setCousinToLatencyMap(new HashMap<Integer,Double>());
+		
+		//PLAYGROUND ADDITIONS for connections mapping
+		setConnectionsMap(new HashMap<Integer, String>());
+//		setParentConnection(new Pair<Integer, Boolean>(-1, false));
+//		setChildConnectionsMap(new HashMap<Integer, Boolean>());
+//		setCousinConnectionsMap(new HashMap<Integer, Boolean>()); 
 	}
 	
 	public FogDevice(
@@ -334,6 +359,12 @@ public class FogDevice extends PowerDatacenter {
 		setChildToLatencyMap(new HashMap<Integer, Double>());
 		setCousinToLatencyMap(new HashMap<Integer, Double>());
 		setModuleInstanceCount(new HashMap<String, Map<String, Integer>>());
+		
+		//PLAYGROUND ADDITIONS for connections mapping
+		setConnectionsMap(new HashMap<Integer, String>());
+//		setParentConnection(new Pair<Integer, Boolean>(-1, false));
+//		setChildConnectionsMap(new HashMap<Integer, Boolean>());
+//		setCousinConnectionsMap(new HashMap<Integer, Boolean>()); 
 	}
 	
 	public FogDevice(
@@ -427,6 +458,12 @@ public class FogDevice extends PowerDatacenter {
 		setChildToLatencyMap(new HashMap<Integer, Double>());
 		setCousinToLatencyMap(new HashMap<Integer, Double>());
 		setModuleInstanceCount(new HashMap<String, Map<String, Integer>>());
+		
+		//PLAYGROUND ADDITIONS for connections mapping
+		setConnectionsMap(new HashMap<Integer, String>());
+//		setParentConnection(new Pair<Integer, Boolean>(-1, false));
+//		setChildConnectionsMap(new HashMap<Integer, Boolean>());
+//		setCousinConnectionsMap(new HashMap<Integer, Boolean>()); 
 	}
 	
 	/**
@@ -1278,5 +1315,10 @@ public class FogDevice extends PowerDatacenter {
 	public void setModuleInstanceCount(
 			Map<String, Map<String, Integer>> moduleInstanceCount) {
 		this.moduleInstanceCount = moduleInstanceCount;
+	}
+	
+	//PLAYGROUND GETTERS AND SETTERS
+	public void setConnectionsMap(Map<Integer, String> inputMap){
+		connectionsMap = inputMap; 
 	}
 }

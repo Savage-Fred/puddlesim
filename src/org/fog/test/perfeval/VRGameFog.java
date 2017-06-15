@@ -202,7 +202,7 @@ public class VRGameFog {
 		List<Host> hostList = new ArrayList<Host>();
 		hostList.add(host);
 
-		String arch = "x86"; // system architecture
+ 		String arch = "x86"; // system architecture
 		String os = "Linux"; // operating system
 		String vmm = "Xen";
 		double time_zone = 10.0; // time zone this resource located
