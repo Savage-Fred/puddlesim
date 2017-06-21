@@ -49,6 +49,11 @@ public class FogDevice extends PowerDatacenter {
 	protected Map<Integer, Integer> cloudTrafficMap;
 
 	protected double lockTime;
+	
+	/**
+	 * List of all the other devices in this device's puddle 
+	 */
+	protected List<Integer> puddleBuddies; 
 
 	/**	
 	 * ID of the parent Fog Device
@@ -125,6 +130,9 @@ public class FogDevice extends PowerDatacenter {
 		this.lastUtilization = 0;
 		setTotalCost(0);
 		moduleMap = new HashMap<Integer, AppModule>();
+		
+		//puddlebuddies addition 
+		setPuddleBuddies(new ArrayList<Integer>());
 	}
 	
 	public FogDevice(
@@ -159,6 +167,9 @@ public class FogDevice extends PowerDatacenter {
 		this.lastUtilization = 0;
 		setTotalCost(0);
 		moduleMap = new HashMap<Integer, AppModule>();
+		
+		//puddlebuddies addition 
+		setPuddleBuddies(new ArrayList<Integer>());
 	}
 
 	/**
@@ -739,5 +750,24 @@ public class FogDevice extends PowerDatacenter {
 
 	public void setLinkId(int linkId) {
 		this.linkId = linkId;
+	}
+	
+	//getter and setter for puddleBuddies
+	public List<Integer> getPuddleBuddies(){
+		return puddleBuddies;
+	}
+	public void setPuddleBuddies(List<Integer> puddleBuddies){
+		this.puddleBuddies = puddleBuddies;
+	}
+	 
+	//add a node to the puddleBuddies
+	public void addPuddleBuddy(int buddyId){
+		puddleBuddies.add(buddyId);
+	}
+	public void removePuddleBuddy(int buddyId){
+		puddleBuddies.remove(buddyId);
+	}
+	public boolean isMyPuddleBuddy(int buddyId){
+		return puddleBuddies.contains(buddyId);
 	}
 }
