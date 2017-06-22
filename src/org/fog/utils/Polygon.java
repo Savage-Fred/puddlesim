@@ -71,12 +71,16 @@ public class Polygon {
     public 
     Polygon(double[][] xyin) throws IOException 
     {
-    	double []temp = xyin[0];
         numberOfPoints = xyin[0].length;
-        if (numberOfPoints <= 2)
+    	if (numberOfPoints <= 2)
             throw new IllegalArgumentException ("Error: A polygon must contain at least 3 points");
         points = new Point[numberOfPoints];
-        //Polygon(xyin[0],xyin[1]);
+        for (int i = 0; i < numberOfPoints; i++) {
+            Point p = new Point(xyin[i][0], xyin[i][1]);
+            points[i] = p;
+        }
+        numberOfPoints = count(points);
+        
     }
     /**
      * <b>Polygon Constructor</b> 
@@ -168,11 +172,11 @@ public class Polygon {
      * @return the number of nonNull elements in the array
      */
     private 
-    int count(Object[] xin) 
+    static <T> int count(T[] a)
     {
-        ArrayList<Object> list = new ArrayList<Object>(Arrays.asList(xin));
-        list.trimToSize();
-        return list.size();
+       ArrayList<T> list = new ArrayList<T>(Arrays.asList(a)); 
+       list.trimToSize();
+       return list.size();
         
     }
 
