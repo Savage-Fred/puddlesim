@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 /**
- * <h1> Voronoi Class </h1>
+ * Voronoi Class 
  * <p> Utility class to create a voronoi graph
  * @see https://rosettacode.org/wiki/Voronoi_diagram#Java
  */ 
