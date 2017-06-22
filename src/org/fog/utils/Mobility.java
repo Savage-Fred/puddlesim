@@ -16,7 +16,13 @@ public class Mobility {
 	 * Turns on or off the debug outputs. 
 	 */
 	private static final boolean DEBUG = true;
-	
+	/**
+	 * Hold the bounds of the device. If the device leaves the rectangle, it will 'bounce' off the sides.
+	 */
+	Rectangle bounds;
+	/**
+	 * Holds the movement vector as an x,y value. Velocity is included in these values.
+	 */
 	private Vector movementVector;
 	/**
 	 * Holds the current longitude of the device.
@@ -36,22 +42,22 @@ public class Mobility {
 	 */ 
 	private double counter;
 	/**
-	 * @param latitude latitude of the device.
-	 * @param longitude longitude of the device.
+	 * @param latitude of the device.
+	 * @param longitude of the device.
 	 * @param xVector x-component of the movement vector, meters/second.
 	 * @param yVector y-component of the movement vector, meters/second.
 	 * @param isMobile determines whether or not the device changes location.
 	 */
-	public Mobility(double latitude, double longitude, Vector movementVector, boolean isMobile){
+	public Mobility(Rectangle bounds, double latitude, double longitude, Vector movementVector, boolean isMobile){
+		this.bounds = bounds;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.isMobile = isMobile;
 		this.movementVector = movementVector;
 		counter = CloudSim.clock();
 	}
-	// TODO: Bounds limiting. Make sure device can't leave map. Need bounds, of course.
 	/**
-	 *  Updates the device location.
+	 *  Updates the device location or wrap around if device leaves boundaries.
 	 */
 	public void updateLocation(){
 		boolean logStatus = Log.isDisabled();
@@ -64,10 +70,21 @@ public class Mobility {
 		counter = CloudSim.clock();
 		// Output for testing
 		String str = "---- Scalar = " + scalar;
+		// Update the location of the device
 		if(isMobile){
 			this.latitude +=scalar*this.movementVector.getxComponent();
 			this.longitude += scalar*this.movementVector.getyComponent();	
 		}
+		// If the device has left the bounds, wrap it around
+		if (this.latitude > bounds.getWidth()+bounds.getX()) 
+			this.latitude = bounds.getX()+latitude % bounds.getWidth();
+		else if (this.latitude < bounds.getX())
+			latitude += bounds.getX()+bounds.getWidth();
+		if (this.longitude > bounds.getY() + bounds.getHeight()) 
+			this.latitude = bounds.getY() + latitude % bounds.getHeight();
+		else if (this.latitude < bounds.getY())
+			latitude += bounds.getY() + bounds.getHeight();
+				
 		if(DEBUG){
 			Log.printLine(str);
 			if(logStatus)
