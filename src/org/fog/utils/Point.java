@@ -40,4 +40,15 @@ class Point {
 
     public double   getx() {return this.x;}
     public double   gety() {return this.y;}
+
+    @Override 
+    /** 
+     * Simple method to return the coordinates as a string
+     * @return String "X,Y coordinates: x,y "
+     */
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("X,Y coordinates: " + x + "," + y);
+        return buffer.toString();
+    }
 }
