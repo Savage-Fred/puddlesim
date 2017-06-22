@@ -33,6 +33,7 @@ import org.fog.utils.Config;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
 import org.fog.utils.TimeKeeper;
+import org.fog.network.Link; 
 
 public class FogDevice extends PowerDatacenter {
 	private static String LOG_TAG = "FOG_DEVICE";
@@ -96,6 +97,8 @@ public class FogDevice extends PowerDatacenter {
 	protected Map<Integer, AppModule> moduleMap;
 	
 	protected int linkId;
+	
+	protected Map<Integer, Link> linksMap; 
 
 	
 	public FogDevice(
@@ -133,6 +136,9 @@ public class FogDevice extends PowerDatacenter {
 		
 		//puddlebuddies addition 
 		setPuddleBuddies(new ArrayList<Integer>());
+		
+		//initialize map of links
+		setLinksMap(new HashMap<Integer, Link>()); 
 	}
 	
 	public FogDevice(
@@ -170,6 +176,9 @@ public class FogDevice extends PowerDatacenter {
 		
 		//puddlebuddies addition 
 		setPuddleBuddies(new ArrayList<Integer>());
+		
+		//initialize map of links
+		setLinksMap(new HashMap<Integer, Link>()); 
 	}
 
 	/**
@@ -764,10 +773,21 @@ public class FogDevice extends PowerDatacenter {
 	public void addPuddleBuddy(int buddyId){
 		puddleBuddies.add(buddyId);
 	}
+	//remove a node from puddleBuddies
 	public void removePuddleBuddy(int buddyId){
 		puddleBuddies.remove(buddyId);
 	}
+	//check if a node is a puddle buddy 
 	public boolean isMyPuddleBuddy(int buddyId){
 		return puddleBuddies.contains(buddyId);
+	}
+	
+	//getter and setter for linksMap
+	public void setLinksMap(Map<Integer, Link> linksMap){
+		this.linksMap = linksMap;
+	}
+	
+	public Map<Integer, Link> getLinksMap(){
+		return linksMap; 
 	}
 }
