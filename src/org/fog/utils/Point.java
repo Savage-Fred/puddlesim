@@ -48,7 +48,7 @@ class Point {
      */
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("X,Y coordinates: " + x + "," + y);
+        buffer.append(x + "," + y);
         return buffer.toString();
     }
 }
