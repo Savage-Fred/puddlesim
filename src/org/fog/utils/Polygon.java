@@ -1,6 +1,8 @@
 package org.fog.utils;
 import java.io.*;       /* Error Handling */
+import java.util.*;
 import java.util.Arrays;
+import java.util.List;
 /**
  * <h1> Polygon Class </h1>
  * Defines the area of Polygon for a clusterhead.
@@ -17,7 +19,7 @@ public class Polygon {
     ///////////////////////////////////////////////////////
     private Point[] points;     /* A collection of points defines the boundaries of a polygon */
     private int     numberOfPoints = 0;
-    private String polygonTypes = {"Point", "Line", "Triangle", "Quadrilateral", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Nonagon", "Decagon"};
+    private String[] polygonTypes = {"Point", "Line", "Triangle", "Quadrilateral", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Nonagon", "Decagon"};
     
     /////////////////////////////////////////////////////////////
     /////////////////// Polygon CONSTRUCTORS 
@@ -34,8 +36,8 @@ public class Polygon {
     public 
     Polygon(double[] xin, double[] yin) throws IOException 
     {
-        int sizex = count(xin);
-        int sizey = count(yin);
+        int sizex = xin.length;
+        int sizey = yin.length;
 
         if (sizex <= 2 || sizey <= 2) {
             throw new IllegalArgumentException ("Error: Not enough points to be a polygon");
@@ -69,10 +71,12 @@ public class Polygon {
     public 
     Polygon(double[][] xyin) throws IOException 
     {
-        numberOfPoints = count(xyin[0]);
+    	double []temp = xyin[0];
+        numberOfPoints = xyin[0].length;
         if (numberOfPoints <= 2)
             throw new IllegalArgumentException ("Error: A polygon must contain at least 3 points");
         points = new Point[numberOfPoints];
+        //Polygon(xyin[0],xyin[1]);
     }
     /**
      * <b>Polygon Constructor</b> 
@@ -93,7 +97,8 @@ public class Polygon {
     /////////////////// GETTERS AND SETTERS
     /////////////////////////////////////////////////////////
 
-    public void setPoints(Point[] points_in)    { this.points = Arrays.copyOf(points_in, points_in.length); }
+
+	public void setPoints(Point[] points_in)    { this.points = Arrays.copyOf(points_in, points_in.length); }
     public int  getNumberOfPoints()             { return numberOfPoints; }
     public void setNumberOfPoints(int c)        {this.numberOfPoints = c;}   
 
@@ -159,15 +164,16 @@ public class Polygon {
     /**
      * count
      * <p> Method to count the number of elements in an array 
-     * @param array of objects
+     * @param xin of objects
      * @return the number of nonNull elements in the array
      */
     private 
-    int count(Object [] array) 
+    int count(Object[] xin) 
     {
-        int c = 0;
-        for(Object el: array) { if(el != null) c++; }
-        return c;
+        ArrayList<Object> list = new ArrayList<Object>(Arrays.asList(xin));
+        list.trimToSize();
+        return list.size();
+        
     }
 
 
@@ -189,7 +195,7 @@ public class Polygon {
         buffer.append("Points: ");
         for (Point p: points)
         {
-            buffer.append("{" + p.toString + " } ");
+            buffer.append("{" + p.toString() + " } ");
         }
 
         return buffer.toString();
