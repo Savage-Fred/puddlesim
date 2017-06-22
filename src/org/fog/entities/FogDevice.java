@@ -32,6 +32,7 @@ import org.fog.utils.AppModuleAddress;
 import org.fog.utils.Config;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
+import org.fog.utils.Polygon;
 import org.fog.utils.TimeKeeper;
 import org.fog.network.Link; 
 
@@ -99,6 +100,8 @@ public class FogDevice extends PowerDatacenter {
 	protected int linkId;
 	
 	protected Map<Integer, Link> linksMap; 
+	
+	protected Polygon areaOfCoverage; 
 
 	
 	public FogDevice(
@@ -789,5 +792,21 @@ public class FogDevice extends PowerDatacenter {
 	
 	public Map<Integer, Link> getLinksMap(){
 		return linksMap; 
+	}
+
+	/**
+	 * Gets the area of coverage of where this device can connect 
+	 * @return the areaOfCoverage
+	 */
+	public Polygon getAreaOfCoverage() {
+		return areaOfCoverage;
+	}
+
+	/**
+	 * Sets the area of coverage of where this device can connect
+	 * @param areaOfCoverage the areaOfCoverage to set
+	 */
+	public void setAreaOfCoverage(Polygon areaOfCoverage) {
+		this.areaOfCoverage = areaOfCoverage;
 	}
 }
