@@ -5,7 +5,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 
 /**
  * This class is meant to add mobility features onto FogDevice, Actuator, and Sensor currently being used in iFogSim. 
- * It's purpose is to allow the movement of fog devices between the areas of influence of clusterhead. This is accomplished
+ * It's purpose is to allow the movement of fog devices between the areas of influence of puddlehead. This is accomplished
  * with the use of 2D vector that's updated every time the update function is called.   
  * 
  * @author Avi Rynderman
