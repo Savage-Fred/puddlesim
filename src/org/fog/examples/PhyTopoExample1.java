@@ -295,9 +295,14 @@ public class PhyTopoExample1 {
 		
 		FogNode fognode = null;
 		try {
+			/*
 			fognode = new FogNode(nodeName, characteristics, 
 					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
 					bounds, 0, 0, direction, true);
+					*/
+			fognode = new FogNode(nodeName, characteristics, 
+					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
+					bounds, 0, 0, 3.2, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

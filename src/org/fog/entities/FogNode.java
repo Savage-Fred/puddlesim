@@ -29,8 +29,14 @@ public class FogNode extends FogDevice {
 	 * Mobility object for FogNode.
 	 */
 	protected Mobility mobile = null;
-	
+	/**
+	 * Used for debugging purposes. Adds a label onto the output. Note, only used in Logger.debug
+	 */
 	private static String LOG_TAG = "FOG_NODE";
+	/**
+	 * Used to check whether or not the device has started moving.
+	 */
+	private boolean moving = false;
 	
 	protected int puddleHeadId; 
 
@@ -121,6 +127,56 @@ public class FogNode extends FogDevice {
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		this.mobile = new Mobility(bounds, latitude, longitude, movementVector, isMobile);
 	}
+	
+	/**
+	 * Constructor for a FogNode with mobility.
+	 * @param name
+	 * @param characteristics
+	 * @param vmAllocationPolicy
+	 * @param storageList
+	 * @param schedulingInterval
+	 * @param ratePerMips
+	 * @param bounds
+	 * @param latitude
+	 * @param longitude
+	 * @param scalarVector
+	 * @param isMobile
+	 * @throws Exception
+	 */
+	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
+			List<Storage> storageList, double schedulingInterval, double ratePerMips,
+			Rectangle bounds, double latitude, double longitude, double scalar, boolean isMobile) throws Exception {
+		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
+		this.mobile = new Mobility(bounds, latitude, longitude, scalar, isMobile);
+	}
+
+	/**
+	 * FogNode constructor with mobility and with the addition to the basic constructor which takes in parameters for uplink and downlink bandwidth 
+	 * as well as uplink latency
+	 * @param name
+	 * @param characteristics
+	 * @param vmAllocationPolicy
+	 * @param storageList
+	 * @param schedulingInterval
+	 * @param uplinkBandwidth
+	 * @param downlinkBandwidth
+	 * @param uplinkLatency
+	 * @param ratePerMips
+	 * @param bounds
+	 * @param latitude
+	 * @param longitude
+	 * @param scalar
+	 * @param isMobile  
+	 * @throws Exception
+	 */
+	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
+			List<Storage> storageList, double schedulingInterval, double uplinkBandwidth, double downlinkBandwidth,
+			double uplinkLatency, double ratePerMips,
+			Rectangle bounds, double latitude, double longitude, double scalar, boolean isMobile) throws Exception {
+		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
+				downlinkBandwidth, uplinkLatency, ratePerMips);
+		this.mobile = new Mobility(bounds, latitude, longitude, scalar, isMobile);
+	}
 
 	/**
 	 * Gets the ID of the puddle head that this FogNode belongs to 
@@ -151,10 +207,12 @@ public class FogNode extends FogDevice {
 
 	@Override
 	protected void processOtherEvent(SimEvent ev) {
-		if(!mobile.getMoving()){
-			mobile.setMoving(true);
+		// This kickstarts the movement. 
+		if(!this.moving){
+			this.moving = true;
 			processUpdateLocation(ev);
 		}			
+		
 		switch(ev.getTag()){
 		case FogEvents.TUPLE_ARRIVAL:
 			processTupleArrival(ev);

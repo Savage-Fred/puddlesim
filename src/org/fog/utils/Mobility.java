@@ -41,10 +41,7 @@ public class Mobility {
 	 *  with the current clock value and the total movement adjustment calculated.
 	 */ 
 	private double counter;
-	/**
-	 * Started moving.
-	 */
-	protected boolean moving = false;
+
 	
 	/**
 	 * @param latitude of the device.
@@ -61,6 +58,23 @@ public class Mobility {
 		this.movementVector = movementVector;
 		counter = CloudSim.clock();
 	}
+	
+	/**
+	 * @param latitude of the device.
+	 * @param longitude of the device.
+	 * @param xVector x-component of the movement vector, meters/second.
+	 * @param yVector y-component of the movement vector, meters/second.
+	 * @param isMobile determines whether or not the device changes location.
+	 */
+	public Mobility(Rectangle bounds, double latitude, double longitude, double scalar, boolean isMobile){
+		this.bounds = bounds;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.isMobile = isMobile;
+		this.movementVector = new Vector(scalar);
+		counter = CloudSim.clock();
+	}
+	
 	/**
 	 *  Updates the device location or wrap around if device leaves boundaries.
 	 */
@@ -121,12 +135,6 @@ public class Mobility {
 	}
 	public void setMobile(boolean isMobile) {
 		this.isMobile = isMobile;
-	}
-	public void setMoving(boolean moving) {
-		this.moving = moving;
-	}
-	public boolean getMoving() {
-		return moving;
 	}
 }
 
