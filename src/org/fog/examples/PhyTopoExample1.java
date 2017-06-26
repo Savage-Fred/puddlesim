@@ -41,6 +41,7 @@ import org.fog.scheduler.AppModuleScheduler;
 import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
+import org.fog.utils.Point;
 import org.fog.utils.Rectangle;
 import org.fog.utils.TimeKeeper;
 import org.fog.utils.Vector;
@@ -302,7 +303,7 @@ public class PhyTopoExample1 {
 					*/
 			fognode = new FogNode(nodeName, characteristics, 
 					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
-					bounds, 0, 0, 3.2, true);
+					bounds, new Point(0, 0), 3.2, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
