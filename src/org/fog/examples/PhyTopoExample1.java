@@ -29,6 +29,7 @@ import org.fog.entities.EndDevice;
 import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
+import org.fog.entities.FogNode;
 import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.network.EdgeSwitch;
@@ -40,7 +41,9 @@ import org.fog.scheduler.AppModuleScheduler;
 import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
+import org.fog.utils.Rectangle;
 import org.fog.utils.TimeKeeper;
+import org.fog.utils.Vector;
 import org.fog.utils.distribution.DeterministicDistribution;
 
 /**
@@ -115,6 +118,10 @@ public class PhyTopoExample1 {
 		Switch sw2 = new Switch("SW2");
 		EndDevice dev = new EndDevice("DEV");
 		
+		// Test FogNode
+		FogNode fd2 = createFogNode("FD2", false, 102400, 4000, 0.01, 103, 83.25);
+		
+		
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
 		sensors.add(sensor);
@@ -125,12 +132,14 @@ public class PhyTopoExample1 {
 		
 		PhysicalTopology.getInstance().addFogDevice(fd0);
 		PhysicalTopology.getInstance().addFogDevice(fd1);
+		PhysicalTopology.getInstance().addFogDevice(fd2);
 		PhysicalTopology.getInstance().addSwitch(sw0);
 		PhysicalTopology.getInstance().addSwitch(sw1);
 		PhysicalTopology.getInstance().addSwitch(sw2);
 		PhysicalTopology.getInstance().addEndDevice(dev);
 		fogDevices.add(fd0);
 		fogDevices.add(fd1);
+		fogDevices.add(fd2);
 		
 		// Now connecting entities with Links
 		PhysicalTopology.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
@@ -138,6 +147,7 @@ public class PhyTopoExample1 {
 		PhysicalTopology.getInstance().addLink(sw0.getId(), fd0.getId(), 2, 1000);
 		PhysicalTopology.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
 		PhysicalTopology.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
+		PhysicalTopology.getInstance().addLink(sw2.getId(), fd2.getId(), 2, 1000);
 		
 		if (PhysicalTopology.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");
@@ -223,6 +233,82 @@ public class PhyTopoExample1 {
 		return fogdevice;
 	}
 
+	/**
+	 * Creates a vanilla fog device
+	 * @param nodeName name of the device to be used in simulation
+	 * @param mips MIPS
+	 * @param ram RAM
+	 * @param upBw uplink bandwidth
+	 * @param downBw downlink bandwidth
+	 * @param level hierarchy level of the device
+	 * @param ratePerMips cost rate per MIPS used
+	 * @param busyPower
+	 * @param idlePower
+	 * @return
+	 */
+	private static FogNode createFogNode(String nodeName, boolean isCloud, long mips,
+			int ram, double ratePerMips, double busyPower, double idlePower) {
+		
+		List<Pe> peList = new ArrayList<Pe>();
+
+		// 3. Create PEs and add these into a list.
+		peList.add(new Pe(0, new PeProvisionerOverbooking(mips))); // need to store Pe id and MIPS Rating
+
+		int hostId = FogUtils.generateEntityId();
+		long storage = 10000000; // host storage
+		int bw = 1000000;
+
+		PowerHost host = new PowerHost(
+				hostId,
+				new RamProvisionerSimple(ram),
+				new BwProvisionerOverbooking(bw),
+				storage,
+				peList,
+				new AppModuleScheduler(peList),
+				new FogLinearPowerModel(busyPower, idlePower)
+			);
+
+		List<Host> hostList = new ArrayList<Host>();
+		hostList.add(host);
+
+		String arch = "x86"; // system architecture
+		String os = "Linux"; // operating system
+		String vmm = "Xen";
+		double time_zone = 10.0; // time zone this resource located
+		double cost = 3.0; // the cost of using processing in this resource
+		double costPerMem = 0.05; // the cost of using memory in this resource
+		double costPerStorage = 0.001; // the cost of using storage in this
+										// resource
+		double costPerBw = 0.0; // the cost of using bw in this resource
+		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are not adding SAN
+													// devices by now
+
+		FogDeviceCharacteristics characteristics = new FogDeviceCharacteristics(isCloud, 
+				arch, os, vmm, host, time_zone, cost, costPerMem,
+				costPerStorage, costPerBw);
+		
+		/*
+		 * Added material for testing
+		 */
+		Rectangle bounds = new Rectangle(1000, 1000);
+		Vector direction = new Vector(1,1);
+		
+		FogNode fognode = null;
+		try {
+			/*
+			fognode = new FogNode(nodeName, characteristics, 
+					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
+					bounds, 0, 0, direction, true);
+					*/
+			fognode = new FogNode(nodeName, characteristics, 
+					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
+					bounds, 0, 0, 3.2, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fognode;
+	}
+	
 	/**
 	 * Function to create the EEG Tractor Beam game application in the DDF model. 
 	 * @param appId unique identifier of the application

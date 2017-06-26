@@ -5,7 +5,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 
 /**
  * This class is meant to add mobility features onto FogDevice, Actuator, and Sensor currently being used in iFogSim. 
- * It's purpose is to allow the movement of fog devices between the areas of influence of clusterhead. This is accomplished
+ * It's purpose is to allow the movement of fog devices between the areas of influence of puddlehead. This is accomplished
  * with the use of 2D vector that's updated every time the update function is called.   
  * 
  * @author Avi Rynderman
@@ -41,6 +41,8 @@ public class Mobility {
 	 *  with the current clock value and the total movement adjustment calculated.
 	 */ 
 	private double counter;
+
+	
 	/**
 	 * @param latitude of the device.
 	 * @param longitude of the device.
@@ -56,6 +58,23 @@ public class Mobility {
 		this.movementVector = movementVector;
 		counter = CloudSim.clock();
 	}
+	
+	/**
+	 * @param latitude of the device.
+	 * @param longitude of the device.
+	 * @param xVector x-component of the movement vector, meters/second.
+	 * @param yVector y-component of the movement vector, meters/second.
+	 * @param isMobile determines whether or not the device changes location.
+	 */
+	public Mobility(Rectangle bounds, double latitude, double longitude, double scalar, boolean isMobile){
+		this.bounds = bounds;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.isMobile = isMobile;
+		this.movementVector = new Vector(scalar);
+		counter = CloudSim.clock();
+	}
+	
 	/**
 	 *  Updates the device location or wrap around if device leaves boundaries.
 	 */
@@ -69,21 +88,22 @@ public class Mobility {
 		// Now update the simulation time stored in the mobility class
 		counter = CloudSim.clock();
 		// Output for testing
-		String str = "---- Scalar = " + scalar;
+		String str = "---- Location = " + this.latitude + " " + this.longitude;
 		// Update the location of the device
 		if(isMobile){
 			this.latitude +=scalar*this.movementVector.getxComponent();
 			this.longitude += scalar*this.movementVector.getyComponent();	
 		}
 		// If the device has left the bounds, wrap it around
-		if (this.latitude > bounds.getWidth()+bounds.getX()) 
-			this.latitude = bounds.getX()+latitude % bounds.getWidth();
+		if (this.latitude > bounds.getWidth() + bounds.getX()) 
+			this.latitude = bounds.getX() + latitude % bounds.getWidth();
 		else if (this.latitude < bounds.getX())
-			latitude += bounds.getX()+bounds.getWidth();
-		if (this.longitude > bounds.getY() + bounds.getHeight()) 
-			this.latitude = bounds.getY() + latitude % bounds.getHeight();
-		else if (this.latitude < bounds.getY())
-			latitude += bounds.getY() + bounds.getHeight();
+			latitude += bounds.getX() + bounds.getWidth();
+		
+		if (this.longitude > bounds.getHeight() + bounds.getY()) 
+			this.longitude = bounds.getY() + longitude % bounds.getHeight();
+		else if (this.longitude < bounds.getY())
+			longitude += bounds.getY() + bounds.getHeight();
 				
 		if(DEBUG){
 			Log.printLine(str);
