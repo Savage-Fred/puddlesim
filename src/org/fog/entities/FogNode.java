@@ -6,11 +6,13 @@ package org.fog.entities;
 
 import java.util.List;
 
+import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.utils.FogEvents;
+import org.fog.utils.Logger;
 import org.fog.utils.Mobility;
 import org.fog.utils.Rectangle;
 import org.fog.utils.Vector;
@@ -28,6 +30,7 @@ public class FogNode extends FogDevice {
 	 */
 	protected Mobility mobile = null;
 	
+	private static String LOG_TAG = "FOG_NODE";
 	
 	protected int puddleHeadId; 
 
@@ -140,13 +143,18 @@ public class FogNode extends FogDevice {
 	protected void processUpdateLocation(SimEvent ev){
 		// If the device is mobile, update the location and send an event to the queue to trigger it again
 		if(mobile.isMobile()){
-			send(getLinkId(), CloudSim.getMinTimeBetweenEvents(), FogEvents.UPDATE_LOCATION);
+			send(super.getId(), 100*CloudSim.getMinTimeBetweenEvents(), FogEvents.UPDATE_LOCATION);
 			mobile.updateLocation();
 		}
+		Logger.debug(LOG_TAG, getName(), "Completed execution of move");
 	}
 
 	@Override
 	protected void processOtherEvent(SimEvent ev) {
+		if(!mobile.getMoving()){
+			mobile.setMoving(true);
+			processUpdateLocation(ev);
+		}			
 		switch(ev.getTag()){
 		case FogEvents.TUPLE_ARRIVAL:
 			processTupleArrival(ev);

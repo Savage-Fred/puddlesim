@@ -42,6 +42,11 @@ public class Mobility {
 	 */ 
 	private double counter;
 	/**
+	 * Started moving.
+	 */
+	protected boolean moving = false;
+	
+	/**
 	 * @param latitude of the device.
 	 * @param longitude of the device.
 	 * @param xVector x-component of the movement vector, meters/second.
@@ -69,21 +74,22 @@ public class Mobility {
 		// Now update the simulation time stored in the mobility class
 		counter = CloudSim.clock();
 		// Output for testing
-		String str = "---- Scalar = " + scalar;
+		String str = "---- Location = " + this.latitude + " " + this.longitude;
 		// Update the location of the device
 		if(isMobile){
 			this.latitude +=scalar*this.movementVector.getxComponent();
 			this.longitude += scalar*this.movementVector.getyComponent();	
 		}
 		// If the device has left the bounds, wrap it around
-		if (this.latitude > bounds.getWidth()+bounds.getX()) 
-			this.latitude = bounds.getX()+latitude % bounds.getWidth();
+		if (this.latitude > bounds.getWidth() + bounds.getX()) 
+			this.latitude = bounds.getX() + latitude % bounds.getWidth();
 		else if (this.latitude < bounds.getX())
-			latitude += bounds.getX()+bounds.getWidth();
-		if (this.longitude > bounds.getY() + bounds.getHeight()) 
-			this.latitude = bounds.getY() + latitude % bounds.getHeight();
-		else if (this.latitude < bounds.getY())
-			latitude += bounds.getY() + bounds.getHeight();
+			latitude += bounds.getX() + bounds.getWidth();
+		
+		if (this.longitude > bounds.getHeight() + bounds.getY()) 
+			this.longitude = bounds.getY() + longitude % bounds.getHeight();
+		else if (this.longitude < bounds.getY())
+			longitude += bounds.getY() + bounds.getHeight();
 				
 		if(DEBUG){
 			Log.printLine(str);
@@ -115,6 +121,12 @@ public class Mobility {
 	}
 	public void setMobile(boolean isMobile) {
 		this.isMobile = isMobile;
+	}
+	public void setMoving(boolean moving) {
+		this.moving = moving;
+	}
+	public boolean getMoving() {
+		return moving;
 	}
 }
 
