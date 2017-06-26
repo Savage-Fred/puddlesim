@@ -8,7 +8,7 @@ package org.fog.utils;
  * @version 1.0.0
  * @since   June 14, 2017
  */ 
-class Point {
+public class Point {
     //////////////////////////////////////////
     //////////////  FIELDS 
     //////////////////////////////////////////

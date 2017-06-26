@@ -25,13 +25,9 @@ public class Mobility {
 	 */
 	private Vector movementVector;
 	/**
-	 * Holds the current longitude of the device.
+	 * Holds the current position of the device
 	 */
-	private double longitude;
-	/**
-	 * Holds the current latitude of the device.
-	 */
-	private double latitude;
+	private Point coordinates;
 	/**
 	 *  Boolean that determines the moveability of the device. False means immobile, True means mobile.
 	 */
@@ -44,32 +40,30 @@ public class Mobility {
 
 	
 	/**
-	 * @param latitude of the device.
-	 * @param longitude of the device.
+	 * @param bounds in which the object in constrained.
+	 * @param coordinates at which the device is initially placed.
 	 * @param xVector x-component of the movement vector, meters/second.
 	 * @param yVector y-component of the movement vector, meters/second.
 	 * @param isMobile determines whether or not the device changes location.
 	 */
-	public Mobility(Rectangle bounds, double latitude, double longitude, Vector movementVector, boolean isMobile){
+	public Mobility(Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile){
 		this.bounds = bounds;
-		this.latitude = latitude;
-		this.longitude = longitude;
+		this.coordinates = coordinates;
 		this.isMobile = isMobile;
 		this.movementVector = movementVector;
 		counter = CloudSim.clock();
 	}
 	
 	/**
-	 * @param latitude of the device.
-	 * @param longitude of the device.
+	 * @param bounds in which the object in constrained.
+	 * @param coordinates at which the device is initially placed.
 	 * @param xVector x-component of the movement vector, meters/second.
 	 * @param yVector y-component of the movement vector, meters/second.
 	 * @param isMobile determines whether or not the device changes location.
 	 */
-	public Mobility(Rectangle bounds, double latitude, double longitude, double scalar, boolean isMobile){
+	public Mobility(Rectangle bounds, Point coordinates, double scalar, boolean isMobile){
 		this.bounds = bounds;
-		this.latitude = latitude;
-		this.longitude = longitude;
+		this.coordinates = coordinates;
 		this.isMobile = isMobile;
 		this.movementVector = new Vector(scalar);
 		counter = CloudSim.clock();
@@ -88,22 +82,22 @@ public class Mobility {
 		// Now update the simulation time stored in the mobility class
 		counter = CloudSim.clock();
 		// Output for testing
-		String str = "---- Location = " + this.latitude + " " + this.longitude;
+		String str = "---- Location = " + this.coordinates.getx() + " " + this.coordinates.gety();
 		// Update the location of the device
 		if(isMobile){
-			this.latitude +=scalar*this.movementVector.getxComponent();
-			this.longitude += scalar*this.movementVector.getyComponent();	
+			this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
+			this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());	
 		}
 		// If the device has left the bounds, wrap it around
-		if (this.latitude > bounds.getWidth() + bounds.getX()) 
-			this.latitude = bounds.getX() + latitude % bounds.getWidth();
-		else if (this.latitude < bounds.getX())
-			latitude += bounds.getX() + bounds.getWidth();
+		if (this.coordinates.getx() > bounds.getWidth() + bounds.getX()) 
+			this.coordinates.setx(bounds.getX() + this.coordinates.getx() % bounds.getWidth());
+		else if (this.coordinates.getx() < bounds.getX())
+			this.coordinates.setx(this.coordinates.getx() + bounds.getX() + bounds.getWidth());
 		
-		if (this.longitude > bounds.getHeight() + bounds.getY()) 
-			this.longitude = bounds.getY() + longitude % bounds.getHeight();
-		else if (this.longitude < bounds.getY())
-			longitude += bounds.getY() + bounds.getHeight();
+		if (this.coordinates.gety() > bounds.getHeight() + bounds.getY()) 
+			this.coordinates.sety(bounds.getY() + this.coordinates.gety() % bounds.getHeight());
+		else if (this.coordinates.gety()< bounds.getY())
+			this.coordinates.sety(this.coordinates.gety() + bounds.getY() + bounds.getHeight());
 				
 		if(DEBUG){
 			Log.printLine(str);
@@ -118,18 +112,13 @@ public class Mobility {
 	public void updateDirection(Vector v){
 		this.movementVector = v;
 	}
-	public double getLatitude() {
-		return latitude;
+	public Point getPoint(){
+		return this.coordinates;
 	}
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
+	public void setPoint(Point coordinates){
+		this.coordinates = coordinates;
 	}
-	public double getLongitude() {
-		return longitude;
-	}
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
+	
 	public boolean isMobile() {
 		return isMobile;
 	}
