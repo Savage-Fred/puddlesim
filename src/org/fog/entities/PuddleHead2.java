@@ -24,20 +24,38 @@ public class PuddleHead2 extends FogBroker {
 	protected List<Integer> puddleBuddies; 
 	protected List<Integer> childrenIds;
 	private int level; 
-	protected Polygon areaOfCoverage; 
+	protected Polygon areaOfCoverage;
+	protected double latitude; 
+	protected double longitude; 
+	
 	/**
 	 * @param name
 	 * @throws Exception
 	 */
 	public PuddleHead2(String name) throws Exception {
 		super(name);
-		// TODO Auto-generated constructor stub
 		//initialize the lists and map
 		setPuddleDevices(new ArrayList<Integer>());
 		setPuddleDevicesCharacteristics(new HashMap<Integer, FogDeviceCharacteristics>());
 		setPuddleBuddies(new ArrayList<Integer>()); 
 		setChildrenIds(new ArrayList<Integer>());
 	}
+	
+	//TODO look into this functionality for PuddleSim extension
+	/**
+	 * We may want to implement this for our own functionality in the future. 
+	public void submitApplication(){
+		
+	}
+	protected void deployApplication(){
+		
+	}
+	*/
+	
+	
+	
+	
+	///////////////////////Getters and Setters////////////////////////////////////////
 	/**
 	 * @return the puddleDevices
 	 */
@@ -121,6 +139,30 @@ public class PuddleHead2 extends FogBroker {
 	 */
 	public void setAreaOfCoverage(Polygon areaOfCoverage) {
 		this.areaOfCoverage = areaOfCoverage;
+	}
+	/**
+	 * @return the latitude
+	 */
+	public double getLatitude() {
+		return latitude;
+	}
+	/**
+	 * @param latitude the latitude to set
+	 */
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+	/**
+	 * @return the longitude
+	 */
+	public double getLongitude() {
+		return longitude;
+	}
+	/**
+	 * @param longitude the longitude to set
+	 */
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 }
