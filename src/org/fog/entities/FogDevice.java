@@ -278,7 +278,7 @@ public class FogDevice extends PowerDatacenter {
 	 * Perform miscellaneous resource management tasks
 	 * @param ev
 	 */
-	private void manageResources(SimEvent ev) {
+	protected void manageResources(SimEvent ev) {
 		updateEnergyConsumption();
 		send(getId(), Config.RESOURCE_MGMT_INTERVAL, FogEvents.RESOURCE_MGMT);
 	}
@@ -287,7 +287,7 @@ public class FogDevice extends PowerDatacenter {
 	 * Sending periodic tuple for an application edge. Note that for multiple instances of a single source module, only one tuple is sent DOWN while instanceCount number of tuples are sent UP.
 	 * @param ev SimEvent instance containing the edge to send tuple on
 	 */
-	private void sendPeriodicTuple(SimEvent ev) {
+	protected void sendPeriodicTuple(SimEvent ev) {
 		Pair<Integer, String> tupleInfo = (Pair<Integer, String>) ev.getData();
 		AppModule module = moduleMap.get(tupleInfo.getFirst());
 		String tupleType = tupleInfo.getSecond();
