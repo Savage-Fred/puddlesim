@@ -16,6 +16,7 @@ import org.fog.utils.Logger;
 import org.fog.utils.Mobility;
 import org.fog.utils.Rectangle;
 import org.fog.utils.Vector;
+import org.fog.utils.Point;
 
 /**
  * @author Jessica Knezha
@@ -87,17 +88,16 @@ public class FogNode extends FogDevice {
 	 * @param schedulingInterval
 	 * @param ratePerMips
 	 * @param bounds
-	 * @param latitude
-	 * @param longitude
+	 * @param coordinates
 	 * @param movementVector
 	 * @param isMobile
 	 * @throws Exception
 	 */
 	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList, double schedulingInterval, double ratePerMips,
-			Rectangle bounds, double latitude, double longitude, Vector movementVector, boolean isMobile) throws Exception {
+			Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
-		this.mobile = new Mobility(bounds, latitude, longitude, movementVector, isMobile);
+		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
 	}
 
 	/**
@@ -113,8 +113,7 @@ public class FogNode extends FogDevice {
 	 * @param uplinkLatency
 	 * @param ratePerMips
 	 * @param bounds
-	 * @param latitude
-	 * @param longitude
+	 * @param coordinates
 	 * @param movementVector
 	 * @param isMobile  
 	 * @throws Exception
@@ -122,10 +121,10 @@ public class FogNode extends FogDevice {
 	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList, double schedulingInterval, double uplinkBandwidth, double downlinkBandwidth,
 			double uplinkLatency, double ratePerMips,
-			Rectangle bounds, double latitude, double longitude, Vector movementVector, boolean isMobile) throws Exception {
+			Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
-		this.mobile = new Mobility(bounds, latitude, longitude, movementVector, isMobile);
+		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
 	}
 	
 	/**
@@ -137,17 +136,16 @@ public class FogNode extends FogDevice {
 	 * @param schedulingInterval
 	 * @param ratePerMips
 	 * @param bounds
-	 * @param latitude
-	 * @param longitude
+	 * @param coordinates
 	 * @param scalarVector
 	 * @param isMobile
 	 * @throws Exception
 	 */
 	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList, double schedulingInterval, double ratePerMips,
-			Rectangle bounds, double latitude, double longitude, double scalar, boolean isMobile) throws Exception {
+			Rectangle bounds, Point coordinates, double scalar, boolean isMobile) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
-		this.mobile = new Mobility(bounds, latitude, longitude, scalar, isMobile);
+		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
 	}
 
 	/**
@@ -163,8 +161,7 @@ public class FogNode extends FogDevice {
 	 * @param uplinkLatency
 	 * @param ratePerMips
 	 * @param bounds
-	 * @param latitude
-	 * @param longitude
+	 * @param coordinates
 	 * @param scalar
 	 * @param isMobile  
 	 * @throws Exception
@@ -172,10 +169,10 @@ public class FogNode extends FogDevice {
 	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList, double schedulingInterval, double uplinkBandwidth, double downlinkBandwidth,
 			double uplinkLatency, double ratePerMips,
-			Rectangle bounds, double latitude, double longitude, double scalar, boolean isMobile) throws Exception {
+			Rectangle bounds, Point coordinates, double scalar, boolean isMobile) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
-		this.mobile = new Mobility(bounds, latitude, longitude, scalar, isMobile);
+		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
 	}
 
 	/**
