@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cloudbus.cloudsim.core.SimEntity;
+import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.utils.Polygon;
 
 /**
@@ -16,10 +18,8 @@ import org.fog.utils.Polygon;
  * @since June 26, 2017
  *
  */
-public class PuddleHead2 extends FogBroker {
+public class PuddleHead3 extends SimEntity {
 	
-	private static final String LOG_TAG = "PUDDLE_HEAD";
-
 	protected List<Integer> puddleDevices;
 	protected Map<Integer,FogDeviceCharacteristics> puddleDevicesCharacteristics;
 	protected int parentId; 
@@ -29,47 +29,59 @@ public class PuddleHead2 extends FogBroker {
 	protected Polygon areaOfCoverage;
 	protected double latitude; 
 	protected double longitude; 
-	
+
 	/**
 	 * @param name
-	 * @throws Exception
 	 */
-	public PuddleHead2(String name) throws Exception {
+	public PuddleHead3(String name) {
 		super(name);
-		//initialize the lists and map
+	
 		setPuddleDevices(new ArrayList<Integer>());
 		setPuddleDevicesCharacteristics(new HashMap<Integer, FogDeviceCharacteristics>());
 		setPuddleBuddies(new ArrayList<Integer>()); 
 		setChildrenIds(new ArrayList<Integer>());
-	}
-	
-	//TODO look into this functionality for PuddleSim extension
-	/**
-	 * We may want to implement this for our own functionality in the future. 
-	public void submitApplication(){
 		
 	}
-	protected void deployApplication(){
-		
+
+	/* (non-Javadoc)
+	 * @see org.cloudbus.cloudsim.core.SimEntity#startEntity()
+	 */
+	@Override
+	public void startEntity() {
+
 	}
-	*/
-	
-	
-	
-	
-	///////////////////////Getters and Setters////////////////////////////////////////
+
+	/* (non-Javadoc)
+	 * @see org.cloudbus.cloudsim.core.SimEntity#processEvent(org.cloudbus.cloudsim.core.SimEvent)
+	 */
+	@Override
+	public void processEvent(SimEvent ev) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.cloudbus.cloudsim.core.SimEntity#shutdownEntity()
+	 */
+	@Override
+	public void shutdownEntity() {
+
+	}
+
 	/**
 	 * @return the puddleDevices
 	 */
 	public List<Integer> getPuddleDevices() {
 		return puddleDevices;
 	}
+
 	/**
 	 * @param puddleDevices the puddleDevices to set
 	 */
 	public void setPuddleDevices(List<Integer> puddleDevices) {
 		this.puddleDevices = puddleDevices;
 	}
+	
 	//add a node to the puddleDevices
 	public void addPuddleDevice(int deviceId){
 		puddleDevices.add(deviceId);
@@ -82,42 +94,49 @@ public class PuddleHead2 extends FogBroker {
 	public boolean isMyPuddleDevice(int deviceId){
 		return puddleDevices.contains(deviceId);
 	}
+
 	/**
 	 * @return the puddleDevicesCharacteristics
 	 */
 	public Map<Integer, FogDeviceCharacteristics> getPuddleDevicesCharacteristics() {
 		return puddleDevicesCharacteristics;
 	}
+
 	/**
 	 * @param puddleDevicesCharacteristics the puddleDevicesCharacteristics to set
 	 */
 	public void setPuddleDevicesCharacteristics(Map<Integer, FogDeviceCharacteristics> puddleDevicesCharacteristics) {
 		this.puddleDevicesCharacteristics = puddleDevicesCharacteristics;
 	}
+
 	/**
 	 * @return the parentId
 	 */
 	public int getParentId() {
 		return parentId;
 	}
+
 	/**
 	 * @param parentId the parentId to set
 	 */
 	public void setParentId(int parentId) {
 		this.parentId = parentId;
 	}
+
 	/**
 	 * @return the puddleBuddies
 	 */
 	public List<Integer> getPuddleBuddies() {
 		return puddleBuddies;
 	}
+
 	/**
 	 * @param puddleBuddies the puddleBuddies to set
 	 */
 	public void setPuddleBuddies(List<Integer> puddleBuddies) {
 		this.puddleBuddies = puddleBuddies;
 	}
+	
 	//add a node to the puddleBuddies
 	public void addPuddleBuddy(int buddyId){
 		puddleBuddies.add(buddyId);
@@ -130,60 +149,70 @@ public class PuddleHead2 extends FogBroker {
 	public boolean isMyPuddleBuddy(int buddyId){
 		return puddleBuddies.contains(buddyId);
 	}
+
 	/**
 	 * @return the childrenIds
 	 */
 	public List<Integer> getChildrenIds() {
 		return childrenIds;
 	}
+
 	/**
 	 * @param childrenIds the childrenIds to set
 	 */
 	public void setChildrenIds(List<Integer> childrenIds) {
 		this.childrenIds = childrenIds;
 	}
+
 	/**
 	 * @return the level
 	 */
 	public int getLevel() {
 		return level;
 	}
+
 	/**
 	 * @param level the level to set
 	 */
 	public void setLevel(int level) {
 		this.level = level;
 	}
+
 	/**
 	 * @return the areaOfCoverage
 	 */
 	public Polygon getAreaOfCoverage() {
 		return areaOfCoverage;
 	}
+
 	/**
 	 * @param areaOfCoverage the areaOfCoverage to set
 	 */
 	public void setAreaOfCoverage(Polygon areaOfCoverage) {
 		this.areaOfCoverage = areaOfCoverage;
 	}
+
 	/**
 	 * @return the latitude
 	 */
 	public double getLatitude() {
 		return latitude;
 	}
+
 	/**
 	 * @param latitude the latitude to set
 	 */
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
+
 	/**
 	 * @return the longitude
 	 */
 	public double getLongitude() {
 		return longitude;
 	}
+
 	/**
 	 * @param longitude the longitude to set
 	 */
