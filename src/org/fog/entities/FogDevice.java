@@ -102,6 +102,8 @@ public class FogDevice extends PowerDatacenter {
 	protected Map<Integer, Link> linksMap; 
 	
 	protected Polygon areaOfCoverage; 
+	
+	protected FogDeviceCharacteristics myCharacteristics; 
 
 	
 	public FogDevice(
@@ -142,6 +144,8 @@ public class FogDevice extends PowerDatacenter {
 		
 		//initialize map of links
 		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		myCharacteristics = characteristics; 
 	}
 	
 	public FogDevice(
@@ -182,6 +186,8 @@ public class FogDevice extends PowerDatacenter {
 		
 		//initialize map of links
 		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		myCharacteristics = characteristics;
 	}
 
 	/**
@@ -808,5 +814,9 @@ public class FogDevice extends PowerDatacenter {
 	 */
 	public void setAreaOfCoverage(Polygon areaOfCoverage) {
 		this.areaOfCoverage = areaOfCoverage;
+	}
+	
+	public FogDeviceCharacteristics getDeviceCharactersitics(){
+		return myCharacteristics; 
 	}
 }
