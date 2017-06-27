@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
+import org.fog.application.AppModule;
 import org.fog.utils.Polygon;
 
 /**
@@ -20,15 +21,65 @@ import org.fog.utils.Polygon;
  */
 public class PuddleHead3 extends SimEntity {
 	
+	/**
+	 * List of IDs of the FogNodes which this PuddleHead is in control of. 
+	 */
 	protected List<Integer> puddleDevices;
+	
+	/**
+	 * This map contains the ID of a fog device and it's corresponding FogDeviceCharacteristics object. This is how the PuddleHead will 
+	 * keep track of how many resources a device has and what resources are available.
+	 */
 	protected Map<Integer,FogDeviceCharacteristics> puddleDevicesCharacteristics;
+	
+	/**
+	 * The ID of the parent PuddleHead.
+	 */
 	protected int parentId; 
+	
+	/**
+	 * List of all the IDs of the other PuddleHeads in this puddle.
+	 */
 	protected List<Integer> puddleBuddies; 
+	
+	/**
+	 * List of all the IDs of PuddleHeads who are children of this PuddleHead.
+	 */
 	protected List<Integer> childrenIds;
+	
+	/**
+	 * Map of all the nodes that belong to each child PuddleHead.
+	 */
+	protected Map<Integer, List<Integer>> childrenPuddles;
+	
+	/**
+	 * Level of fog that this PuddleHead belongs to.
+	 */
 	private int level; 
+	
+	/**
+	 * The area that the PuddleHead would be the optimal connection to make. 
+	 */
 	protected Polygon areaOfCoverage;
+	
+	/**
+	 * Location of the PuddleHead.
+	 */
 	protected double latitude; 
 	protected double longitude; 
+	
+	/**
+	 * The integer is the ID of the fog node and the list is of all modules currently running on that node. 
+	 */
+	protected Map<Integer, List<AppModule>> runningServices; 
+	
+	
+	
+	
+	
+	// services running on all puddleDevices
+	// remaining resources on all remaining puddleDevices
+	// info about children puddleHeads and their puddles 
 
 	/**
 	 * @param name
@@ -40,6 +91,8 @@ public class PuddleHead3 extends SimEntity {
 		setPuddleDevicesCharacteristics(new HashMap<Integer, FogDeviceCharacteristics>());
 		setPuddleBuddies(new ArrayList<Integer>()); 
 		setChildrenIds(new ArrayList<Integer>());
+		setChildrenPuddles(new HashMap<Integer, List<Integer>>());
+		setRunningServices(new HashMap<Integer, List<AppModule>>());
 		
 	}
 
@@ -165,6 +218,20 @@ public class PuddleHead3 extends SimEntity {
 	}
 
 	/**
+	 * @return the childrenPuddles
+	 */
+	public Map<Integer, List<Integer>> getChildrenPuddles() {
+		return childrenPuddles;
+	}
+
+	/**
+	 * @param childrenPuddles the childrenPuddles to set
+	 */
+	public void setChildrenPuddles(Map<Integer, List<Integer>> childrenPuddles) {
+		this.childrenPuddles = childrenPuddles;
+	}
+
+	/**
 	 * @return the level
 	 */
 	public int getLevel() {
@@ -218,6 +285,20 @@ public class PuddleHead3 extends SimEntity {
 	 */
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
+	}
+
+	/**
+	 * @return the runningServices
+	 */
+	public Map<Integer, List<AppModule>> getRunningServices() {
+		return runningServices;
+	}
+
+	/**
+	 * @param runningServices the runningServices to set
+	 */
+	public void setRunningServices(Map<Integer, List<AppModule>> runningServices) {
+		this.runningServices = runningServices;
 	}
 
 }
