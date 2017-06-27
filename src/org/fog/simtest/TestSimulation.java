@@ -28,7 +28,7 @@ import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.FogNode;
-import org.fog.entities.PuddleHead2;
+import org.fog.entities.PuddleHead;
 import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.network.EdgeSwitch;
@@ -128,7 +128,7 @@ public class TestSimulation {
 		fogDevices.add(fd3);
 		
 		try {
-		PuddleHead2 ph1 = new PuddleHead2("PH1");
+		PuddleHead ph1 = new PuddleHead("PH1");
 		
 		fd1.setPuddleHeadId(ph1.getId());
 		ph1.addPuddleDevice(fd1.getId());
@@ -138,14 +138,14 @@ public class TestSimulation {
 		fd2.addPuddleBuddy(fd1.getId());
 		
 		
-		PuddleHead2 ph2 = new PuddleHead2("PH2");
+		PuddleHead ph2 = new PuddleHead("PH2");
 		
 		fd3.setPuddleHeadId(ph2.getId());
 		ph2.addPuddleDevice(fd3.getId());
 		}
 		catch (Exception e){
 			e.printStackTrace();
-			Log.printLine("Unwanted errors happen"); 
+			Log.printLine("Unwanted errors happened"); 
 		}
 		
 		int transmissionInterval = 5000;
@@ -153,6 +153,10 @@ public class TestSimulation {
 		sensors.add(sensor);
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
 		actuators.add(actuator);
+		EndDevice dev = new EndDevice("DEV");
+		dev.addSensor(sensor);
+		dev.addActuator(actuator);
+		
 		
 	}
 	

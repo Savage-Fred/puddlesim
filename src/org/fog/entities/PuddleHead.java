@@ -83,6 +83,7 @@ public class PuddleHead extends SimEntity {
 	// info about children puddleHeads and their puddles 
 
 	/**
+	 * Constructor of a PuddleHead, initializes all Lists and Maps
 	 * @param name
 	 */
 	public PuddleHead(String name) {

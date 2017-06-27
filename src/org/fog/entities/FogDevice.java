@@ -51,11 +51,6 @@ public class FogDevice extends PowerDatacenter {
 	protected Map<Integer, Integer> cloudTrafficMap;
 
 	protected double lockTime;
-	
-	/**
-	 * List of all the other devices in this device's puddle 
-	 */
-	protected List<Integer> puddleBuddies; 
 
 	/**	
 	 * ID of the parent Fog Device
@@ -98,12 +93,6 @@ public class FogDevice extends PowerDatacenter {
 	protected Map<Integer, AppModule> moduleMap;
 	
 	protected int linkId;
-	
-	protected Map<Integer, Link> linksMap; 
-	
-	protected Polygon areaOfCoverage; 
-	
-	protected FogDeviceCharacteristics myCharacteristics; 
 
 	
 	public FogDevice(
@@ -138,14 +127,6 @@ public class FogDevice extends PowerDatacenter {
 		this.lastUtilization = 0;
 		setTotalCost(0);
 		moduleMap = new HashMap<Integer, AppModule>();
-		
-		//puddlebuddies addition 
-		setPuddleBuddies(new ArrayList<Integer>());
-		
-		//initialize map of links
-		setLinksMap(new HashMap<Integer, Link>()); 
-		
-		myCharacteristics = characteristics; 
 	}
 	
 	public FogDevice(
@@ -180,14 +161,6 @@ public class FogDevice extends PowerDatacenter {
 		this.lastUtilization = 0;
 		setTotalCost(0);
 		moduleMap = new HashMap<Integer, AppModule>();
-		
-		//puddlebuddies addition 
-		setPuddleBuddies(new ArrayList<Integer>());
-		
-		//initialize map of links
-		setLinksMap(new HashMap<Integer, Link>()); 
-		
-		myCharacteristics = characteristics;
 	}
 
 	/**
@@ -769,54 +742,5 @@ public class FogDevice extends PowerDatacenter {
 	public void setLinkId(int linkId) {
 		this.linkId = linkId;
 	}
-	
-	//getter and setter for puddleBuddies
-	public List<Integer> getPuddleBuddies(){
-		return puddleBuddies;
-	}
-	public void setPuddleBuddies(List<Integer> puddleBuddies){
-		this.puddleBuddies = puddleBuddies;
-	}
-	 
-	//add a node to the puddleBuddies
-	public void addPuddleBuddy(int buddyId){
-		puddleBuddies.add(buddyId);
-	}
-	//remove a node from puddleBuddies
-	public void removePuddleBuddy(int buddyId){
-		puddleBuddies.remove(buddyId);
-	}
-	//check if a node is a puddle buddy 
-	public boolean isMyPuddleBuddy(int buddyId){
-		return puddleBuddies.contains(buddyId);
-	}
-	
-	//getter and setter for linksMap
-	public void setLinksMap(Map<Integer, Link> linksMap){
-		this.linksMap = linksMap;
-	}
-	
-	public Map<Integer, Link> getLinksMap(){
-		return linksMap; 
-	}
-
-	/**
-	 * Gets the area of coverage of where this device can connect 
-	 * @return the areaOfCoverage
-	 */
-	public Polygon getAreaOfCoverage() {
-		return areaOfCoverage;
-	}
-
-	/**
-	 * Sets the area of coverage of where this device can connect
-	 * @param areaOfCoverage the areaOfCoverage to set
-	 */
-	public void setAreaOfCoverage(Polygon areaOfCoverage) {
-		this.areaOfCoverage = areaOfCoverage;
-	}
-	
-	public FogDeviceCharacteristics getDeviceCharactersitics(){
-		return myCharacteristics; 
-	}
 }
+	

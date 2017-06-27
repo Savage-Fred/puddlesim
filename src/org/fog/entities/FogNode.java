@@ -4,22 +4,27 @@
  */
 package org.fog.entities;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEvent;
+import org.fog.network.Link;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
 import org.fog.utils.Mobility;
 import org.fog.utils.Rectangle;
 import org.fog.utils.Vector;
 import org.fog.utils.Point;
+import org.fog.utils.Polygon;
 
 /**
- * @author Jessica Knezha
+ * @author Jessica Knezha and Avi Rynderman
  * @version PuddleSim 1.0
  * @since June 22, 2017
  *
@@ -39,7 +44,18 @@ public class FogNode extends FogDevice {
 	 */
 	private boolean moving = false;
 	
-	protected int puddleHeadId; 
+	protected int puddleHeadId;
+	
+	/**
+	 * List of all the other devices in this device's puddle 
+	 */
+	protected List<Integer> puddleBuddies; 
+	
+	protected Map<Integer, Link> linksMap; 
+	
+	protected Polygon areaOfCoverage; 
+	
+	protected FogDeviceCharacteristics myCharacteristics; 
 
 	/**
 	 * Constructor for a FogNode
@@ -55,6 +71,14 @@ public class FogNode extends FogDevice {
 			List<Storage> storageList, double schedulingInterval, double ratePerMips) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
 		// TODO Auto-generated constructor stub
+		
+		//puddlebuddies addition 
+		setPuddleBuddies(new ArrayList<Integer>());
+		
+		//initialize map of links
+		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		myCharacteristics = characteristics; 
 	}
 
 	/**
@@ -77,6 +101,14 @@ public class FogNode extends FogDevice {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		// TODO Auto-generated constructor stub
+		
+		//puddlebuddies addition 
+		setPuddleBuddies(new ArrayList<Integer>());
+		
+		//initialize map of links
+		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		myCharacteristics = characteristics; 
 	}
 	
 	/**
@@ -98,6 +130,14 @@ public class FogNode extends FogDevice {
 			Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
+		
+		//puddlebuddies addition 
+		setPuddleBuddies(new ArrayList<Integer>());
+		
+		//initialize map of links
+		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		myCharacteristics = characteristics; 		
 	}
 
 	/**
@@ -125,6 +165,14 @@ public class FogNode extends FogDevice {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
+		
+		//puddlebuddies addition 
+		setPuddleBuddies(new ArrayList<Integer>());
+		
+		//initialize map of links
+		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		myCharacteristics = characteristics; 	
 	}
 	
 	/**
@@ -146,6 +194,14 @@ public class FogNode extends FogDevice {
 			Rectangle bounds, Point coordinates, double scalar, boolean isMobile) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
+		
+		//puddlebuddies addition 
+		setPuddleBuddies(new ArrayList<Integer>());
+		
+		//initialize map of links
+		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		myCharacteristics = characteristics; 
 	}
 
 	/**
@@ -173,6 +229,14 @@ public class FogNode extends FogDevice {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
+		
+		//puddlebuddies addition 
+		setPuddleBuddies(new ArrayList<Integer>());
+		
+		//initialize map of links
+		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		myCharacteristics = characteristics; 
 	}
 
 	/**
@@ -244,5 +308,55 @@ public class FogNode extends FogDevice {
 		default:
 			break;
 		}
+	}
+	
+	//getter and setter for puddleBuddies
+	public List<Integer> getPuddleBuddies(){
+		return puddleBuddies;
+	}
+	public void setPuddleBuddies(List<Integer> puddleBuddies){
+		this.puddleBuddies = puddleBuddies;
+	}
+	 
+	//add a node to the puddleBuddies
+	public void addPuddleBuddy(int buddyId){
+		puddleBuddies.add(buddyId);
+	}
+	//remove a node from puddleBuddies
+	public void removePuddleBuddy(int buddyId){
+		puddleBuddies.remove(buddyId);
+	}
+	//check if a node is a puddle buddy 
+	public boolean isMyPuddleBuddy(int buddyId){
+		return puddleBuddies.contains(buddyId);
+	}
+	
+	//getter and setter for linksMap
+	public void setLinksMap(Map<Integer, Link> linksMap){
+		this.linksMap = linksMap;
+	}
+	
+	public Map<Integer, Link> getLinksMap(){
+		return linksMap; 
+	}
+
+	/**
+	 * Gets the area of coverage of where this device can connect 
+	 * @return the areaOfCoverage
+	 */
+	public Polygon getAreaOfCoverage() {
+		return areaOfCoverage;
+	}
+
+	/**
+	 * Sets the area of coverage of where this device can connect
+	 * @param areaOfCoverage the areaOfCoverage to set
+	 */
+	public void setAreaOfCoverage(Polygon areaOfCoverage) {
+		this.areaOfCoverage = areaOfCoverage;
+	}
+	
+	public FogDeviceCharacteristics getDeviceCharactersitics(){
+		return myCharacteristics; 
 	}
 }
