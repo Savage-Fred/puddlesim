@@ -34,6 +34,8 @@ public class FogNode extends FogDevice {
 	 * Used for debugging purposes. Adds a label onto the output. Note, only used in Logger.debug
 	 */
 	private static String LOG_TAG = "FOG_NODE";
+	
+	private static double delayBetweenLocationUpdates = 0;
 	/**
 	 * Used to check whether or not the device has started moving.
 	 */
@@ -98,6 +100,7 @@ public class FogNode extends FogDevice {
 			Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
+		this.setMobilityDelay();
 	}
 
 	/**
@@ -125,6 +128,7 @@ public class FogNode extends FogDevice {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
+		this.setMobilityDelay();
 	}
 	
 	/**
@@ -146,6 +150,7 @@ public class FogNode extends FogDevice {
 			Rectangle bounds, Point coordinates, double scalar, boolean isMobile) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
+		this.setMobilityDelay();
 	}
 
 	/**
@@ -173,6 +178,7 @@ public class FogNode extends FogDevice {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
+		this.setMobilityDelay();
 	}
 
 	/**
@@ -191,12 +197,21 @@ public class FogNode extends FogDevice {
 		this.puddleHeadId = puddleHeadId;
 	}
 	/**
-	 * Updates the location continually
+	 * Choose the mobility step delay
+	 */
+	private void setMobilityDelay(){
+		FogNode.delayBetweenLocationUpdates = CloudSim.getMinTimeBetweenEvents();
+	}
+	
+	/**
+	 * Updates the location and latency continually
 	 */
 	protected void processUpdateLocation(SimEvent ev){
 		// If the device is mobile, update the location and send an event to the queue to trigger it again
 		if(mobile.isMobile()){
-			send(super.getId(), 100*CloudSim.getMinTimeBetweenEvents(), FogEvents.UPDATE_LOCATION);
+			send(super.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LOCATION);
+			this.linksMap.forEach((k,v) -> {send(v.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LATENCY);
+				Logger.debug("LINKMAP", getName(), "Loop");});
 			mobile.updateLocation();
 		}
 		Logger.debug(LOG_TAG, getName(), "Completed execution of move");

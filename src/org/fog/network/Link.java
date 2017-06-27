@@ -76,7 +76,12 @@ public class Link extends SimEntity {
 		setNorthTupleQueue(new LinkedList<Tuple>());
 		setSouthTupleQueue(new LinkedList<Tuple>());
 	}
-
+	
+	private void processUpdateLatency(){
+		// TODO: Insert latency calculating function
+		Logger.debug(LOG_TAG, getName(), "Completed execution of latency update");
+	}
+	
 	@Override
 	public void startEntity() {
 		
@@ -94,6 +99,9 @@ public class Link extends SimEntity {
 			break;
 		case FogEvents.TUPLE_ARRIVAL:
 			processTupleArrival(ev);
+			break;
+		case FogEvents.UPDATE_LATENCY:
+			processUpdateLatency();
 			break;
 		}		
 	}

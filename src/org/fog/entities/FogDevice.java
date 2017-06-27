@@ -793,6 +793,13 @@ public class FogDevice extends PowerDatacenter {
 	public Map<Integer, Link> getLinksMap(){
 		return linksMap; 
 	}
+	
+	public void addToLinksMap(int deviceId, Link link){
+		linksMap.put(deviceId, link);
+	}
+	public void removeFromLinksMap(int deviceId){
+		linksMap.remove(deviceId);
+	}
 
 	/**
 	 * Gets the area of coverage of where this device can connect 

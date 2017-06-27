@@ -58,6 +58,7 @@ public class PhysicalTopology {
 	 */
 	public void addLink(int endpoint1, int endpoint2, double latency, double bandwidth) {
 		getLinks().add(new Link("link-"+endpoint1+"-"+endpoint2, latency, bandwidth, endpoint1, endpoint2));
+		
 	}
 	
 	/**

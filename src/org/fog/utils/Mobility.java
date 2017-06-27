@@ -15,7 +15,7 @@ public class Mobility {
 	/**
 	 * Turns on or off the debug outputs. 
 	 */
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	/**
 	 * Hold the bounds of the device. If the device leaves the rectangle, it will 'bounce' off the sides.
 	 */
