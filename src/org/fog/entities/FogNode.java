@@ -200,7 +200,8 @@ public class FogNode extends FogDevice {
 	 * Choose the mobility step delay
 	 */
 	private void setMobilityDelay(){
-		FogNode.delayBetweenLocationUpdates = CloudSim.getMinTimeBetweenEvents();
+		// Minimum time is 0.1. 10 x gives 1 second per location update.
+		FogNode.delayBetweenLocationUpdates = 10*CloudSim.getMinTimeBetweenEvents();
 	}
 	
 	/**
