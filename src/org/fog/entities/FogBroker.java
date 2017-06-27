@@ -52,13 +52,13 @@ public class FogBroker extends PowerDatacenterBroker{
 
 	private static final String LOG_TAG = "FOG_BROKER";
 	
-	List<Integer> fogDeviceIds;
-	List<Integer> sensorIds;
-	List<Integer> actuatorIds;
+	protected List<Integer> fogDeviceIds;
+	protected List<Integer> sensorIds;
+	protected List<Integer> actuatorIds;
 	
-	Map<Integer, FogDeviceCharacteristics> fogDeviceCharacteristics;
-	Map<Integer, SensorCharacteristics> sensorCharacteristics;
-	Map<Integer, ActuatorCharacteristics> actuatorCharacteristics;
+	protected Map<Integer, FogDeviceCharacteristics> fogDeviceCharacteristics;
+	protected Map<Integer, SensorCharacteristics> sensorCharacteristics;
+	protected Map<Integer, ActuatorCharacteristics> actuatorCharacteristics;
 	
 	private Map<String, Application> applications;
 	private Map<String, Double> appLaunchDelays;
