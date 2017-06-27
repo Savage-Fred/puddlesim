@@ -3,6 +3,8 @@ import java.io.*;       /* Error Handling */
 import java.util.*;
 import java.util.Arrays;
 import java.util.List;
+
+
 /**
  * <h1> Polygon Class </h1>
  * Defines the area of Polygon for a clusterhead.
@@ -14,16 +16,18 @@ import java.util.List;
  * @since   June 14, 2017
  */
 public class Polygon {
-    ///////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////
     /////////////////// Polygon FIELDS 
-    ///////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
     private Point[] points;     /* A collection of points defines the boundaries of a polygon */
     private int     numberOfPoints = 0;
     private String[] polygonTypes = {"Point", "Line", "Triangle", "Quadrilateral", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Nonagon", "Decagon"};
     
-    /////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////
     /////////////////// Polygon CONSTRUCTORS 
-    /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
     /**
      * <b>Polygon Constructor</b>
      * <p>Fills an array with points that define the boundary of the polygon. 
@@ -39,10 +43,12 @@ public class Polygon {
         int sizex = xin.length;
         int sizey = yin.length;
 
+        /**
+         * Exception Handling 
+         */
         if (sizex <= 2 || sizey <= 2) {
             throw new IllegalArgumentException ("Error: Not enough points to be a polygon");
         }
-
         if (sizex > sizey) {
             throw new IllegalArgumentException ("Error: More x values than y values");
         }
@@ -50,6 +56,9 @@ public class Polygon {
             throw new IllegalArgumentException ("Error: More y values than x values");
         }
 
+        /**
+         * Make a Polygon if the input is valid 
+         */ 
         points = new Point[sizex];
         for (int i = 0; i < sizex;i++)
         {
@@ -97,14 +106,16 @@ public class Polygon {
         setPoints(points_in);
     }
 
+
+
     ////////////////////////////////////////////////////////
     /////////////////// GETTERS AND SETTERS
     /////////////////////////////////////////////////////////
-
-
 	public void setPoints(Point[] points_in)    { this.points = Arrays.copyOf(points_in, points_in.length); }
     public int  getNumberOfPoints()             { return numberOfPoints; }
     public void setNumberOfPoints(int c)        {this.numberOfPoints = c;}   
+
+
 
     ////////////////////////////////////////////////////////
     /////////////////// Polygon METHODS 
