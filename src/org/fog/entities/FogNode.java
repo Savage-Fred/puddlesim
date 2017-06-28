@@ -34,7 +34,7 @@ public class FogNode extends FogDevice {
 	/**
 	 * Mobility object for FogNode.
 	 */
-	protected Mobility mobile = null;
+	private Mobility mobile = null;
 	/**
 	 * Used for debugging purposes. Adds a label onto the output. Note, only used in Logger.debug
 	 */
@@ -365,7 +365,40 @@ public class FogNode extends FogDevice {
 	public Map<Integer, Link> getLinksMap(){
 		return linksMap; 
 	}
-
+	/**
+	 * Gets the location of the fog device.
+	 * @return locations of the fog device as a Point.
+	 */
+	public Point getLocation(){
+		return this.mobile.getPoint();
+	}
+	/**
+	 * Sets the location of the fog device.
+	 */
+	public void getLocation(Point point){
+		this.mobile.setPoint(point);
+	}
+	/**
+	 * This function changes the old direction of movement and velocity of the device.
+	 * @param v new value for movement of device
+	 */
+	public void updateDirection(Vector v){
+		this.mobile.updateDirection(v);
+	}
+	/**
+	 * Determines if the device is mobile.
+	 * @return a boolean indicating whether or not the device is mobile.
+	 */
+	public boolean isMobile() {
+		return this.mobile.isMobile();
+	}
+	/**
+	 * Sets the mobility of the device. If it is mobile, it will move. 
+	 * @param isMobile
+	 */
+	public void setMobility(boolean isMobile) {
+		this.mobile.setMobile(isMobile);
+	}
 	/**
 	 * Gets the area of coverage of where this device can connect 
 	 * @return the areaOfCoverage
