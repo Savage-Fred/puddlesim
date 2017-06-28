@@ -275,6 +275,7 @@ public class FogNode extends FogDevice {
 	
 	/**
 	 * Updates the location and latency continually
+	 * Note: it will send the process node move event only if the name of the global broker is "globalbroker"
 	 */
 	protected void processUpdateLocation(SimEvent ev){
 		// If the device is mobile, update the location and send an event to the queue to trigger it again
@@ -283,6 +284,12 @@ public class FogNode extends FogDevice {
 			this.linksMap.forEach((k,v) -> {send(v.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LATENCY);
 				Logger.debug("LINKMAP", getName(), "Loop");});
 			mobile.updateLocation();
+			
+			//Send to global broker for processing. 
+			int brokerId = CloudSim.getEntityId("globalbroker");
+			if(brokerId > 0){
+				send(brokerId, CloudSim.getMinTimeBetweenEvents(), FogEvents.PROCESS_NODE_MOVE, getId());
+			}
 		}
 		Logger.debug(LOG_TAG, getName(), "Completed execution of move");
 	}

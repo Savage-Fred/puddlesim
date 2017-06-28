@@ -151,8 +151,16 @@ public class PuddleHead extends SimEntity {
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
 		
 		node.setPuddleHeadId(this.getId());
+		
+		for(int buddyId : puddleDevices){
+			FogNode buddy = (FogNode) CloudSim.getEntity(buddyId);
+			buddy.addPuddleBuddy(nodeId);
+		}
+		
 		addPuddleDevice(nodeId);
 		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());
+		
+		
 		
 	}
 	
@@ -166,13 +174,19 @@ public class PuddleHead extends SimEntity {
 	protected void processNodeLeavePuddleHead(SimEvent ev){
 		int nodeId = (int) ev.getData();
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
+		removePuddleDevice(nodeId); 
+		removePuddleDeviceCharacteristics(nodeId);
 		
 		if(node.isGone()){
 			//TODO HANDLE THE SERVICE STUFF HERE since the node is completely gone not relocated.
 		}
-		
-		removePuddleDevice(nodeId); 
-		removePuddleDeviceCharacteristics(nodeId);
+		else{
+			for(int buddyId : puddleDevices){
+				FogNode buddy = (FogNode) CloudSim.getEntity(buddyId);
+				buddy.removePuddleBuddy(nodeId);
+			}
+		}
+			
 		removeRunningServices(nodeId);
 		
 		//TODO deal with service migration if necessary. order of events may be an issue in removing running services

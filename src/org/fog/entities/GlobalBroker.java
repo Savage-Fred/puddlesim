@@ -17,7 +17,6 @@ public class GlobalBroker extends FogBroker {
 	
 	protected Map<Integer, List<Integer>> puddleHeadsByLevel; 
 	
-	
 	public GlobalBroker(String name) throws Exception {
 		super(name);
 		// TODO Auto-generated constructor stub
@@ -67,9 +66,6 @@ public class GlobalBroker extends FogBroker {
 		
 	}
 	
-//	public void processNodeLeave(SimEvent ev){
-//		
-//	}
 	
 	/**
 	 * Private function for checking if a node is in its current puddleheads polygon area of coverage
