@@ -291,7 +291,7 @@ public class FogNode extends FogDevice {
 				send(brokerId, CloudSim.getMinTimeBetweenEvents(), FogEvents.PROCESS_NODE_MOVE, getId());
 			}
 		}
-		Logger.debug(LOG_TAG, getName(), "Completed execution of move");
+		//Logger.debug(LOG_TAG, getName(), "Completed execution of move");
 	}
 
 	@Override

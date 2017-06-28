@@ -12,6 +12,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.application.AppModule;
+import org.fog.network.Link;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Polygon;
 
@@ -75,7 +76,7 @@ public class PuddleHead extends SimEntity {
 	 */
 	protected Map<Integer, List<AppModule>> runningServices; 
 	
-	
+	protected Map<Integer, Link> linksMap;
 	
 	
 	
@@ -129,7 +130,6 @@ public class PuddleHead extends SimEntity {
 		default:
 			break;
 		}
-
 	}
 
 	/* (non-Javadoc)
@@ -474,6 +474,14 @@ public class PuddleHead extends SimEntity {
 	
 	public void removeRunningServices(int deviceId){
 		runningServices.remove(deviceId);
+	}
+	//getter and setter for linksMap
+	public void setLinksMap(Map<Integer, Link> linksMap){
+		this.linksMap = linksMap;
+	}
+	
+	public Map<Integer, Link> getLinksMap(){
+		return linksMap; 
 	}
 
 }
