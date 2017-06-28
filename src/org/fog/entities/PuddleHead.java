@@ -140,7 +140,12 @@ public class PuddleHead extends SimEntity {
 
 	}
 
-	//TODO add all these functions. 
+	//TODO add all these functions.
+	/**
+	 * Cares for when a initially joins a puddlehead in the overall network. 
+	 * The event must have in the data the nodeId of the node joining. 
+	 * @param ev
+	 */
 	protected void processNodeJoinPuddleHead(SimEvent ev){
 		int nodeId = (int) ev.getData(); 
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
@@ -151,10 +156,20 @@ public class PuddleHead extends SimEntity {
 		
 	}
 	
-	
+	/**
+	 * Cares for when a node leaves a puddlehead. This occurs when a node relocates to a different puddlehead 
+	 * or leaves the network overall. Extra handling of running services occurs in the latter case. 
+	 * Does the maintenance for updating all necessary lists.
+	 * The data in the event should be the node ID. 
+	 * @param ev
+	 */
 	protected void processNodeLeavePuddleHead(SimEvent ev){
 		int nodeId = (int) ev.getData();
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
+		
+		if(node.isGone()){
+			//TODO HANDLE THE SERVICE STUFF HERE since the node is completely gone not relocated.
+		}
 		
 		removePuddleDevice(nodeId); 
 		removePuddleDeviceCharacteristics(nodeId);
@@ -168,9 +183,19 @@ public class PuddleHead extends SimEntity {
 		//update the running services table 
 	}
 	
+	/**
+	 * Cares for when a node is moving between puddleheads. The puddlehead who does the processing is the new puddlehead. 
+	 * The puddlehead does maintenance within the node and for its own lists. If the puddlehead has a parent puddlehead, 
+	 * it also updates the list of devices within its puddle in its parents list. This function deals with any service migration
+	 * and placement that needs to occur. At the end of the function, it sends a node leave puddlehead to the old puddlehead. 
+	 * The event should have the data of the node id. 
+	 * @param ev
+	 */
 	protected void processNodeRelocatePuddle(SimEvent ev){
 		int nodeId = (int) ev.getData(); 
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
+		
+		int oldPuddleHeadId = node.getPuddleHeadId();
 		
 		node.setPuddleHeadId(getId());
 		addPuddleDevice(nodeId);
@@ -184,6 +209,9 @@ public class PuddleHead extends SimEntity {
 		
 		//TODO service relocation and placement algorithm
 		//SERVICE STUFF
+		
+		
+		send(oldPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId);
 		
 		
 	}

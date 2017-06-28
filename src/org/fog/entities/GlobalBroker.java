@@ -31,9 +31,6 @@ public class GlobalBroker extends FogBroker {
 		case FogEvents.PROCESS_NODE_MOVE:
 			processNodeMove(ev); 
 			break;
-//		case FogEvents.NODE_LEAVE:
-//			processNodeLeave(ev); 
-//			break;
 		}
 	}
 
@@ -52,15 +49,15 @@ public class GlobalBroker extends FogBroker {
 		
 		if(!inArea){
 			FogNode node = (FogNode) CloudSim.getEntity(nodeId);
-			//send(node.getPuddleHeadId(), CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId); 
 			
-			int puddleHeadId = findNodeNewPuddleHead(nodeId);
+			int newPuddleHeadId = findNodeNewPuddleHead(nodeId);
 			
-			if(puddleHeadId > 0){
-				int currentPuddleHeadId = node.getPuddleHeadId();
-				send(puddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_RELOCATE_PUDDLE, nodeId);
-				send(currentPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId); 
-				//send(puddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_JOIN_PUDDLEHEAD, node);
+			if(newPuddleHeadId > 0){
+				//int currentPuddleHeadId = node.getPuddleHeadId();
+				send(newPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_RELOCATE_PUDDLE, nodeId);
+				
+				//moved this to be done in the new puddlehead to prevent any service issues
+				//send(currentPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId); 
 			}
 			else {
 				send(nodeId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE); 
@@ -78,20 +75,21 @@ public class GlobalBroker extends FogBroker {
 	 * Private function for checking if a node is in its current puddleheads polygon area of coverage
 	 * Used by processNodeLocationUpdates
 	 * @param nodeId
-	 * @return
+	 * @return true if it is in the current puddlehead's area of coverage
 	 */
 	private boolean checkNodeInPuddleHeadRange(int nodeId){
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId);
 		PuddleHead puddlehead = (PuddleHead) CloudSim.getEntity(node.getPuddleHeadId());
 		
-		Point nodePoint = node.mobile.getPoint(); 
+		Point nodePoint = node.getLocation(); 
 		Polygon area = puddlehead.getAreaOfCoverage(); 
 		
 		return area.contains(nodePoint);
 	}
 	
 	/**
-	 * Private function for finding the puddlehead's area of coverage where a node currently is. 
+	 * Private function for finding the puddlehead's area of coverage where a node currently is.
+	 * To save time, it only looks at puddleheads in the node's level (since that is the restriction on connections anyway).
 	 * If it returns -2 it means there are no viable puddleheads. 
 	 * Used by processNodeLocationUpdates
 	 * @param nodeId
@@ -99,7 +97,7 @@ public class GlobalBroker extends FogBroker {
 	 */
 	private int findNodeNewPuddleHead(int nodeId){
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId);
-		Point nodePoint = node.mobile.getPoint();
+		Point nodePoint = node.getLocation();
 		
 		List<Integer> viablePuddleHeads = puddleHeadsByLevel.get(node.getLevel());
 		
