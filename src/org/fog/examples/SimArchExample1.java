@@ -29,6 +29,7 @@ import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.network.EdgeSwitch;
 import org.fog.network.PhysicalTopology;
+import org.fog.network.SimulationArchitecture;
 import org.fog.network.Switch;
 import org.fog.placement.ModulePlacementOnlyCloud;
 import org.fog.policy.AppModuleAllocationPolicy;
@@ -111,13 +112,12 @@ public class SimArchExample1 {
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
 		FogDevice fd1 = createFogDevice("FD1", true, 102400, 4000, 0.01, 103, 83.25);
 		FogDevice fd0 = createFogDevice("FD0", false, 102400, 4000, 0.01, 103, 83.25);
-		FogNode fd2 = createFogNode("FD2", false, 102400, 4000, 0.01, 103, 83.25);
 		Switch sw0 = new EdgeSwitch("SW0");
 		Switch sw1 = new Switch("SW1");
 		Switch sw2 = new Switch("SW2");
 		EndDevice dev = new EndDevice("DEV");
 		
-		
+		FogNode fd2 = createFogNode("FD2", false, 102400, 4000, 0.01, 103, 83.25);
 		
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
@@ -127,28 +127,28 @@ public class SimArchExample1 {
 		dev.addSensor(sensor);
 		dev.addActuator(actuator);
 		
-		PhysicalTopology.getInstance().addFogDevice(fd0);
-		PhysicalTopology.getInstance().addFogDevice(fd1);
-		PhysicalTopology.getInstance().addFogDevice(fd2);
-		PhysicalTopology.getInstance().addSwitch(sw0);
-		PhysicalTopology.getInstance().addSwitch(sw1);
-		PhysicalTopology.getInstance().addSwitch(sw2);
-		PhysicalTopology.getInstance().addEndDevice(dev);
+		SimulationArchitecture.getInstance().addFogDevice(fd0);
+		SimulationArchitecture.getInstance().addFogDevice(fd1);
+		SimulationArchitecture.getInstance().addFogNode(fd2);
+		SimulationArchitecture.getInstance().addSwitch(sw0);
+		SimulationArchitecture.getInstance().addSwitch(sw1);
+		SimulationArchitecture.getInstance().addSwitch(sw2);
+		SimulationArchitecture.getInstance().addEndDevice(dev);
 		fogDevices.add(fd0);
 		fogDevices.add(fd1);
 		fogDevices.add(fd2);
 		
 		// Now connecting entities with Links
-		PhysicalTopology.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
-		PhysicalTopology.getInstance().addLink(sw0.getId(), sw1.getId(), 15, 1000);
-		PhysicalTopology.getInstance().addLink(sw0.getId(), fd0.getId(), 2, 1000);
-		PhysicalTopology.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
-		PhysicalTopology.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
-		PhysicalTopology.getInstance().addLink(sw2.getId(), fd2.getId(), 2, 1000);
+		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
+		SimulationArchitecture.getInstance().addLink(sw0.getId(), sw1.getId(), 15, 1000);
+		SimulationArchitecture.getInstance().addLink(sw0.getId(), fd0.getId(), 2, 1000);
+		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
+		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
+		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd2.getId(), 2, 1000);
 		
-		if (PhysicalTopology.getInstance().validateTopology()) {
+		if (SimulationArchitecture.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");
-			PhysicalTopology.getInstance().setUpEntities();
+			SimulationArchitecture.getInstance().setUpEntities();
 			
 		} else {
 			System.out.println("Topology validation UNsuccessful");

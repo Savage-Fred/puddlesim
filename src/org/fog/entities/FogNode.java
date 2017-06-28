@@ -284,7 +284,7 @@ public class FogNode extends FogDevice {
 				Logger.debug("LINKMAP", getName(), "Loop");});
 			mobile.updateLocation();
 		}
-		Logger.debug(LOG_TAG, getName(), "Completed execution of move");
+		//Logger.debug(LOG_TAG, getName(), "Completed execution of move");
 	}
 
 	@Override

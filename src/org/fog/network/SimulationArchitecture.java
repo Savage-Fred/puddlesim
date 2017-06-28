@@ -1,63 +1,87 @@
 package org.fog.network;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.entities.EndDevice;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogNode;
+import org.fog.utils.Logger;
 
 public class SimulationArchitecture extends PhysicalTopology{
-
+	private static String LOG_TAG = "SIMUL_ARCH";
+	/**
+	 * Singleton object that needs to be manipulated in the example script
+	 */
+	private static SimulationArchitecture instance = null;
+	
+	public static SimulationArchitecture getInstance() {
+		if (instance == null) 
+			instance = new SimulationArchitecture();
+		return instance;
+	}
+	
 	/**
 	 * List of fog devices in the physical topology
 	 */
-	private List<Integer> fogDevices;
+	private List<Integer> fogDeviceIDs;
 	/**
 	 * List of fog nodes in the physical topology
 	 */
-	private List<Integer> fogNodes;
+	private List<Integer> fogNodeIDs;
 	/**
 	 * List of end-devices in the physical topology
 	 */
-	private List<Integer> endDevices;
+	private List<Integer> endDeviceIDs;
 	/**
 	 * List of switches in the physical topology
 	 */
-	private List<Integer> switches;
+	private List<Integer> switchIDs;
 	/**
 	 * List of links in the physical topology
 	 */
-	private List<Integer> links;
+	private List<Integer> linkIDs;
 	
-	public SimulationArchitecture(){
-		super();
+	protected SimulationArchitecture(){
+		setLinks(new ArrayList<Link>());
+		setFogDevices(new ArrayList<FogDevice>());
+		setFogNodes(new ArrayList<FogNode>());
+		setSwitches(new ArrayList<Switch>());
+		setEndDevices(new ArrayList<EndDevice>());
+		this.fogDeviceIDs = new ArrayList<Integer>();
+		this.fogNodeIDs = new ArrayList<Integer>();
+		this.endDeviceIDs = new ArrayList<Integer>();
+		this.switchIDs = new ArrayList<Integer>();
+		this.linkIDs = new ArrayList<Integer>();
 	}
 	
 	@Override
 	public void addLink(int endpoint1, int endpoint2, double latency, double bandwidth) {
 		Link newLink = new Link("link-"+endpoint1+"-"+endpoint2, latency, bandwidth, endpoint1, endpoint2);
 		getLinks().add(newLink);
-		links.add(newLink.getId());
-		if (this.fogNodes.contains(endpoint1)) {
+		linkIDs.add(newLink.getId());
+		System.out.println("FOG_NODE: " + this.fogNodeIDs.contains(endpoint1));
+		if (this.fogNodeIDs.contains(endpoint1)) {
 			FogNode device = (FogNode)CloudSim.getEntity(endpoint1);
 			device.getLinksMap().put(newLink.getId(), newLink);
-		} else if (this.fogDevices.contains(endpoint1)) {
+			System.out.println("Link: " + device.getId() + " <==>" + newLink.getId());
+		} else if (this.fogDeviceIDs.contains(endpoint1)) {
 			// TODO: add maps of links to fogDevices
-		} else if (this.endDevices.contains(endpoint1)) {
+		} else if (this.endDeviceIDs.contains(endpoint1)) {
 			// TODO: add maps of links to endDevices 
-		} else if (this.switches.contains(endpoint1)) {
+		} else if (this.switchIDs.contains(endpoint1)) {
 			// TODO: add maps of links to switches			
 		}
-		
-		if (this.fogNodes.contains(endpoint2)) {
+		System.out.println("FOG_NODE: " + this.fogNodeIDs.contains(endpoint2));
+		if (this.fogNodeIDs.contains(endpoint2)) {
 			FogNode device = (FogNode)CloudSim.getEntity(endpoint2);
 			device.getLinksMap().put(newLink.getId(), newLink);
-		} else if (this.fogDevices.contains(endpoint2)) {
+		} else if (this.fogDeviceIDs.contains(endpoint2)) {
 			// TODO: add maps of links to fogDevices
-		} else if (this.endDevices.contains(endpoint2)) {
+		} else if (this.endDeviceIDs.contains(endpoint2)) {
 			// TODO: add maps of links to endDevices 
-		} else if (this.switches.contains(endpoint2)) {
+		} else if (this.switchIDs.contains(endpoint2)) {
 			// TODO: add maps of links to switches			
 		}
 	}	
@@ -70,7 +94,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	public void addFogDevice(FogDevice dev) {
 		getFogDevices().add(dev);
 		// Add device ID to integer list
-		fogDevices.add(dev.getId());
+		fogDeviceIDs.add(dev.getId());
 	}
 	
 	/**
@@ -81,10 +105,10 @@ public class SimulationArchitecture extends PhysicalTopology{
 	public void addFogNode(FogNode dev) {
 		getFogNodes().add(dev);
 		// Add device ID to integer list
-		fogNodes.add(dev.getId());
+		fogNodeIDs.add(dev.getId());
+		System.out.println("Added FOG_NODE: " + dev.getId());
 	}
-
-
+	
 	/**
 	 * Add end-device to physical topology
 	 * @param dev
@@ -93,7 +117,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	public void addEndDevice(EndDevice dev) {
 		getEndDevices().add(dev);
 		// Add device ID to integer list
-		endDevices.add(dev.getId());
+		endDeviceIDs.add(dev.getId());
 	}
 	
 	/**
@@ -104,6 +128,6 @@ public class SimulationArchitecture extends PhysicalTopology{
 	public void addSwitch(Switch sw) {
 		getSwitches().add(sw);
 		// Add device ID to integer list
-		switches.add(sw.getId());
+		switchIDs.add(sw.getId());
 	}
 }
