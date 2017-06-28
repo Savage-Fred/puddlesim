@@ -79,7 +79,7 @@ public class Link extends SimEntity {
 	
 	private void processUpdateLatency(){
 		// TODO: Insert latency calculating function
-		Logger.debug(LOG_TAG, getName(), "Completed execution of latency update");
+		// Logger.debug(LOG_TAG, getName(), "Completed execution of latency update");
 	}
 	
 	@Override
