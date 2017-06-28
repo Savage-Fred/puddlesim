@@ -16,6 +16,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.entities.Actuator;
 import org.fog.entities.EndDevice;
 import org.fog.entities.FogDevice;
+import org.fog.entities.FogNode;
 import org.fog.utils.Logger;
 
 public class PhysicalTopology {
@@ -36,6 +37,10 @@ public class PhysicalTopology {
 	 * List of fog devices in the physical topology
 	 */
 	private List<FogDevice> fogDevices;
+	/**
+	 * List of fog devices in the physical topology
+	 */
+	private List<FogNode> fogNodes;
 	/**
 	 * List of end-devices in the physical topology
 	 */
@@ -66,6 +71,13 @@ public class PhysicalTopology {
 	 */
 	public void addFogDevice(FogDevice dev) {
 		getFogDevices().add(dev);
+	}
+	/**
+	 * Add fog node to physical topology
+	 * @param dev
+	 */
+	public void addFogNode(FogNode dev) {
+		getFogNodes().add(dev);
 	}
 
 	/**
@@ -370,6 +382,12 @@ public class PhysicalTopology {
 	public void setFogDevices(List<FogDevice> fogDevices) {
 		this.fogDevices = fogDevices;
 	}
+	public List<FogNode> getFogNodes() {
+		return fogNodes;
+	}
+	public void setFogNodes(List<FogNode> fogNodes) {
+		this.fogNodes = fogNodes;
+	}
 	public List<Switch> getSwitches() {
 		return switches;
 	}
@@ -383,7 +401,7 @@ public class PhysicalTopology {
 		this.links = links;
 	}
 	
-	private PhysicalTopology() {
+	protected PhysicalTopology() {
 		setLinks(new ArrayList<Link>());
 		setFogDevices(new ArrayList<FogDevice>());
 		setSwitches(new ArrayList<Switch>());
