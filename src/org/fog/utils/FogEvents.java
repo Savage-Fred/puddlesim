@@ -31,8 +31,11 @@ public class FogEvents {
 	public static final int ENDPOINT_CONNECTION = BASE+27;
 	public static final int UPDATE_LOCATION = BASE+28;
 	public static final int UPDATE_LATENCY= BASE+29;
-	public static final int NODE_JOIN = BASE+30; 
-	public static final int NODE_LEAVE = BASE+31;
-	public static final int PLACE_SERVICES = BASE+32;  
+	public static final int NODE_JOIN_PUDDLEHEAD = BASE+30; 
+	public static final int NODE_LEAVE_PUDDLEHEAD = BASE+31;
+	public static final int PLACE_SERVICES = BASE+32;
+	public static final int NODE_LEAVE = BASE+33;
+	public static final int PROCESS_NODE_MOVE = BASE+34; 
+	public static final int NODE_RELOCATE_PUDDLE = BASE+35; 
  
 }

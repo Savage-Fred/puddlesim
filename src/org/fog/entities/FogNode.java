@@ -321,8 +321,18 @@ public class FogNode extends FogDevice {
 		case FogEvents.UPDATE_LOCATION:
 			processUpdateLocation(ev);
 			break;
+		case FogEvents.NODE_LEAVE:
+			processNodeLeave();
 		default:
 			break;
+		}
+	}
+	
+	//TODO finish this function please. 
+	public void processNodeLeave(){
+		for(Integer buddyId : puddleBuddies){
+			FogNode node = (FogNode) CloudSim.getEntity(buddyId);
+			node.removePuddleBuddy(getId());
 		}
 	}
 	
