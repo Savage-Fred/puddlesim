@@ -58,6 +58,11 @@ public class FogNode extends FogDevice {
 	protected Polygon areaOfCoverage; 
 	
 	protected FogDeviceCharacteristics myCharacteristics; 
+	
+	/**
+	 * Boolean that says if this node has left the overall network
+	 */
+	protected boolean gone = false;
 
 	/**
 	 * Constructor for a FogNode
@@ -321,9 +326,30 @@ public class FogNode extends FogDevice {
 		case FogEvents.UPDATE_LOCATION:
 			processUpdateLocation(ev);
 			break;
+		case FogEvents.NODE_LEAVE:
+			processNodeLeave();
 		default:
 			break;
 		}
+	}
+	
+	//TODO finish this function please. 
+	/**
+	 * Maintenance work for a node when it leaves the overall network. This occurs when it has no puddlehead to connect to.
+	 * This function sets gone to true. This is the only place that this should happen. 
+	 * It removes itself from all of it's puddleBuddies lists of their buddies. It then sends an event to leave its current puddlehead.
+	 * The puddlehead cares for all other maintenance within the network due to the node leaving. 
+	 */
+	public void processNodeLeave(){
+		gone = true; 
+	
+		for(Integer buddyId : puddleBuddies){
+			FogNode node = (FogNode) CloudSim.getEntity(buddyId);
+			node.removePuddleBuddy(getId());
+		}
+		
+		//This stuff might need to be altered to properly handle what happens when a node leaves the system completely. 
+		send(puddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, getId()); 
 	}
 	
 	//getter and setter for puddleBuddies
@@ -405,7 +431,17 @@ public class FogNode extends FogDevice {
 		this.areaOfCoverage = areaOfCoverage;
 	}
 	
+	/**
+	 * @return the node's characteristics
+	 */
 	public FogDeviceCharacteristics getDeviceCharactersitics(){
 		return myCharacteristics; 
+	}
+	
+	/**
+	 * @return true if the node has left the network
+	 */
+	public boolean isGone(){
+		return gone; 
 	}
 }

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.application.AppModule;
@@ -114,14 +115,17 @@ public class PuddleHead extends SimEntity {
 	public void processEvent(SimEvent ev) {
 		// TODO Auto-generated method stub
 		switch(ev.getTag()){
-		case FogEvents.NODE_JOIN:
-			processNodeJoin(ev); 
+		case FogEvents.NODE_JOIN_PUDDLEHEAD:
+			processNodeJoinPuddleHead(ev); 
 			break;
-		case FogEvents.NODE_LEAVE:
-			processNodeLeave(ev);
+		case FogEvents.NODE_LEAVE_PUDDLEHEAD:
+			processNodeLeavePuddleHead(ev);
 			break;
 		case FogEvents.PLACE_SERVICES:
 			processPlaceServices(ev);
+			break;
+		case FogEvents.NODE_RELOCATE_PUDDLE: 
+			processNodeRelocatePuddle(ev);
 			break;
 		default:
 			break;
@@ -136,28 +140,80 @@ public class PuddleHead extends SimEntity {
 
 	}
 
-	//TODO add all these functions. 
-	protected void processNodeJoin(SimEvent ev){
-		FogNode node = (FogNode) ev.getData(); 
+	//TODO add all these functions.
+	/**
+	 * Cares for when a initially joins a puddlehead in the overall network. 
+	 * The event must have in the data the nodeId of the node joining. 
+	 * @param ev
+	 */
+	protected void processNodeJoinPuddleHead(SimEvent ev){
+		int nodeId = (int) ev.getData(); 
+		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
 		
 		node.setPuddleHeadId(this.getId());
-		addPuddleDevice(node.getId());
-		addPuddleDevicesCharacteristics(node.getId(), node.getDeviceCharactersitics());
+		addPuddleDevice(nodeId);
+		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());
 		
 	}
 	
-	
-	protected void processNodeLeave(SimEvent ev){
-		FogNode node = (FogNode) ev.getData();
+	/**
+	 * Cares for when a node leaves a puddlehead. This occurs when a node relocates to a different puddlehead 
+	 * or leaves the network overall. Extra handling of running services occurs in the latter case. 
+	 * Does the maintenance for updating all necessary lists.
+	 * The data in the event should be the node ID. 
+	 * @param ev
+	 */
+	protected void processNodeLeavePuddleHead(SimEvent ev){
+		int nodeId = (int) ev.getData();
+		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
 		
-		removePuddleDevice(node.getId()); 
-		removePuddleDevicesCharacteristics(node.getId());
-		removeRunningServices(node.getId());
+		if(node.isGone()){
+			//TODO HANDLE THE SERVICE STUFF HERE since the node is completely gone not relocated.
+		}
+		
+		removePuddleDevice(nodeId); 
+		removePuddleDeviceCharacteristics(nodeId);
+		removeRunningServices(nodeId);
+		
+		//TODO deal with service migration if necessary. order of events may be an issue in removing running services
 	}
 	
 	protected void processPlaceServices(SimEvent ev){
 		//TODO make this work 
 		//update the running services table 
+	}
+	
+	/**
+	 * Cares for when a node is moving between puddleheads. The puddlehead who does the processing is the new puddlehead. 
+	 * The puddlehead does maintenance within the node and for its own lists. If the puddlehead has a parent puddlehead, 
+	 * it also updates the list of devices within its puddle in its parents list. This function deals with any service migration
+	 * and placement that needs to occur. At the end of the function, it sends a node leave puddlehead to the old puddlehead. 
+	 * The event should have the data of the node id. 
+	 * @param ev
+	 */
+	protected void processNodeRelocatePuddle(SimEvent ev){
+		int nodeId = (int) ev.getData(); 
+		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
+		
+		int oldPuddleHeadId = node.getPuddleHeadId();
+		
+		node.setPuddleHeadId(getId());
+		addPuddleDevice(nodeId);
+		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());
+		
+		if(parentId > 0){
+			PuddleHead parent = (PuddleHead) CloudSim.getEntity(parentId);
+			parent.addChildPuddle(getId(), puddleDevices);
+		}
+		
+		
+		//TODO service relocation and placement algorithm
+		//SERVICE STUFF
+		
+		
+		send(oldPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId);
+		
+		
 	}
 	
 	/**
@@ -216,15 +272,19 @@ public class PuddleHead extends SimEntity {
 	 * @param deviceId
 	 * @param characteristics
 	 */
-	public void addPuddleDevicesCharacteristics(int deviceId, FogDeviceCharacteristics characteristics) {
+	public void addPuddleDeviceCharacteristics(int deviceId, FogDeviceCharacteristics characteristics) {
 		puddleDevicesCharacteristics.put(deviceId, characteristics);
+	}
+	
+	public FogDeviceCharacteristics getPuddleDeviceCharacteristics(int deviceId){
+		return puddleDevicesCharacteristics.get(deviceId); 
 	}
 	
 	/**
 	 * Remove a single node's characteristics. 
 	 * @param deviceId
 	 */
-	public void removePuddleDevicesCharacteristics(int deviceId){
+	public void removePuddleDeviceCharacteristics(int deviceId){
 		puddleDevicesCharacteristics.remove(deviceId);
 	}
 
@@ -322,6 +382,10 @@ public class PuddleHead extends SimEntity {
 	 */
 	public void setChildrenPuddles(Map<Integer, List<Integer>> childrenPuddles) {
 		this.childrenPuddles = childrenPuddles;
+	}
+	
+	public void addChildPuddle(int childId, List<Integer> childPuddle){
+		childrenPuddles.put(childId, childPuddle);
 	}
 
 	/**
