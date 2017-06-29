@@ -28,6 +28,7 @@ import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.FogNode;
+import org.fog.entities.GlobalBroker;
 import org.fog.entities.PuddleHead;
 import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
@@ -91,6 +92,7 @@ public class TestSimulation {
 			String appId = "simple_app"; 
 			
 			FogBroker broker = new FogBroker("broker");
+			GlobalBroker globalBroker = new GlobalBroker("globalbroker");
 			
 			Application application = createApplication(appId, broker.getId());
 			application.setUserId(broker.getId());
