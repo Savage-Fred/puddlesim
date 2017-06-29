@@ -580,12 +580,26 @@ public class PuddleHead extends SimEntity {
 	}
 	
 	/**
-	 * Adds a single link to the map.
+	 * Add a link to the map and update all associate tables. 
 	 * @param linkId
 	 * @param theLink
 	 */
+	//TODO have Chandler proof this
 	public void addLinkToMap(int linkId, Link theLink){
 		linksMap.put(linkId, theLink);
+		int otherEnd = theLink.getOtherEndpoint(getId());
+		SimEntity ent = CloudSim.getEntity(otherEnd);
+		String type = ent.getClass().getName(); 
+		if(type.compareToIgnoreCase("PuddleHead") == 0){
+			PuddleHead otherPuddleHead = (PuddleHead) CloudSim.getEntity(otherEnd); 
+			int otherLevel = otherPuddleHead.getLevel();
+			if(level > otherLevel){
+				newChildPuddleHead(otherEnd);
+			}
+		}
+		else if(type.compareToIgnoreCase("FogNode") == 0){
+			addNodetoPuddleHead(otherEnd);
+		}
 	}
 	
 	/**
