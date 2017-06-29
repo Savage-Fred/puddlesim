@@ -26,6 +26,8 @@ import org.fog.utils.Polygon;
  * @author Jessica Knezha and Avi Rynderman
  * @version PuddleSim 1.0
  * @since June 22, 2017
+ * 
+ * The FogNode class is an extension of FogDevice with added features for PuddleSim, especially mobility. 
  *
  */
 public class FogNode extends FogDevice {
@@ -93,7 +95,6 @@ public class FogNode extends FogDevice {
 	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList, double schedulingInterval, double ratePerMips) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
-		// TODO Auto-generated constructor stub
 		
 		//puddlebuddies addition 
 		setPuddleBuddies(new ArrayList<Integer>());
@@ -123,7 +124,6 @@ public class FogNode extends FogDevice {
 			double uplinkLatency, double ratePerMips) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
-		// TODO Auto-generated constructor stub
 		
 		//puddlebuddies addition 
 		setPuddleBuddies(new ArrayList<Integer>());

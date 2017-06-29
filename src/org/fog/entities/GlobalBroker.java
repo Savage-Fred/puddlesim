@@ -20,6 +20,14 @@ import org.fog.utils.Polygon;
  * @author Jessica Knezha
  * @version PuddleSim 1.0
  * @since June 29, 2017
+ * 
+ * The GlobalBroker is a simulation only entity to allow the simulator to act in place of network capabilities found in the real world.
+ * There should only be one GlobalBroker declared for any simulation. 
+ * The GlobalBroker should contain information about every device in the network. It is used to send events between different devices
+ * and track their movement in relation to each other. 
+ * 
+ * Note: It should have the name 'globalbroker' for the capabilities to work with mobility and updating between devices.
+ * (If this name would like to be changed, code in the FogNode function processUpdateLocation needs to reflect the change).
  *
  */
 
@@ -28,33 +36,39 @@ public class GlobalBroker extends FogBroker {
 	private static final String LOG_TAG = "GLOBAL_BROKER";
 	
 	/**
-	 * List of the ids for all puddleheads in the network.
+	 * List of the IDs for all PuddleHeads in the network.
 	 */
 	protected List<Integer> puddleHeadIds; 
 	
 	/**
-	 * Map of all the puddleheads in the network by level. The key is the level and the list is the ids of all puddleheads at that level.
+	 * Map of all the PuddleHeads in the network by level. The key is the level and the list is the IDs of all PuddleHeads at that level.
 	 */
 	protected Map<Integer, List<Integer>> puddleHeadsByLevel; 
 	
 	/**
-	 * List of ids of all nodes in the network. 
+	 * List of IDs of all nodes in the network. 
 	 */
 	protected List<Integer> nodeIds; 
 	
 	/**
-	 * List of ids of all sensors in the network.
+	 * List of IDs of all sensors in the network.
 	 */
 	protected List<Integer> sensorIds;
 	
 	/**
-	 * List of ids of all actuators in the network. 
+	 * List of IDs of all actuators in the network. 
 	 */
 	protected List<Integer> actuatorIds; 
 	
+	
+	/**
+	 * Constructor of a GlobalBroker. The input name should be 'globalbroker' for use with PuddleSim capabilities. (See Note above)
+	 * @param name
+	 * @throws Exception
+	 */
 	public GlobalBroker(String name) throws Exception {
 		super(name);
-		// TODO Auto-generated constructor stub
+
 		setPuddleHeadIds(new ArrayList<Integer>());
 		setPuddleHeadsByLevel(new HashMap<Integer, List<Integer>>());
 		setNodeIds(new ArrayList<Integer>());
@@ -73,9 +87,9 @@ public class GlobalBroker extends FogBroker {
 
 	
 	/**
-	 * Event to be run to check if a node is still within the area of coverage of its current puddlehead
-	 * If the node has gone out of bounds of its puddlehead, a new puddlehead is determined. If a new puddlehead 
-	 * can be found then the node relocate is called. Otherwise, the node has left the bounds of all puddleheads
+	 * Event to be run to check if a node is still within the area of coverage of its current PuddleHead
+	 * If the node has gone out of bounds of its PuddleHead, a new PuddleHead is determined. If a new PuddleHead 
+	 * can be found then the node relocate is called. Otherwise, the node has left the bounds of all PuddleHeads
 	 * and node leave is called. 
 	 * @param ev
 	 */
@@ -85,16 +99,10 @@ public class GlobalBroker extends FogBroker {
 		boolean inArea = checkNodeInPuddleHeadRange(nodeId);
 		
 		if(!inArea){
-			//FogNode node = (FogNode) CloudSim.getEntity(nodeId);
-			
 			int newPuddleHeadId = findNodeNewPuddleHead(nodeId);
 			
 			if(newPuddleHeadId > 0){
-				//int currentPuddleHeadId = node.getPuddleHeadId();
 				send(newPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_RELOCATE_PUDDLE, nodeId);
-				
-				//moved this to be done in the new puddlehead to prevent any service issues
-				//send(currentPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId); 
 			}
 			else {
 				send(nodeId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE);
@@ -102,12 +110,11 @@ public class GlobalBroker extends FogBroker {
 			}
 			
 		}
-		
 	}
 	
 	
 	/**
-	 * Private function for checking if a node is in its current puddleheads polygon area of coverage
+	 * Private function for checking if a node is in its current PuddleHeads polygon area of coverage
 	 * Used by processNodeLocationUpdates
 	 * @param nodeId
 	 * @return true if it is in the current puddlehead's area of coverage
@@ -124,8 +131,8 @@ public class GlobalBroker extends FogBroker {
 	
 	/**
 	 * Private function for finding the puddlehead's area of coverage where a node currently is.
-	 * To save time, it only looks at puddleheads in the node's level (since that is the restriction on connections anyway).
-	 * If it returns -2 it means there are no viable puddleheads. 
+	 * To save time, it only looks at PuddleHeads in the node's level (since that is the restriction on connections anyway).
+	 * If it returns -1 it means there are no viable PuddleHeads. 
 	 * Used by processNodeLocationUpdates
 	 * @param nodeId
 	 * @return
@@ -145,7 +152,7 @@ public class GlobalBroker extends FogBroker {
 			}
 		}
 		
-		return -2; 
+		return -1; 
 	}
 
 
@@ -164,7 +171,7 @@ public class GlobalBroker extends FogBroker {
 	}
 	
 	/**
-	 * Add a single puddlehead
+	 * Add a single PuddleHead
 	 * @param puddleHeadId
 	 */
 	public void addPuddleHeadId(int puddleHeadId){
@@ -172,7 +179,7 @@ public class GlobalBroker extends FogBroker {
 	}
 	
 	/**
-	 * Remove a single puddlehead
+	 * Remove a single PuddleHead
 	 * @param puddleHeadId
 	 */
 	public void removePuddleHeadId(int puddleHeadId){
@@ -194,7 +201,7 @@ public class GlobalBroker extends FogBroker {
 	}
 	
 	/**
-	 * Adds a single puddlehead into the by level map. If there are no puddleheads at that level, a new list is created. 
+	 * Adds a single PuddleHead into the by level map. If there are no PuddleHeads at that level, a new list is created. 
 	 * @param puddleHeadId
 	 * @param level
 	 */
@@ -212,7 +219,7 @@ public class GlobalBroker extends FogBroker {
 	}
 	
 	/**
-	 * Removes a single puddlehead from the by level map. Error catching for if the level is not in the map. 
+	 * Removes a single PuddleHead from the by level map. Error catching for if the level is not in the map. 
 	 * @param puddleHeadId
 	 * @param level
 	 */

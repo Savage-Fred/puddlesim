@@ -1,5 +1,6 @@
 /**
- * 
+ * Title: PuddleSim
+ * Description: PuddleSim is an extension of the iFogSim simulator.
  */
 package org.fog.entities;
 
@@ -22,6 +23,9 @@ import org.fog.utils.Polygon;
  * @author Jessica Knezha
  * @version PuddleSim 1.0
  * @since June 26, 2017
+ * 
+ * The PuddleHead class represents the PuddleHead in our fog architecture. It is a control unit that monitors fog nodes and manages the
+ * scheduling of applications. 
  *
  */
 public class PuddleHead extends SimEntity {
@@ -87,11 +91,6 @@ public class PuddleHead extends SimEntity {
 	 */
 	protected List<Application> runningApplications;
 	
-	
-	
-	// services running on all puddleDevices
-	// remaining resources on all remaining puddleDevices
-	// info about children puddleHeads and their puddles 
 
 	/**
 	 * Constructor of a PuddleHead, initializes all Lists and Maps
@@ -113,6 +112,8 @@ public class PuddleHead extends SimEntity {
 		setLinksMap(new HashMap<Integer, Link>());
 		setRunningApplications(new ArrayList<Application>());
 		
+		parentId = -1;
+		
 	}
 
 	/* (non-Javadoc)
@@ -128,7 +129,6 @@ public class PuddleHead extends SimEntity {
 	 */
 	@Override
 	public void processEvent(SimEvent ev) {
-		// TODO Auto-generated method stub
 		switch(ev.getTag()){
 		case FogEvents.NODE_JOIN_PUDDLEHEAD:
 			processNodeJoinPuddleHead(ev); 
@@ -175,6 +175,11 @@ public class PuddleHead extends SimEntity {
 		node.setPuddleBuddies(puddleDevices);
 		addPuddleDevice(nodeId);
 		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());
+		
+		if(parentId > 0){
+			PuddleHead parent = (PuddleHead) CloudSim.getEntity(parentId);
+			parent.addChildPuddle(getId(), puddleDevices);
+		}
 	}
 	
 	/**
@@ -241,6 +246,66 @@ public class PuddleHead extends SimEntity {
 		send(oldPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId);
 		
 		
+	}
+	
+	/**
+	 * Adds a node to a PuddleHead's puddle. Does all necessary list maintenance. Should only be used for initializing architecture.
+	 * During the simulation it should be an event that calls processNodeJoinPuddleHead. 
+	 * @param newNodeId
+	 */
+	public void addNodetoPuddleHead(int newNodeId){
+		FogNode node = (FogNode) CloudSim.getEntity(newNodeId);
+		
+		node.setPuddleHeadId(getId());
+		
+		for(int buddyId : puddleDevices){
+			FogNode buddy = (FogNode) CloudSim.getEntity(buddyId);
+			buddy.addPuddleBuddy(newNodeId);
+		}
+		
+		node.setPuddleBuddies(puddleDevices);
+		addPuddleDevice(newNodeId);
+		addPuddleDeviceCharacteristics(newNodeId, node.getDeviceCharactersitics());
+		
+		if(parentId > 0){
+			PuddleHead parent = (PuddleHead) CloudSim.getEntity(parentId);
+			parent.addChildPuddle(getId(), puddleDevices);
+		}
+	}
+	
+	
+	/**
+	 * Takes the ID of a PuddleHead that should become this PuddleHead's child and does all the list/map maintenance. 
+	 * @param babyId
+	 */
+	public void newChildPuddleHead(int babyId){
+		PuddleHead baby = (PuddleHead) CloudSim.getEntity(babyId);
+		
+		baby.setParentId(getId());
+		
+		for(int childId : childrenIds){
+			PuddleHead child = (PuddleHead) CloudSim.getEntity(childId);
+			child.addPuddleBuddy(babyId);
+		}
+		
+		baby.setPuddleBuddies(childrenIds);
+		addChildId(babyId);
+		addChildPuddle(babyId, baby.getPuddleDevices());
+	}
+	
+	/**
+	 * Remove a child PuddleHead and do the list maintenance for your other children and your lists.
+	 * @param badChildId
+	 */
+	public void removeChildPuddleHead(int badChildId){
+		
+		removeChildId(badChildId);
+		removeChildPuddle(badChildId);
+		
+		for(int childId: childrenIds){
+			PuddleHead child = (PuddleHead) CloudSim.getEntity(childId);
+			child.removePuddleBuddy(badChildId);
+		}
 	}
 	
 	/**
@@ -426,6 +491,14 @@ public class PuddleHead extends SimEntity {
 	 */
 	public void addChildPuddle(int childId, List<Integer> childPuddle){
 		childrenPuddles.put(childId, childPuddle);
+	}
+	
+	/**
+	 * Removes a single child puddle from the list
+	 * @param childId
+	 */
+	public void removeChildPuddle(int childId){
+		childrenPuddles.remove(childId);
 	}
 
 	/**
