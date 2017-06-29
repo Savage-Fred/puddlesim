@@ -17,6 +17,7 @@ import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.FogNode;
 import org.fog.entities.PuddleHead;
+import org.fog.entities.Sensor;
 import org.fog.policy.AppModuleAllocationPolicy;
 import org.fog.scheduler.AppModuleScheduler;
 import org.fog.utils.FogLinearPowerModel;
@@ -91,41 +92,66 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 */
 	@Override
 	public void addLink(int endpoint1, int endpoint2, double latency, double bandwidth) {
+		/**
+		 * Identity refers to the type of device an endpoint is referencing
+		 * 1 = FogNode
+		 * 2 = PuddleHead
+		 * 3 = Switch
+		 * 4 = EndDevice
+		 */
+		Integer identityEndpoint1 = 0;
+		Integer identityEndpoint2 = 0;
 		
 		Link newLink = new Link("link-"+endpoint1+"-"+endpoint2, latency, bandwidth, endpoint1, endpoint2);
 		getLinks().add(newLink);
 		linkIDs.add(newLink.getId());
-		System.out.println("FOG_NODE: " + this.fogNodeIDs.contains(endpoint1));
+		System.out.println("Added Link: " + newLink.getId() +
+							". Connects: " + endpoint1 + "<=" + newLink.getId() + "=>" + endpoint2);
+		
 		if (this.fogNodeIDs.contains(endpoint1)) {
+			identityEndpoint1 = 1;
 			FogNode device = (FogNode)CloudSim.getEntity(endpoint1);
-			device.getLinksMap().put(newLink.getId(), newLink);
-			System.out.println("Link: " + device.getId() + " <==>" + newLink.getId());
-		} else if (this.puddleHeadIDs.contains(endpoint1)) {
+			device.addLinkToMap(newLink.getId(), newLink);
+			System.out.println("Fog Node Link: " + device.getId() + " <=" + newLink.getId());
+		} 
+		else if (this.puddleHeadIDs.contains(endpoint1)) {
+			identityEndpoint1 = 2;
 			PuddleHead device = (PuddleHead)CloudSim.getEntity(endpoint1);
-			device.getLinksMap().put(newLink.getId(), newLink);
-			System.out.println("Link: " + device.getId() + " <==>" + newLink.getId());
-		} else if (this.fogDeviceIDs.contains(endpoint1)) {
+			device.addLinkToMap(newLink.getId(), newLink);
+			System.out.println("Puddlehead Link: " + device.getId() + " <=" + newLink.getId());
+		} 
+		else if (this.fogDeviceIDs.contains(endpoint1)) {
 			// TODO: add maps of links to fogDevices
-		} else if (this.endDeviceIDs.contains(endpoint1)) {
+		} 
+		else if (this.endDeviceIDs.contains(endpoint1)) {
 			// TODO: add maps of links to endDevices 
-		} else if (this.switchIDs.contains(endpoint1)) {
+		} 
+		else if (this.switchIDs.contains(endpoint1)) {
 			// TODO: add maps of links to switches			
 		}
-		System.out.println("FOG_NODE: " + this.fogNodeIDs.contains(endpoint2));
+		
 		if (this.fogNodeIDs.contains(endpoint2)) {
+			identityEndpoint2 = 1;
 			FogNode device = (FogNode)CloudSim.getEntity(endpoint2);
-			device.getLinksMap().put(newLink.getId(), newLink);
-		} else if (this.puddleHeadIDs.contains(endpoint1)) {
+			device.addLinkToMap(newLink.getId(), newLink);
+			System.out.println("Fog Node Link: " + device.getId() + " <=" + newLink.getId());
+		} 
+		else if (this.puddleHeadIDs.contains(endpoint1)) {
+			identityEndpoint2 = 2;
 			PuddleHead device = (PuddleHead)CloudSim.getEntity(endpoint1);
-			device.getLinksMap().put(newLink.getId(), newLink);
-			System.out.println("Link: " + device.getId() + " <==>" + newLink.getId());
-		} else if (this.fogDeviceIDs.contains(endpoint2)) {
+			device.addLinkToMap(newLink.getId(), newLink);
+			System.out.println("Puddlehead Link: " + device.getId() + " <=" + newLink.getId());
+		} 
+		else if (this.fogDeviceIDs.contains(endpoint2)) {
 			// TODO: add maps of links to fogDevices
-		} else if (this.endDeviceIDs.contains(endpoint2)) {
+		} 
+		else if (this.endDeviceIDs.contains(endpoint2)) {
 			// TODO: add maps of links to endDevices 
-		} else if (this.switchIDs.contains(endpoint2)) {
+		} 
+		else if (this.switchIDs.contains(endpoint2)) {
 			// TODO: add maps of links to switches			
 		}
+		
 	}	
 	
 	/**
@@ -149,10 +175,20 @@ public class SimulationArchitecture extends PhysicalTopology{
 		getFogNodes().add(dev);
 		// Add device ID to integer list
 		fogNodeIDs.add(dev.getId());
-		System.out.println("Added FOG_NODE: " + dev.getId());
+		System.out.println("Added Fog Node: " + dev.getId());
 	}
 	
-	
+	/**
+	 * Add ouddlehead to physical topology
+	 * @param dev
+	 */
+	@Override
+	public void addPuddleHead(PuddleHead dev) {
+		getPuddleHeads().add(dev);
+		// Add device ID to integer list
+		puddleHeadIDs.add(dev.getId());
+		System.out.println("Added PuddleHead: " + dev.getId());
+	}
 	
 	/**
 	 * Add end-device to physical topology
@@ -163,7 +199,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		getEndDevices().add(dev);
 		// Add device ID to integer list
 		endDeviceIDs.add(dev.getId());
-		System.out.println("Added EndDevice: " + dev.getId());
+		System.out.println("Added End Device: " + dev.getId());
 	}
 	
 	/**

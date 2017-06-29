@@ -18,6 +18,7 @@ import org.fog.entities.EndDevice;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogNode;
 import org.fog.entities.PuddleHead;
+import org.fog.entities.Sensor;
 import org.fog.utils.Logger;
 
 public class PhysicalTopology {
@@ -219,13 +220,22 @@ public class PhysicalTopology {
 		return res;
 	}
 	
-	private List<Actuator> getActuators() {
+	public List<Actuator> getActuators() {
 		List<Actuator> actuators = new ArrayList<Actuator>();
 		for (EndDevice d : getEndDevices()) {
 			for (Actuator a : d.getActuators())
 				actuators.add(a);
 		}
 		return actuators;
+	}
+	
+	public List<Sensor> getSensors() {
+		List<Sensor> sensors = new ArrayList<Sensor>();
+		for (EndDevice d : getEndDevices()) {
+			for (Sensor s : d.getSensors())
+				sensors.add(s);
+		}
+		return sensors;
 	}
 	
 	/**
@@ -418,7 +428,6 @@ public class PhysicalTopology {
 	public void setLinks(List<Link> links) {
 		this.links = links;
 	}
-	
 	protected PhysicalTopology() {
 		setLinks(new ArrayList<Link>());
 		setFogDevices(new ArrayList<FogDevice>());
