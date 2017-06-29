@@ -76,6 +76,9 @@ public class PuddleHead extends SimEntity {
 	 */
 	protected Map<Integer, List<AppModule>> runningServices; 
 	
+	/**
+	 * Map of the links with their id and the link object. 
+	 */
 	protected Map<Integer, Link> linksMap;
 	
 	
@@ -101,6 +104,7 @@ public class PuddleHead extends SimEntity {
 		setChildrenIds(new ArrayList<Integer>());
 		setChildrenPuddles(new HashMap<Integer, List<Integer>>());
 		setRunningServices(new HashMap<Integer, List<AppModule>>());
+		setLinksMap(new HashMap<Integer, Link>());
 		
 	}
 
@@ -459,16 +463,45 @@ public class PuddleHead extends SimEntity {
 		this.runningServices = runningServices;
 	}
 	
+	/**
+	 * 
+	 * @param deviceId
+	 */
 	public void removeRunningServices(int deviceId){
 		runningServices.remove(deviceId);
 	}
-	//getter and setter for linksMap
+	
+	/**
+	 * @param linksMap
+	 */
 	public void setLinksMap(Map<Integer, Link> linksMap){
 		this.linksMap = linksMap;
 	}
 	
+	/**
+	 * @return the current links map
+	 */
 	public Map<Integer, Link> getLinksMap(){
 		return linksMap; 
 	}
+	
+	/**
+	 * Adds a single link to the map.
+	 * @param linkId
+	 * @param theLink
+	 */
+	public void addLinkToMap(int linkId, Link theLink){
+		linksMap.put(linkId, theLink);
+	}
+	
+	/**
+	 * Removes a single link from the map.
+	 * @param linkId
+	 */
+	public void removeLinkFromMap(int linkId){
+		linksMap.remove(linkId);
+	}
+	
+	
 
 }

@@ -362,35 +362,76 @@ public class FogNode extends FogDevice {
 		send(puddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, getId()); 
 	}
 	
-	//getter and setter for puddleBuddies
+	/**
+	 * @return list of puddle buddies
+	 */
 	public List<Integer> getPuddleBuddies(){
 		return puddleBuddies;
 	}
+	
+	/**
+	 * @param puddleBuddies
+	 */
 	public void setPuddleBuddies(List<Integer> puddleBuddies){
 		this.puddleBuddies = puddleBuddies;
 	}
 	 
-	//add a node to the puddleBuddies
+	/**
+	 * Add a single node to the puddle buddies
+	 * @param buddyId
+	 */
 	public void addPuddleBuddy(int buddyId){
 		puddleBuddies.add(buddyId);
 	}
-	//remove a node from puddleBuddies
+	
+	/**
+	 * Remove a single node from the puddle buddies
+	 * @param buddyId
+	 */
 	public void removePuddleBuddy(int buddyId){
 		puddleBuddies.remove(buddyId);
 	}
-	//check if a node is a puddle buddy 
+	
+	/**
+	 * Check if the given node is one of my puddle buddies
+	 * @param buddyId
+	 * @return
+	 */
 	public boolean isMyPuddleBuddy(int buddyId){
 		return puddleBuddies.contains(buddyId);
 	}
 	
-	//getter and setter for linksMap
+	/**
+	 * @param linksMap
+	 */
 	public void setLinksMap(Map<Integer, Link> linksMap){
 		this.linksMap = linksMap;
 	}
 	
+	/**
+	 * @return the map of links connected to this node
+	 */
 	public Map<Integer, Link> getLinksMap(){
 		return linksMap; 
 	}
+	
+	/**
+	 * Adds a single link to the map.
+	 * @param linkId
+	 * @param theLink
+	 */
+	public void addLinkToMap(int linkId, Link theLink){
+		linksMap.put(linkId, theLink);
+	}
+	
+	/**
+	 * Removes a single link from the map.
+	 * @param linkId
+	 */
+	public void removeLinkFromMap(int linkId){
+		linksMap.remove(linkId);
+	}
+	
 	/**
 	 * Gets the location of the fog device.
 	 * @return locations of the fog device as a Point.
@@ -400,6 +441,7 @@ public class FogNode extends FogDevice {
 	}
 	/**
 	 * Sets the location of the fog device.
+	 * @param point 
 	 */
 	public void getLocation(Point point){
 		this.mobile.setPoint(point);
