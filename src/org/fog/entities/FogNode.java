@@ -289,7 +289,10 @@ public class FogNode extends FogDevice {
 			int brokerId = CloudSim.getEntityId("globalbroker");
 			if(brokerId > 0){
 				send(brokerId, CloudSim.getMinTimeBetweenEvents(), FogEvents.PROCESS_NODE_MOVE, getId());
-			};
+			}
+			else{
+				Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
+			}
 		}
 		//Logger.debug(LOG_TAG, getName(), "Completed execution of move");
 	}
