@@ -1,5 +1,6 @@
 package org.fog.examples;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -25,6 +26,7 @@ import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.FogNode;
+import org.fog.entities.PuddleHead;
 import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.network.EdgeSwitch;
@@ -38,6 +40,7 @@ import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
 import org.fog.utils.Point;
+import org.fog.utils.Polygon;
 import org.fog.utils.Rectangle;
 import org.fog.utils.TimeKeeper;
 import org.fog.utils.Vector;
@@ -60,6 +63,7 @@ import org.fog.utils.distribution.DeterministicDistribution;
 public class SimArchExample1 {
 	static List<FogDevice> fogDevices = new ArrayList<FogDevice>();
 	static List<FogNode> fogNodes = new ArrayList<FogNode>();
+	static List<PuddleHead> puddleHeads = new ArrayList<PuddleHead>();
 	static List<Sensor> sensors = new ArrayList<Sensor>();
 	static List<Actuator> actuators = new ArrayList<Actuator>();
 	
@@ -110,14 +114,33 @@ public class SimArchExample1 {
 	}
 
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
-		FogDevice fd1 = createFogDevice("FD1", true, 102400, 4000, 0.01, 103, 83.25);
-		FogDevice fd0 = createFogDevice("FD0", false, 102400, 4000, 0.01, 103, 83.25);
+		FogDevice fd1 = SimulationArchitecture.createFogDevice("FD1", true, 102400, 
+																4000, 0.01, 103, 83.25, 10000000,
+																1000000, 3.0, 0.05, 0.001, 0.0);
+		FogDevice fd0 = SimulationArchitecture.createFogDevice("FD0", false, 102400, 
+																4000, 0.01, 103, 83.25, 10000000,
+																1000000, 3.0, 0.05, 0.001, 0.0);
 		Switch sw0 = new EdgeSwitch("SW0");
 		Switch sw1 = new Switch("SW1");
 		Switch sw2 = new Switch("SW2");
 		EndDevice dev = new EndDevice("DEV");
 		
-		FogNode fd2 = createFogNode("FD2", false, 102400, 4000, 0.01, 103, 83.25);
+		FogNode fd2 = SimulationArchitecture.createFogNode("FD2", false, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(1000, 1000), new Vector(1,1));
+		
+		// PuddleHead attempt
+		double[] xcor = {0.0, 0, 100, 100};
+		double[] ycor = {0.0, 100, 0, 100};
+		Polygon areaOfCoverage = null;
+		try {
+			areaOfCoverage = new Polygon(xcor, ycor);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Point location = new Point(10, 10);
+		PuddleHead ph0 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD", areaOfCoverage, location, 1);
 		
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
@@ -130,6 +153,7 @@ public class SimArchExample1 {
 		SimulationArchitecture.getInstance().addFogDevice(fd0);
 		SimulationArchitecture.getInstance().addFogDevice(fd1);
 		SimulationArchitecture.getInstance().addFogNode(fd2);
+		SimulationArchitecture.getInstance().addPuddleHead(ph0);
 		SimulationArchitecture.getInstance().addSwitch(sw0);
 		SimulationArchitecture.getInstance().addSwitch(sw1);
 		SimulationArchitecture.getInstance().addSwitch(sw2);
@@ -145,6 +169,7 @@ public class SimArchExample1 {
 		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd2.getId(), 2, 1000);
+		SimulationArchitecture.getInstance().addLink(ph0.getId(), fd2.getId(), 2, 1000);
 		
 		if (SimulationArchitecture.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");
@@ -228,82 +253,6 @@ public class SimArchExample1 {
 			e.printStackTrace();
 		}
 		return fogdevice;
-	}
-
-	/**
-	 * Creates a vanilla fog device
-	 * @param nodeName name of the device to be used in simulation
-	 * @param mips MIPS
-	 * @param ram RAM
-	 * @param upBw uplink bandwidth
-	 * @param downBw downlink bandwidth
-	 * @param level hierarchy level of the device
-	 * @param ratePerMips cost rate per MIPS used
-	 * @param busyPower
-	 * @param idlePower
-	 * @return
-	 */
-	private static FogNode createFogNode(String nodeName, boolean isCloud, long mips,
-			int ram, double ratePerMips, double busyPower, double idlePower) {
-		
-		List<Pe> peList = new ArrayList<Pe>();
-
-		// 3. Create PEs and add these into a list.
-		peList.add(new Pe(0, new PeProvisionerOverbooking(mips))); // need to store Pe id and MIPS Rating
-
-		int hostId = FogUtils.generateEntityId();
-		long storage = 10000000; // host storage
-		int bw = 1000000;
-
-		PowerHost host = new PowerHost(
-				hostId,
-				new RamProvisionerSimple(ram),
-				new BwProvisionerOverbooking(bw),
-				storage,
-				peList,
-				new AppModuleScheduler(peList),
-				new FogLinearPowerModel(busyPower, idlePower)
-			);
-
-		List<Host> hostList = new ArrayList<Host>();
-		hostList.add(host);
-
-		String arch = "x86"; // system architecture
-		String os = "Linux"; // operating system
-		String vmm = "Xen";
-		double time_zone = 10.0; // time zone this resource located
-		double cost = 3.0; // the cost of using processing in this resource
-		double costPerMem = 0.05; // the cost of using memory in this resource
-		double costPerStorage = 0.001; // the cost of using storage in this
-										// resource
-		double costPerBw = 0.0; // the cost of using bw in this resource
-		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are not adding SAN
-													// devices by now
-
-		FogDeviceCharacteristics characteristics = new FogDeviceCharacteristics(isCloud, 
-				arch, os, vmm, host, time_zone, cost, costPerMem,
-				costPerStorage, costPerBw);
-		
-		/*
-		 * Added material for testing
-		 */
-		Rectangle bounds = new Rectangle(1000, 1000);
-		Vector direction = new Vector(1,1);
-		
-		FogNode fognode = null;
-		try {
-			/*
-			fognode = new FogNode(nodeName, characteristics, 
-					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
-					bounds, 0, 0, direction, true);
-					*/
-			fognode = new FogNode(nodeName, characteristics, 
-					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
-					bounds, new Point(0, 0), 3.2, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return fognode;
 	}
 	
 	/**

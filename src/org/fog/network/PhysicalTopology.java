@@ -17,6 +17,7 @@ import org.fog.entities.Actuator;
 import org.fog.entities.EndDevice;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogNode;
+import org.fog.entities.PuddleHead;
 import org.fog.utils.Logger;
 
 public class PhysicalTopology {
@@ -38,9 +39,13 @@ public class PhysicalTopology {
 	 */
 	private List<FogDevice> fogDevices;
 	/**
-	 * List of fog devices in the physical topology
+	 * List of fog nodes in the physical topology
 	 */
 	private List<FogNode> fogNodes;
+	/**
+	 * List of puddleheads in the physical topology
+	 */
+	private List<PuddleHead> puddleheads;
 	/**
 	 * List of end-devices in the physical topology
 	 */
@@ -79,7 +84,14 @@ public class PhysicalTopology {
 	public void addFogNode(FogNode dev) {
 		getFogNodes().add(dev);
 	}
-
+	
+	/**
+	 * Add puddlehead to physical topology
+	 * @param dev
+	 */
+	public void addPuddleHead(PuddleHead dev) {
+		getPuddleHeads().add(dev);
+	}
 	/**
 	 * Add end-device to physical topology
 	 * @param dev
@@ -382,6 +394,12 @@ public class PhysicalTopology {
 	public void setFogDevices(List<FogDevice> fogDevices) {
 		this.fogDevices = fogDevices;
 	}
+	public List<PuddleHead> getPuddleHeads() {
+		return this.puddleheads;
+	}
+	public void setPuddleHeads(List<PuddleHead> puddleheads) {
+		this.puddleheads = puddleheads;
+	}
 	public List<FogNode> getFogNodes() {
 		return fogNodes;
 	}
@@ -404,6 +422,7 @@ public class PhysicalTopology {
 	protected PhysicalTopology() {
 		setLinks(new ArrayList<Link>());
 		setFogDevices(new ArrayList<FogDevice>());
+		setPuddleHeads(new ArrayList<PuddleHead>());
 		setSwitches(new ArrayList<Switch>());
 		setEndDevices(new ArrayList<EndDevice>());
 	}

@@ -14,6 +14,7 @@ import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.application.AppModule;
 import org.fog.network.Link;
 import org.fog.utils.FogEvents;
+import org.fog.utils.Point;
 import org.fog.utils.Polygon;
 
 /**
@@ -68,8 +69,7 @@ public class PuddleHead extends SimEntity {
 	/**
 	 * Location of the PuddleHead.
 	 */
-	protected double latitude; 
-	protected double longitude; 
+	protected Point location;
 	
 	/**
 	 * The integer is the ID of the fog node and the list is of all modules currently running on that node. 
@@ -88,9 +88,13 @@ public class PuddleHead extends SimEntity {
 	 * Constructor of a PuddleHead, initializes all Lists and Maps
 	 * @param name
 	 */
-	public PuddleHead(String name) {
+	public PuddleHead(String name, Polygon areaOfCoverage, Point location, int level) {
 		super(name);
-	
+		
+		this.areaOfCoverage = areaOfCoverage;
+		this.location = location;
+		this.level = level;
+		
 		setPuddleDevices(new ArrayList<Integer>());
 		setPuddleDevicesCharacteristics(new HashMap<Integer, FogDeviceCharacteristics>());
 		setPuddleBuddies(new ArrayList<Integer>()); 
@@ -158,10 +162,7 @@ public class PuddleHead extends SimEntity {
 		}
 		
 		addPuddleDevice(nodeId);
-		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());
-		
-		
-		
+		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());	
 	}
 	
 	/**
@@ -431,31 +432,17 @@ public class PuddleHead extends SimEntity {
 	}
 
 	/**
-	 * @return the latitude
+	 * @return the location
 	 */
-	public double getLatitude() {
-		return latitude;
+	public Point getLocation() {
+		return this.location;
 	}
 
 	/**
 	 * @param latitude the latitude to set
 	 */
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	/**
-	 * @return the longitude
-	 */
-	public double getLongitude() {
-		return longitude;
-	}
-
-	/**
-	 * @param longitude the longitude to set
-	 */
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
+	public void setLocation(Point point) {
+		this.location = point;
 	}
 
 	/**
