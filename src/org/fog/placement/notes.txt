@@ -1,0 +1,19 @@
+Placement Algorithm Notes   
+                            
+@author William McCarty     
+@email  wpm0002@auburn.edu  
+~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~~-~-~-~-~-~-~
+
+
+Algorithm 1 - Propogate up: 
+    - Move an application up if it cannot be satisfied at the current level. 
+    - For now, just move an application to another puddlehead 
+    - In fognode child, alert parent 
+        - send tuple 
+    - In fognode parent, processtuplearrival 
+    - update parent.
+        - place modules
+        - process 
+        - if successful, end process at child 
+
+
