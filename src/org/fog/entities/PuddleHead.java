@@ -12,6 +12,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.application.AppModule;
+import org.fog.application.Application;
 import org.fog.network.Link;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Point;
@@ -77,9 +78,14 @@ public class PuddleHead extends SimEntity {
 	protected Map<Integer, List<AppModule>> runningServices; 
 	
 	/**
-	 * Map of the links with their id and the link object. 
+	 * Map of the links by their id with the link object. 
 	 */
 	protected Map<Integer, Link> linksMap;
+	
+	/**
+	 * List of all the services running in the puddle which belongs to this PuddleHead.
+	 */
+	protected List<Application> runningApplications;
 	
 	
 	
@@ -105,6 +111,7 @@ public class PuddleHead extends SimEntity {
 		setChildrenPuddles(new HashMap<Integer, List<Integer>>());
 		setRunningServices(new HashMap<Integer, List<AppModule>>());
 		setLinksMap(new HashMap<Integer, Link>());
+		setRunningApplications(new ArrayList<Application>());
 		
 	}
 
@@ -150,7 +157,7 @@ public class PuddleHead extends SimEntity {
 
 	//TODO add all these functions.
 	/**
-	 * Cares for when a initially joins a puddlehead in the overall network. 
+	 * Cares for when a initially joins a PuddleHead in the overall network. 
 	 * The event must have in the data the nodeId of the node joining. 
 	 * @param ev
 	 */
@@ -165,12 +172,13 @@ public class PuddleHead extends SimEntity {
 			buddy.addPuddleBuddy(nodeId);
 		}
 		
+		node.setPuddleBuddies(puddleDevices);
 		addPuddleDevice(nodeId);
-		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());	
+		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());
 	}
 	
 	/**
-	 * Cares for when a node leaves a puddlehead. This occurs when a node relocates to a different puddlehead 
+	 * Cares for when a node leaves a PuddleHead. This occurs when a node relocates to a different PuddleHead 
 	 * or leaves the network overall. Extra handling of running services occurs in the latter case. 
 	 * Does the maintenance for updating all necessary lists.
 	 * The data in the event should be the node ID. 
@@ -203,12 +211,12 @@ public class PuddleHead extends SimEntity {
 	}
 	
 	/**
-	 * Cares for when a node is moving between puddleheads. The puddlehead who does the processing is the new puddlehead. 
-	 * The puddlehead does maintenance within the node and for its own lists. If the puddlehead has a parent puddlehead, 
+	 * Cares for when a node is moving between PuddleHeads. The PuddleHead who does the processing is the new PuddleHead. 
+	 * The PuddleHead does maintenance within the node and for its own lists. If the PuddleHead has a parent PuddleHead, 
 	 * it also updates the list of devices within its puddle in its parents list. This function deals with any service migration
-	 * and placement that needs to occur. At the end of the function, it sends a node leave puddlehead to the old puddlehead. 
+	 * and placement that needs to occur. At the end of the function, it sends a node leave PuddleHead to the old PuddleHead. 
 	 * The event should have the data of the node id. 
-	 * @param ev
+	 * @param ev (SimEvent)
 	 */
 	protected void processNodeRelocatePuddle(SimEvent ev){
 		int nodeId = (int) ev.getData(); 
@@ -256,6 +264,7 @@ public class PuddleHead extends SimEntity {
 	public void addPuddleDevice(int deviceId){
 		puddleDevices.add(deviceId);
 	}
+	
 	/**
 	 * Remove a single node from puddleDevices
 	 * @param deviceId
@@ -263,6 +272,7 @@ public class PuddleHead extends SimEntity {
 	public void removePuddleDevice(int deviceId){
 		puddleDevices.remove(deviceId);
 	}
+	
 	/**
 	 * Check if a node is one of my puddle devices.
 	 * @param deviceId
@@ -295,6 +305,11 @@ public class PuddleHead extends SimEntity {
 		puddleDevicesCharacteristics.put(deviceId, characteristics);
 	}
 	
+	/**
+	 * Get the FogDeviceCharacteristics information for a single node in the puddle.
+	 * @param deviceId
+	 * @return
+	 */
 	public FogDeviceCharacteristics getPuddleDeviceCharacteristics(int deviceId){
 		return puddleDevicesCharacteristics.get(deviceId); 
 	}
@@ -336,7 +351,7 @@ public class PuddleHead extends SimEntity {
 	}
 	
 	/**
-	 * Add a puddlehead to the puddleBuddies.
+	 * Add a PuddleHead to the puddleBuddies.
 	 * @param buddyId
 	 */
 	public void addPuddleBuddy(int buddyId){
@@ -344,7 +359,7 @@ public class PuddleHead extends SimEntity {
 	}
 	
 	/**
-	 * Remove a single puddle buddy puddlehead. 
+	 * Remove a single puddle buddy PuddleHead. 
 	 * @param buddyId
 	 */
 	public void removePuddleBuddy(int buddyId){
@@ -352,7 +367,7 @@ public class PuddleHead extends SimEntity {
 	}
 	
 	/**
-	 * Check if a puddlehead is a puddle buddy.
+	 * Check if a PuddleHead is a puddle buddy.
 	 * @param buddyId
 	 * @return true if it is a puddle buddy
 	 */ 
@@ -373,6 +388,7 @@ public class PuddleHead extends SimEntity {
 	public void setChildrenIds(List<Integer> childrenIds) {
 		this.childrenIds = childrenIds;
 	}
+	
 	/**
 	 * Add a single child id.
 	 * @param deviceId
@@ -403,6 +419,11 @@ public class PuddleHead extends SimEntity {
 		this.childrenPuddles = childrenPuddles;
 	}
 	
+	/**
+	 * Add the puddle of a child PuddleHead to the list. Also called when updating child puddle list. 
+	 * @param childId
+	 * @param childPuddle
+	 */
 	public void addChildPuddle(int childId, List<Integer> childPuddle){
 		childrenPuddles.put(childId, childPuddle);
 	}
@@ -464,7 +485,7 @@ public class PuddleHead extends SimEntity {
 	}
 	
 	/**
-	 * 
+	 * Remove the running services for a single node from the table.
 	 * @param deviceId
 	 */
 	public void removeRunningServices(int deviceId){
@@ -501,7 +522,20 @@ public class PuddleHead extends SimEntity {
 	public void removeLinkFromMap(int linkId){
 		linksMap.remove(linkId);
 	}
-	
+
+	/**
+	 * @return the runningApplications
+	 */
+	public List<Application> getRunningApplications() {
+		return runningApplications;
+	}
+
+	/**
+	 * @param runningApplications the runningApplications to set
+	 */
+	public void setRunningApplications(List<Application> runningApplications) {
+		this.runningApplications = runningApplications;
+	}
 	
 
 }

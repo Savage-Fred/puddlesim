@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -35,32 +34,49 @@ public class FogNode extends FogDevice {
 	 * Mobility object for FogNode.
 	 */
 	private Mobility mobile = null;
+	
 	/**
 	 * Used for debugging purposes. Adds a label onto the output. Note, only used in Logger.debug
 	 */
 	private static String LOG_TAG = "FOG_NODE";
 	
+	/**
+	 * The delay between location updates.
+	 */
 	private static double delayBetweenLocationUpdates = 0;
+	
 	/**
 	 * Used to check whether or not the device has started moving.
 	 */
 	private boolean moving = false;
 	
+	/**
+	 * The id of the PuddleHead that this node belongs to. 
+	 */
 	protected int puddleHeadId;
 	
 	/**
-	 * List of all the other devices in this device's puddle 
+	 * List of all the other nodes in this node's puddle.
 	 */
 	protected List<Integer> puddleBuddies; 
 	
-	protected Map<Integer, Link> linksMap; 
+	/**
+	 * Map of the links by their id with the link object. 
+	 */
+	protected Map<Integer, Link> linksMap;  
 	
-	protected Polygon areaOfCoverage; 
+	/**
+	 * Polygon denoting its area of coverage for connections to IoT devices (sensors and actuators)
+	 */
+	protected Polygon areaOfCoverage;
 	
+	/**
+	 * Characteristics of this specific node housed in the object FogDeviceCharacteristics.
+	 */
 	protected FogDeviceCharacteristics myCharacteristics; 
 	
 	/**
-	 * Boolean that says if this node has left the overall network
+	 * Boolean that says if this node has left the overall network.
 	 */
 	protected boolean gone = false;
 
@@ -251,7 +267,7 @@ public class FogNode extends FogDevice {
 	}
 
 	/**
-	 * Gets the ID of the puddle head that this FogNode belongs to 
+	 * Gets the ID of the puddle head that this FogNode belongs to. 
 	 * @return the puddleHeadId
 	 */
 	public int getPuddleHeadId() {
@@ -259,12 +275,13 @@ public class FogNode extends FogDevice {
 	}
 
 	/**
-	 * Sets the ID of the puddle head that this FogNode belongs to 
+	 * Sets the ID of the puddle head that this FogNode belongs to. 
 	 * @param puddleHeadId the puddleHeadId to set
 	 */
 	public void setPuddleHeadId(int puddleHeadId) {
 		this.puddleHeadId = puddleHeadId;
 	}
+	
 	/**
 	 * Choose the mobility step delay
 	 */
@@ -276,6 +293,7 @@ public class FogNode extends FogDevice {
 	/**
 	 * Updates the location and latency continually
 	 * Note: it will send the process node move event only if the name of the global broker is "globalbroker"
+	 * @param ev (SimEvent)
 	 */
 	protected void processUpdateLocation(SimEvent ev){
 		// If the device is mobile, update the location and send an event to the queue to trigger it again
@@ -433,42 +451,6 @@ public class FogNode extends FogDevice {
 	}
 	
 	/**
-	 * Gets the location of the fog device.
-	 * @return locations of the fog device as a Point.
-	 */
-	public Point getLocation(){
-		return this.mobile.getPoint();
-	}
-	/**
-	 * Sets the location of the fog device.
-	 * @param point 
-	 */
-	public void getLocation(Point point){
-		this.mobile.setPoint(point);
-	}
-	/**
-	 * This function changes the old direction of movement and velocity of the device.
-	 * @param v new value for movement of device
-	 */
-	public void updateDirection(Vector v){
-		this.mobile.updateDirection(v);
-	}
-	/**
-	 * Determines if the device is mobile.
-	 * @return a boolean indicating whether or not the device is mobile.
-	 */
-	public boolean isMobile() {
-		return this.mobile.isMobile();
-	}
-	/**
-	 * Sets the mobility of the device. If it is mobile, it will move. 
-	 * @param isMobile
-	 */
-	public void setMobility(boolean isMobile) {
-		this.mobile.setMobile(isMobile);
-	}
-	/**
-	 * Gets the area of coverage of where this device can connect 
 	 * @return the areaOfCoverage
 	 */
 	public Polygon getAreaOfCoverage() {
@@ -476,11 +458,50 @@ public class FogNode extends FogDevice {
 	}
 
 	/**
-	 * Sets the area of coverage of where this device can connect
 	 * @param areaOfCoverage the areaOfCoverage to set
 	 */
 	public void setAreaOfCoverage(Polygon areaOfCoverage) {
 		this.areaOfCoverage = areaOfCoverage;
+	}
+
+	/**
+	 * Gets the location of the fog device.
+	 * @return locations of the fog device as a Point.
+	 */
+	public Point getLocation(){
+		return this.mobile.getPoint();
+	}
+	
+	/**
+	 * Sets the location of the fog device.
+	 * @param point 
+	 */
+	public void setLocation(Point point){
+		this.mobile.setPoint(point);
+	}
+	
+	/**
+	 * This function changes the old direction of movement and velocity of the device.
+	 * @param v new value for movement of device
+	 */
+	public void updateDirection(Vector v){
+		this.mobile.updateDirection(v);
+	}
+	
+	/**
+	 * Determines if the device is mobile.
+	 * @return a boolean indicating whether or not the device is mobile.
+	 */
+	public boolean isMobile() {
+		return this.mobile.isMobile();
+	}
+	
+	/**
+	 * Sets the mobility of the device. If it is mobile, it will move. 
+	 * @param isMobile
+	 */
+	public void setMobility(boolean isMobile) {
+		this.mobile.setMobile(isMobile);
 	}
 	
 	/**

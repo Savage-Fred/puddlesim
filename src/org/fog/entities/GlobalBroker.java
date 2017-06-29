@@ -85,7 +85,7 @@ public class GlobalBroker extends FogBroker {
 		boolean inArea = checkNodeInPuddleHeadRange(nodeId);
 		
 		if(!inArea){
-			FogNode node = (FogNode) CloudSim.getEntity(nodeId);
+			//FogNode node = (FogNode) CloudSim.getEntity(nodeId);
 			
 			int newPuddleHeadId = findNodeNewPuddleHead(nodeId);
 			
