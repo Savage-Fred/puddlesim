@@ -3,6 +3,7 @@
  */
 package org.fog.simtest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -34,6 +35,7 @@ import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.network.EdgeSwitch;
 import org.fog.network.PhysicalTopology;
+import org.fog.network.SimulationArchitecture;
 import org.fog.network.Switch;
 import org.fog.placement.ModulePlacementOnlyCloud;
 import org.fog.policy.AppModuleAllocationPolicy;
@@ -42,6 +44,7 @@ import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
 import org.fog.utils.Point;
+import org.fog.utils.Polygon;
 import org.fog.utils.Rectangle;
 import org.fog.utils.TimeKeeper;
 import org.fog.utils.Vector;
@@ -128,6 +131,18 @@ public class TestSimulation {
 		fogDevices.add(fd1);
 		fogDevices.add(fd2);
 		fogDevices.add(fd3);
+		
+		
+		double[] xcor = {0.0, 0, 100, 100};
+		double[] ycor = {0.0, 100, 0, 100};
+		Polygon areaOfCoverage = null;
+		try {
+			areaOfCoverage = new Polygon(xcor, ycor);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Point location = new Point(10, 10);
+		PuddleHead ph0 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD0", areaOfCoverage, location, 1);
 		
 		try {
 		PuddleHead ph1 = new PuddleHead("PH1");
