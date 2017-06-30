@@ -82,7 +82,7 @@ public class Mobility {
 		// Now update the simulation time stored in the mobility class
 		counter = CloudSim.clock();
 		// Output for testing
-		String str = "---- Location = " + this.coordinates.getx() + " " + this.coordinates.gety();
+		String str = "---- Location = " + Math.round(100*this.coordinates.getx())/100.0 + " " + Math.round(100*this.coordinates.gety())/100.0;
 		// Update the location of the device
 		if(isMobile){
 			this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
@@ -91,22 +91,18 @@ public class Mobility {
 			if (this.coordinates.getx() > bounds.getWidth() + bounds.getX()) {
 				movementVector.setxComponent(-1*movementVector.getxComponent());
 				this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
-				this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
 			}
 			else if (this.coordinates.getx() < bounds.getX()){
 				movementVector.setxComponent(-1*movementVector.getxComponent());
 				this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
-				this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
 			}
 			
 			if (this.coordinates.gety() > bounds.getHeight() + bounds.getY()){ 
 				movementVector.setyComponent(-1*movementVector.getyComponent());
-				this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
 				this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
 			}
 			else if (this.coordinates.gety()< bounds.getY()){
 				movementVector.setyComponent(-1*movementVector.getyComponent());
-				this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
 				this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
 			}
 			
