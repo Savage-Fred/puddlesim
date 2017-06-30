@@ -92,16 +92,6 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 */
 	@Override
 	public void addLink(int endpoint1, int endpoint2, double latency, double bandwidth) {
-		/**
-		 * Identity refers to the type of device an endpoint is referencing
-		 * 1 = FogNode
-		 * 2 = PuddleHead
-		 * 3 = Switch
-		 * 4 = EndDevice
-		 */
-		Integer identityEndpoint1 = 0;
-		Integer identityEndpoint2 = 0;
-		
 		Link newLink = new Link("link-"+endpoint1+"-"+endpoint2, latency, bandwidth, endpoint1, endpoint2);
 		getLinks().add(newLink);
 		linkIDs.add(newLink.getId());
@@ -109,13 +99,11 @@ public class SimulationArchitecture extends PhysicalTopology{
 							". Connects: " + endpoint1 + "<=" + newLink.getId() + "=>" + endpoint2);
 		
 		if (this.fogNodeIDs.contains(endpoint1)) {
-			identityEndpoint1 = 1;
 			FogNode device = (FogNode)CloudSim.getEntity(endpoint1);
 			device.addLinkToMap(newLink.getId(), newLink);
 			System.out.println("Fog Node Link: " + device.getId() + " <=" + newLink.getId());
 		} 
 		else if (this.puddleHeadIDs.contains(endpoint1)) {
-			identityEndpoint1 = 2;
 			PuddleHead device = (PuddleHead)CloudSim.getEntity(endpoint1);
 			device.addLinkToMap(newLink.getId(), newLink);
 			System.out.println("Puddlehead Link: " + device.getId() + " <=" + newLink.getId());
@@ -131,13 +119,11 @@ public class SimulationArchitecture extends PhysicalTopology{
 		}
 		
 		if (this.fogNodeIDs.contains(endpoint2)) {
-			identityEndpoint2 = 1;
 			FogNode device = (FogNode)CloudSim.getEntity(endpoint2);
 			device.addLinkToMap(newLink.getId(), newLink);
 			System.out.println("Fog Node Link: " + device.getId() + " <=" + newLink.getId());
 		} 
 		else if (this.puddleHeadIDs.contains(endpoint1)) {
-			identityEndpoint2 = 2;
 			PuddleHead device = (PuddleHead)CloudSim.getEntity(endpoint1);
 			device.addLinkToMap(newLink.getId(), newLink);
 			System.out.println("Puddlehead Link: " + device.getId() + " <=" + newLink.getId());
@@ -151,7 +137,6 @@ public class SimulationArchitecture extends PhysicalTopology{
 		else if (this.switchIDs.contains(endpoint2)) {
 			// TODO: add maps of links to switches			
 		}
-		
 	}	
 	
 	/**
