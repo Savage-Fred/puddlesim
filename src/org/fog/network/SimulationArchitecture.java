@@ -212,12 +212,13 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * @param busyPower
 	 * @param idlePower
 	 * @param storage
+	 * @param level
 	 * @return
 	 */
 	public static FogNode createFogNode(String nodeName, boolean isCloud, long mips,
 			int ram, double ratePerMips, double busyPower, double idlePower, long storage,
 			int bw, double costProcessing, double costPerMem, double costPerStorage, double costPerBw,
-			Rectangle bounds, Point coordinates,  Vector direction) {
+			Rectangle bounds, Point coordinates,  Vector direction, int level) {
 		
 		List<Pe> peList = new ArrayList<Pe>();
 
@@ -259,7 +260,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 					*/
 			fognode = new FogNode(nodeName, characteristics, 
 					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
-					bounds, coordinates, direction, true);
+					bounds, coordinates, direction, true, level);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -267,7 +268,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	}
 	
 	/**
-	 * Creates a vanilla fogNode
+	 * Creates a vanilla FogDevice
 	 * @param nodeName name of the device to be used in simulation
 	 * @param mips MIPS
 	 * @param ram RAM
