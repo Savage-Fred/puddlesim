@@ -260,14 +260,15 @@ public class PuddleHead extends SimEntity {
 		
 		node.setPuddleHeadId(getId());
 		
-		for(int buddyId : puddleDevices){
+		for(int i = 0; i < puddleDevices.size(); i++){
+			int buddyId = puddleDevices.get(i);
 			FogNode buddy = (FogNode) CloudSim.getEntity(buddyId);
 			buddy.addPuddleBuddy(newNodeId);
 		}
 		
+		addPuddleDeviceCharacteristics(newNodeId, node.getDeviceCharactersitics());
 		node.setPuddleBuddies(puddleDevices);
 		addPuddleDevice(newNodeId);
-		addPuddleDeviceCharacteristics(newNodeId, node.getDeviceCharactersitics());
 		
 		if(parentId > 0){
 			PuddleHead parent = (PuddleHead) CloudSim.getEntity(parentId);
