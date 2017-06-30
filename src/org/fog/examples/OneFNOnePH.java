@@ -88,6 +88,7 @@ public class OneFNOnePH {
 			String appId = "simple_app"; // identifier of the application
 			
 			FogBroker broker = new FogBroker("broker");
+			GlobalBroker broker1 = new GlobalBroker("globalbroker");
 			
 			Application application = createApplication(appId, broker.getId());
 			application.setUserId(broker.getId());
@@ -95,7 +96,7 @@ public class OneFNOnePH {
 			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
-			//broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker1.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
 			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
@@ -190,6 +191,8 @@ public class OneFNOnePH {
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn0.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
+		
+		ph0.addNodetoPuddleHead(fn0.getId());
 		/*
 		if (SimulationArchitecture.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");

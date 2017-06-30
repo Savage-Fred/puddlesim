@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.utils.FogEvents;
@@ -108,6 +109,8 @@ public class GlobalBroker extends FogBroker {
 	 * @param ev
 	 */
 	public void processNodeMove(SimEvent ev){
+		Log.printLine("GlobalBroker is processing new location: " + ((FogNode) CloudSim.getEntity((int)ev.getData())).getLocation());
+		
 		int nodeId = (int) ev.getData();
 		
 		boolean inArea = checkNodeInPuddleHeadRange(nodeId);
@@ -157,15 +160,16 @@ public class GlobalBroker extends FogBroker {
 		
 		List<Integer> viablePuddleHeads = puddleHeadsByLevel.get(node.getLevel());
 		
-		for(Integer puddleHeadId : viablePuddleHeads){
-			PuddleHead puddlehead = (PuddleHead) CloudSim.getEntity(puddleHeadId);
-			Polygon area = puddlehead.getAreaOfCoverage(); 
-			
-			if(area.contains(nodePoint)){
-				return puddleHeadId; 
+		if(viablePuddleHeads != null){
+			for(Integer puddleHeadId : viablePuddleHeads){
+				PuddleHead puddlehead = (PuddleHead) CloudSim.getEntity(puddleHeadId);
+				Polygon area = puddlehead.getAreaOfCoverage(); 
+				
+				if(area.contains(nodePoint)){
+					return puddleHeadId; 
+				}
 			}
 		}
-		
 		return -1; 
 	}
 
@@ -276,7 +280,7 @@ public class GlobalBroker extends FogBroker {
 	 * @param nodeId
 	 */
 	public void removeNodeId(int nodeId){
-		nodeIds.remove(nodeId);
+		nodeIds.remove((Integer)nodeId);
 	}
 
 	/**
