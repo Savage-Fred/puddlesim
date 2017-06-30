@@ -151,15 +151,15 @@ public class OneFNOnePH {
 									new Rectangle(10, 10), new Point(1,1), new Vector(1,0));
 		
 		// PuddleHead attempt
-		double[] xcor = {0.0, 0, 100, 100};
-		double[] ycor = {0.0, 100, 0, 100};
+		double[] xcor = {0.0, 6, 6, 0};
+		double[] ycor = {0.0, 0, 2, 2};
 		Polygon areaOfCoverage = null;
 		try {
 			areaOfCoverage = new Polygon(xcor, ycor);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Point location = new Point(10, 10);
+		Point location = new Point(3, 1);
 		PuddleHead ph0 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD0", areaOfCoverage, location, 1);
 		
 		int transmissionInterval = 5000;
@@ -193,6 +193,7 @@ public class OneFNOnePH {
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
 		
 		ph0.addNodetoPuddleHead(fn0.getId());
+		// TODO: Create stuff so that these functions work
 		/*
 		if (SimulationArchitecture.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");
