@@ -91,14 +91,18 @@ public class SimArchExample1 {
 			Application application = createApplication(appId, broker.getId());
 			application.setUserId(broker.getId());
 			
+			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
-			broker.setFogDeviceIds(getIds(fogDevices));
-			broker.setSensorIds(getIds(sensors));
-			broker.setActuatorIds(getIds(actuators));
+			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
+			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
+			broker.setActuatorIds(getIds(SimulationArchitecture.getInstance().getActuators()));
 			
 			broker.submitApplication(application, 0, 
-					new ModulePlacementOnlyCloud(fogDevices, sensors, actuators, application));
+					new ModulePlacementOnlyCloud(SimulationArchitecture.getInstance().getFogDevices(), 
+							SimulationArchitecture.getInstance().getSensors(),
+							SimulationArchitecture.getInstance().getActuators(),
+							application));
 			
 			TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
 
@@ -113,6 +117,18 @@ public class SimArchExample1 {
 		}
 	}
 
+	// Creates the architecture
+	/**
+	 * This function interacts with SimulationArchitecture and creates the architecture. As it stands now,
+	 * the topology is manually generated. In the future, it'll read in a file from the Voronoi generator
+	 * and instantiate items based on the file.
+	 * Step 1: Create the devices. (FogDevice, Switch, FogNode...)
+	 * Step 2: Add them to the lists. (SimulationArchitecture.getInstance().add__)
+	 * Step 3: 
+	 * @param userId
+	 * @param appId
+	 * @param application
+	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
 		FogDevice fd1 = SimulationArchitecture.createFogDevice("FD1", true, 102400, 
 																4000, 0.01, 103, 83.25, 10000000,
@@ -125,7 +141,11 @@ public class SimArchExample1 {
 		Switch sw2 = new Switch("SW2");
 		EndDevice dev = new EndDevice("DEV");
 		
-		FogNode fd2 = SimulationArchitecture.createFogNode("FD2", false, 102400, 
+		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", false, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(1000, 1000), new Vector(1,1));
+		FogNode fn1 = SimulationArchitecture.createFogNode("FN1", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
 									new Rectangle(1000, 1000), new Vector(1,1));
@@ -140,7 +160,7 @@ public class SimArchExample1 {
 			e.printStackTrace();
 		}
 		Point location = new Point(10, 10);
-		PuddleHead ph0 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD", areaOfCoverage, location, 1);
+		PuddleHead ph0 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD0", areaOfCoverage, location, 1);
 		
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
@@ -152,24 +172,27 @@ public class SimArchExample1 {
 		
 		SimulationArchitecture.getInstance().addFogDevice(fd0);
 		SimulationArchitecture.getInstance().addFogDevice(fd1);
-		SimulationArchitecture.getInstance().addFogNode(fd2);
+		SimulationArchitecture.getInstance().addFogNode(fn0);
+		SimulationArchitecture.getInstance().addFogNode(fn1);
 		SimulationArchitecture.getInstance().addPuddleHead(ph0);
 		SimulationArchitecture.getInstance().addSwitch(sw0);
 		SimulationArchitecture.getInstance().addSwitch(sw1);
 		SimulationArchitecture.getInstance().addSwitch(sw2);
 		SimulationArchitecture.getInstance().addEndDevice(dev);
+		/*
 		fogDevices.add(fd0);
 		fogDevices.add(fd1);
-		fogDevices.add(fd2);
-		
+		fogDevices.add(fn0);
+		fogDevices.add(fn1);
+		*/
 		// Now connecting entities with Links
 		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
 		SimulationArchitecture.getInstance().addLink(sw0.getId(), sw1.getId(), 15, 1000);
 		SimulationArchitecture.getInstance().addLink(sw0.getId(), fd0.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd2.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(ph0.getId(), fd2.getId(), 2, 1000);
+		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
+		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn1.getId(), 2, 1000);
 		
 		if (SimulationArchitecture.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");
@@ -188,71 +211,6 @@ public class SimArchExample1 {
 			ids.add(entity.getId());
 		}
 		return ids;
-	}
-	
-	/**
-	 * Creates a vanilla fog device
-	 * @param nodeName name of the device to be used in simulation
-	 * @param mips MIPS
-	 * @param ram RAM
-	 * @param upBw uplink bandwidth
-	 * @param downBw downlink bandwidth
-	 * @param level hierarchy level of the device
-	 * @param ratePerMips cost rate per MIPS used
-	 * @param busyPower
-	 * @param idlePower
-	 * @return
-	 */
-	private static FogDevice createFogDevice(String nodeName, boolean isCloud, long mips,
-			int ram, double ratePerMips, double busyPower, double idlePower) {
-		
-		List<Pe> peList = new ArrayList<Pe>();
-
-		// 3. Create PEs and add these into a list.
-		peList.add(new Pe(0, new PeProvisionerOverbooking(mips))); // need to store Pe id and MIPS Rating
-
-		int hostId = FogUtils.generateEntityId();
-		long storage = 10000000; // host storage
-		int bw = 1000000;
-
-		PowerHost host = new PowerHost(
-				hostId,
-				new RamProvisionerSimple(ram),
-				new BwProvisionerOverbooking(bw),
-				storage,
-				peList,
-				new AppModuleScheduler(peList),
-				new FogLinearPowerModel(busyPower, idlePower)
-			);
-
-		List<Host> hostList = new ArrayList<Host>();
-		hostList.add(host);
-
-		String arch = "x86"; // system architecture
-		String os = "Linux"; // operating system
-		String vmm = "Xen";
-		double time_zone = 10.0; // time zone this resource located
-		double cost = 3.0; // the cost of using processing in this resource
-		double costPerMem = 0.05; // the cost of using memory in this resource
-		double costPerStorage = 0.001; // the cost of using storage in this
-										// resource
-		double costPerBw = 0.0; // the cost of using bw in this resource
-		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are not adding SAN
-													// devices by now
-
-		FogDeviceCharacteristics characteristics = new FogDeviceCharacteristics(isCloud, 
-				arch, os, vmm, host, time_zone, cost, costPerMem,
-				costPerStorage, costPerBw);
-
-		FogDevice fogdevice = null;
-		try {
-			// TODO Check about scheduling interval
-			fogdevice = new FogDevice(nodeName, characteristics, 
-					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return fogdevice;
 	}
 	
 	/**
