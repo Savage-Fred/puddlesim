@@ -370,10 +370,12 @@ public class FogNode extends FogDevice {
 	 */
 	public void processNodeLeave(){
 		gone = true; 
-	
+		
 		for(Integer buddyId : puddleBuddies){
 			FogNode node = (FogNode) CloudSim.getEntity(buddyId);
-			node.removePuddleBuddy(getId());
+			if(buddyId != getId()){
+				node.removePuddleBuddy(getId());
+			}
 		}
 		
 		//This stuff might need to be altered to properly handle what happens when a node leaves the system completely. 

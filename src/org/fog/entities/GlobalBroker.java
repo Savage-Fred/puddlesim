@@ -109,7 +109,9 @@ public class GlobalBroker extends FogBroker {
 	 * @param ev
 	 */
 	public void processNodeMove(SimEvent ev){
+		Log.enable();
 		Log.printLine("GlobalBroker is processing new location: " + ((FogNode) CloudSim.getEntity((int)ev.getData())).getLocation());
+		Log.disable();
 		
 		int nodeId = (int) ev.getData();
 		

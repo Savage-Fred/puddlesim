@@ -259,7 +259,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 					*/
 			fognode = new FogNode(nodeName, characteristics, 
 					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
-					bounds, coordinates, 3.2, true);
+					bounds, coordinates, direction, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
