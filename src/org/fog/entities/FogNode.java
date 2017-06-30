@@ -311,10 +311,10 @@ public class FogNode extends FogDevice {
 	protected void processUpdateLocation(SimEvent ev){
 		// If the device is mobile, update the location and send an event to the queue to trigger it again
 		if(mobile.isMobile()){
+			mobile.updateLocation();
 			send(super.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LOCATION);
 			this.linksMap.forEach((k,v) -> {send(v.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LATENCY);
 				Logger.debug("LINKMAP", getName(), "Loop");});
-			mobile.updateLocation();
 			
 			//Send to global broker for processing. 
 			int brokerId = CloudSim.getEntityId("globalbroker");

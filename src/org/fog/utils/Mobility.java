@@ -86,8 +86,34 @@ public class Mobility {
 		// Update the location of the device
 		if(isMobile){
 			this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
-			this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());	
+			this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
+			
+			if (this.coordinates.getx() > bounds.getWidth() + bounds.getX()) {
+				movementVector.setxComponent(-1*movementVector.getxComponent());
+				this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
+				this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
+			}
+			else if (this.coordinates.getx() < bounds.getX()){
+				movementVector.setxComponent(-1*movementVector.getxComponent());
+				this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
+				this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
+			}
+			
+			if (this.coordinates.gety() > bounds.getHeight() + bounds.getY()){ 
+				movementVector.setyComponent(-1*movementVector.getyComponent());
+				this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
+				this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
+			}
+			else if (this.coordinates.gety()< bounds.getY()){
+				movementVector.setyComponent(-1*movementVector.getyComponent());
+				this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
+				this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
+			}
+			
+			
 		}
+		
+		/*
 		// If the device has left the bounds, wrap it around
 		if (this.coordinates.getx() > bounds.getWidth() + bounds.getX()) 
 			this.coordinates.setx(bounds.getX() + this.coordinates.getx() % bounds.getWidth());
@@ -98,7 +124,7 @@ public class Mobility {
 			this.coordinates.sety(bounds.getY() + this.coordinates.gety() % bounds.getHeight());
 		else if (this.coordinates.gety()< bounds.getY())
 			this.coordinates.sety(this.coordinates.gety() + bounds.getY() + bounds.getHeight());
-				
+		*/
 		if(DEBUG){
 			Log.printLine(str);
 			if(logStatus)
