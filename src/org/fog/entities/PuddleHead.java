@@ -580,7 +580,9 @@ public class PuddleHead extends SimEntity {
 	}
 	
 	/**
-	 * Add a link to the map and update all associate tables. 
+	 * Add a link to the map and update all associate tables.
+	 * It determines the type of object at the other end of the link (PuddleHead or FogNode) and proceeds accordingly.
+	 * It only does processing if the other PuddleHead is at a lower level. All FogNodes are processed.   
 	 * @param linkId
 	 * @param theLink
 	 */
