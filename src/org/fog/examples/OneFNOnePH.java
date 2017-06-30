@@ -162,6 +162,7 @@ public class OneFNOnePH {
 		Point location = new Point(3, 1);
 		PuddleHead ph0 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD0", areaOfCoverage, location, 1);
 		
+		
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
 		sensors.add(sensor);
