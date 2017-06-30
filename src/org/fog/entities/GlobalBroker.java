@@ -76,6 +76,20 @@ public class GlobalBroker extends FogBroker {
 		setActuatorIds(new ArrayList<Integer>()); 
 	}
 	
+	/**
+	 * Takes in the list of IDs of PuddleHeads and nodes and sets up the corresponding lists and map. 
+	 * @param puddleHeadIn
+	 * @param nodeIn
+	 */
+	public void setup(List<Integer> puddleHeadIn, List<Integer> nodeIn){
+		setPuddleHeadIds(puddleHeadIn); 
+		setNodeIds(nodeIn);
+		for(int puddleHeadId : puddleHeadIds){
+			PuddleHead puddleHead = (PuddleHead) CloudSim.getEntity(puddleHeadId);
+			addPuddleHeadByLevel(puddleHeadId, puddleHead.getLevel());
+		}
+	}
+	
 	@Override
 	public void processEvent(SimEvent ev){
 		switch(ev.getTag()){
