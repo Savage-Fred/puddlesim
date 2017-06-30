@@ -81,7 +81,12 @@ public class FogNode extends FogDevice {
 	 * Boolean that says if this node has left the overall network.
 	 */
 	protected boolean gone = false;
-
+	
+	/**
+	 * Level that the node is at. 
+	 */
+	protected int level; 
+	
 	/**
 	 * Constructor for a FogNode
 	 * @param name
@@ -150,7 +155,7 @@ public class FogNode extends FogDevice {
 	 */
 	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList, double schedulingInterval, double ratePerMips,
-			Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile) throws Exception {
+			Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile, int level) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
 		this.setMobilityDelay();
@@ -160,6 +165,8 @@ public class FogNode extends FogDevice {
 		
 		//initialize map of links
 		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		this.level = level;
 		
 		myCharacteristics = characteristics; 		
 	}
@@ -185,7 +192,7 @@ public class FogNode extends FogDevice {
 	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList, double schedulingInterval, double uplinkBandwidth, double downlinkBandwidth,
 			double uplinkLatency, double ratePerMips,
-			Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile) throws Exception {
+			Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile, int level) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
@@ -196,6 +203,8 @@ public class FogNode extends FogDevice {
 		
 		//initialize map of links
 		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		this.level = level; 
 		
 		myCharacteristics = characteristics; 	
 	}
@@ -216,7 +225,7 @@ public class FogNode extends FogDevice {
 	 */
 	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList, double schedulingInterval, double ratePerMips,
-			Rectangle bounds, Point coordinates, double scalar, boolean isMobile) throws Exception {
+			Rectangle bounds, Point coordinates, double scalar, boolean isMobile, int level) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
 		this.setMobilityDelay();
@@ -226,6 +235,8 @@ public class FogNode extends FogDevice {
 		
 		//initialize map of links
 		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		this.level = level;
 		
 		myCharacteristics = characteristics; 
 	}
@@ -251,7 +262,7 @@ public class FogNode extends FogDevice {
 	public FogNode(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
 			List<Storage> storageList, double schedulingInterval, double uplinkBandwidth, double downlinkBandwidth,
 			double uplinkLatency, double ratePerMips,
-			Rectangle bounds, Point coordinates, double scalar, boolean isMobile) throws Exception {
+			Rectangle bounds, Point coordinates, double scalar, boolean isMobile, int level) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
@@ -262,6 +273,8 @@ public class FogNode extends FogDevice {
 		
 		//initialize map of links
 		setLinksMap(new HashMap<Integer, Link>()); 
+		
+		this.level = level;
 		
 		myCharacteristics = characteristics; 
 	}
@@ -518,5 +531,26 @@ public class FogNode extends FogDevice {
 	 */
 	public boolean isGone(){
 		return gone; 
+	}
+
+	/**
+	 * @param gone the gone to set
+	 */
+	public void setGone(boolean gone) {
+		this.gone = gone;
+	}
+
+	/**
+	 * @return the level
+	 */
+	public int getLevel() {
+		return level;
+	}
+
+	/**
+	 * @param level the level to set
+	 */
+	public void setLevel(int level) {
+		this.level = level;
 	}
 }

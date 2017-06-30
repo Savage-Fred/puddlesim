@@ -166,6 +166,7 @@ public class PuddleHead extends SimEntity {
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
 		
 		node.setPuddleHeadId(this.getId());
+		node.setGone(false);
 		
 		for(int buddyId : puddleDevices){
 			FogNode buddy = (FogNode) CloudSim.getEntity(buddyId);
@@ -197,6 +198,7 @@ public class PuddleHead extends SimEntity {
 		
 		if(node.isGone()){
 			//TODO HANDLE THE SERVICE STUFF HERE since the node is completely gone not relocated.
+			node.setPuddleHeadId(-1);
 		}
 		else{
 			for(int buddyId : puddleDevices){
