@@ -407,7 +407,7 @@ public class FogNode extends FogDevice {
 	 * @param buddyId
 	 */
 	public void removePuddleBuddy(int buddyId){
-		puddleBuddies.remove(buddyId);
+		puddleBuddies.remove((Integer)buddyId);
 	}
 	
 	/**

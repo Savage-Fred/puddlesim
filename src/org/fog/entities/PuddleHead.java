@@ -304,7 +304,7 @@ public class PuddleHead extends SimEntity {
 		
 		for(int childId: childrenIds){
 			PuddleHead child = (PuddleHead) CloudSim.getEntity(childId);
-			child.removePuddleBuddy(badChildId);
+			child.removePuddleBuddy((Integer)badChildId);
 		}
 	}
 	
@@ -335,7 +335,7 @@ public class PuddleHead extends SimEntity {
 	 * @param deviceId
 	 */
 	public void removePuddleDevice(int deviceId){
-		puddleDevices.remove(deviceId);
+		puddleDevices.remove((Integer)deviceId);
 	}
 	
 	/**
@@ -428,7 +428,7 @@ public class PuddleHead extends SimEntity {
 	 * @param buddyId
 	 */
 	public void removePuddleBuddy(int buddyId){
-		puddleBuddies.remove(buddyId);
+		puddleBuddies.remove((Integer)buddyId);
 	}
 	
 	/**
@@ -467,7 +467,7 @@ public class PuddleHead extends SimEntity {
 	 * @param deviceId
 	 */
 	public void removeChildId(int deviceId){
-		childrenIds.remove(deviceId);
+		childrenIds.remove((Integer)deviceId);
 	}
 
 	/**

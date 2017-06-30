@@ -201,7 +201,7 @@ public class GlobalBroker extends FogBroker {
 	 * @param puddleHeadId
 	 */
 	public void removePuddleHeadId(int puddleHeadId){
-		puddleHeadIds.remove(puddleHeadId);
+		puddleHeadIds.remove((Integer)puddleHeadId);
 	}
 	
 	/**
@@ -244,7 +244,7 @@ public class GlobalBroker extends FogBroker {
 	public void removePuddleHeadByLevel(int puddleHeadId, int level){
 		List<Integer> levelList = puddleHeadsByLevel.get(level);
 		if(levelList != null){
-				levelList.remove(puddleHeadId); 
+				levelList.remove((Integer)puddleHeadId); 
 				puddleHeadsByLevel.put(level, levelList);
 		}
 		else {
@@ -310,7 +310,7 @@ public class GlobalBroker extends FogBroker {
 	 * @param sensorId
 	 */
 	public void removeSensorId(int sensorId){
-		sensorIds.remove(sensorId);
+		sensorIds.remove((Integer)sensorId);
 	}
 
 	/**
@@ -340,8 +340,7 @@ public class GlobalBroker extends FogBroker {
 	 * @param actuatorId
 	 */
 	public void removeActuatorId(int actuatorId){
-		actuatorIds.remove(actuatorId);
+		actuatorIds.remove((Integer)actuatorId);
 	}
-	
 	
 }
