@@ -158,6 +158,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	@Override
 	public void addFogNode(FogNode dev) {
 		getFogNodes().add(dev);
+		getFogDevices().add((FogDevice)dev);
 		// Add device ID to integer list
 		fogNodeIDs.add(dev.getId());
 		System.out.println("Added Fog Node: " + dev.getId());
@@ -216,7 +217,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	public static FogNode createFogNode(String nodeName, boolean isCloud, long mips,
 			int ram, double ratePerMips, double busyPower, double idlePower, long storage,
 			int bw, double costProcessing, double costPerMem, double costPerStorage, double costPerBw,
-			Rectangle bounds, Vector direction) {
+			Rectangle bounds, Point coordinates,  Vector direction) {
 		
 		List<Pe> peList = new ArrayList<Pe>();
 
@@ -258,7 +259,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 					*/
 			fognode = new FogNode(nodeName, characteristics, 
 					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
-					bounds, new Point(0, 0), 3.2, true);
+					bounds, coordinates, 3.2, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -337,6 +338,89 @@ public class SimulationArchitecture extends PhysicalTopology{
 			e.printStackTrace();
 		}
 		return puddlehead;
+	}
+
+	/**
+	 * @return the fogDeviceIDs
+	 */
+	public List<Integer> getFogDeviceIDs() {
+		return fogDeviceIDs;
+	}
+
+	/**
+	 * @param fogDeviceIDs the fogDeviceIDs to set
+	 */
+	public void setFogDeviceIDs(List<Integer> fogDeviceIDs) {
+		this.fogDeviceIDs = fogDeviceIDs;
+	}
+
+	/**
+	 * @return the fogNodeIDs
+	 */
+	public List<Integer> getFogNodeIDs() {
+		return fogNodeIDs;
+	}
+
+	/**
+	 * @param fogNodeIDs the fogNodeIDs to set
+	 */
+	public void setFogNodeIDs(List<Integer> fogNodeIDs) {
+		this.fogNodeIDs = fogNodeIDs;
+	}
+
+	/**
+	 * @return the puddleHeadIDs
+	 */
+	public List<Integer> getPuddleHeadIDs() {
+		return puddleHeadIDs;
+	}
+
+	/**
+	 * @param puddleHeadIDs the puddleHeadIDs to set
+	 */
+	public void setPuddleHeadIDs(List<Integer> puddleHeadIDs) {
+		this.puddleHeadIDs = puddleHeadIDs;
+	}
+
+	/**
+	 * @return the endDeviceIDs
+	 */
+	public List<Integer> getEndDeviceIDs() {
+		return endDeviceIDs;
+	}
+
+	/**
+	 * @param endDeviceIDs the endDeviceIDs to set
+	 */
+	public void setEndDeviceIDs(List<Integer> endDeviceIDs) {
+		this.endDeviceIDs = endDeviceIDs;
+	}
+
+	/**
+	 * @return the switchIDs
+	 */
+	public List<Integer> getSwitchIDs() {
+		return switchIDs;
+	}
+
+	/**
+	 * @param switchIDs the switchIDs to set
+	 */
+	public void setSwitchIDs(List<Integer> switchIDs) {
+		this.switchIDs = switchIDs;
+	}
+
+	/**
+	 * @return the linkIDs	 */
+	public List<Integer> getLinkIDs() {
+		return linkIDs;
+	}
+
+	/**
+	 * @param linkIDs the linkIDs to set
+	 */
+	public void setLinkIDs(List<Integer> linkIDs) {
+		this.linkIDs = linkIDs;
 	}
 	
 }

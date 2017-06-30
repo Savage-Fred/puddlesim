@@ -84,6 +84,7 @@ public class PhysicalTopology {
 	 */
 	public void addFogNode(FogNode dev) {
 		getFogNodes().add(dev);
+		getFogDevices().add((FogDevice)dev);
 	}
 	
 	/**

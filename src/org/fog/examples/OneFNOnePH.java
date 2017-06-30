@@ -26,6 +26,7 @@ import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.FogNode;
+import org.fog.entities.GlobalBroker;
 import org.fog.entities.PuddleHead;
 import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
@@ -60,7 +61,7 @@ import org.fog.utils.distribution.DeterministicDistribution;
  * @author Harshit Gupta & Avi Rynderman
  *
  */
-public class SimArchExample1 {
+public class OneFNOnePH {
 	static List<FogDevice> fogDevices = new ArrayList<FogDevice>();
 	static List<FogNode> fogNodes = new ArrayList<FogNode>();
 	static List<PuddleHead> puddleHeads = new ArrayList<PuddleHead>();
@@ -87,12 +88,15 @@ public class SimArchExample1 {
 			String appId = "simple_app"; // identifier of the application
 			
 			FogBroker broker = new FogBroker("broker");
+			GlobalBroker broker1 = new GlobalBroker("globalbroker");
 			
 			Application application = createApplication(appId, broker.getId());
 			application.setUserId(broker.getId());
 			
 			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
+			
+			broker1.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
 			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
@@ -144,12 +148,8 @@ public class SimArchExample1 {
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1000, 1000), new Point(1,1), new Vector(1,1));
-		/*FogNode fn1 = SimulationArchitecture.createFogNode("FN1", false, 102400, 
-									4000, 0.01, 103, 83.25, 10000000,
-									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1000, 1000), new Point(1,1), new Vector(1,1));
-		*/
+									new Rectangle(10, 10), new Point(1,1), new Vector(1,0));
+		
 		// PuddleHead attempt
 		double[] xcor = {0.0, 0, 100, 100};
 		double[] ycor = {0.0, 100, 0, 100};
@@ -172,18 +172,16 @@ public class SimArchExample1 {
 		// TODO: Get rid of switches
 		SimulationArchitecture.getInstance().addFogDevice(fd0);
 		SimulationArchitecture.getInstance().addFogDevice(fd1);
-		SimulationArchitecture.getInstance().addFogNode(fn0);		
+		SimulationArchitecture.getInstance().addFogNode(fn0);
+		SimulationArchitecture.getInstance().addPuddleHead(ph0);
 		SimulationArchitecture.getInstance().addSwitch(sw0);
 		SimulationArchitecture.getInstance().addSwitch(sw1);
 		SimulationArchitecture.getInstance().addSwitch(sw2);
 		SimulationArchitecture.getInstance().addEndDevice(dev);
-		//SimulationArchitecture.getInstance().addPuddleHead(ph0);
-		//SimulationArchitecture.getInstance().addFogNode(fn1);
-		
+
 		fogDevices.add(fd0);
 		fogDevices.add(fd1);
 		fogDevices.add(fn0);
-		//fogDevices.add(fn1);
 		
 		// Now connecting entities with Links
 		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
@@ -192,10 +190,10 @@ public class SimArchExample1 {
 		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn0.getId(), 2, 1000);
-		//SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
-		//SimulationArchitecture.getInstance().addLink(ph0.getId(), fn1.getId(), 2, 1000);
-
+		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
 		
+		ph0.addNodetoPuddleHead(fn0.getId());
+		/*
 		if (SimulationArchitecture.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");
 			SimulationArchitecture.getInstance().setUpEntities();
@@ -204,7 +202,7 @@ public class SimArchExample1 {
 			System.out.println("Topology validation UNsuccessful");
 			System.exit(1);
 		}
-		
+		*/
 	}
 
 	public static List<Integer> getIds(List<? extends SimEntity> entities) {

@@ -120,7 +120,7 @@ public class PhyTopoExample1 {
 		EndDevice dev = new EndDevice("DEV");
 		
 		// Test FogNode
-		FogNode fd2 = createFogNode("FD2", false, 102400, 4000, 0.01, 103, 83.25);
+		FogNode fn0 = createFogNode("FN0", false, 102400, 4000, 0.01, 103, 83.25);
 		
 		
 		int transmissionInterval = 5000;
@@ -133,14 +133,14 @@ public class PhyTopoExample1 {
 		
 		PhysicalTopology.getInstance().addFogDevice(fd0);
 		PhysicalTopology.getInstance().addFogDevice(fd1);
-		PhysicalTopology.getInstance().addFogDevice(fd2);
+		PhysicalTopology.getInstance().addFogDevice(fn0);
 		PhysicalTopology.getInstance().addSwitch(sw0);
 		PhysicalTopology.getInstance().addSwitch(sw1);
 		PhysicalTopology.getInstance().addSwitch(sw2);
 		PhysicalTopology.getInstance().addEndDevice(dev);
 		fogDevices.add(fd0);
 		fogDevices.add(fd1);
-		fogDevices.add(fd2);
+		fogDevices.add(fn0);
 		
 		// Now connecting entities with Links
 		PhysicalTopology.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
@@ -148,7 +148,7 @@ public class PhyTopoExample1 {
 		PhysicalTopology.getInstance().addLink(sw0.getId(), fd0.getId(), 2, 1000);
 		PhysicalTopology.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
 		PhysicalTopology.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
-		PhysicalTopology.getInstance().addLink(sw2.getId(), fd2.getId(), 2, 1000);
+		PhysicalTopology.getInstance().addLink(sw2.getId(), fn0.getId(), 2, 1000);
 		
 		if (PhysicalTopology.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");
