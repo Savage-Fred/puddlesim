@@ -111,24 +111,28 @@ public class GlobalBroker extends FogBroker {
 	public void processNodeMove(SimEvent ev){
 		Log.enable();
 		Log.printLine("GlobalBroker is processing new location: " + ((FogNode) CloudSim.getEntity((int)ev.getData())).getLocation());
-		Log.disable();
+		
 		
 		int nodeId = (int) ev.getData();
 		
 		boolean inArea = checkNodeInPuddleHeadRange(nodeId);
-		
+		Log.printLine("beforeIf");
 		if(!inArea){
+			Log.printLine("inIf");
 			int newPuddleHeadId = findNodeNewPuddleHead(nodeId);
 			
 			if(newPuddleHeadId > 0){
+				Log.printLine("I GOT A NEW PUDDLEHEAD");
 				send(newPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_RELOCATE_PUDDLE, nodeId);
 			}
 			else {
+				Log.printLine("IM FREEEEEEEEEEEEEE");
 				send(nodeId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE);
 				removeNodeId(nodeId);
 			}
 			
 		}
+		Log.disable();
 	}
 	
 	
@@ -140,12 +144,15 @@ public class GlobalBroker extends FogBroker {
 	 */
 	private boolean checkNodeInPuddleHeadRange(int nodeId){
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId);
-		PuddleHead puddlehead = (PuddleHead) CloudSim.getEntity(node.getPuddleHeadId());
-		
-		Point nodePoint = node.getLocation(); 
-		Polygon area = puddlehead.getAreaOfCoverage(); 
-		
-		return area.contains(nodePoint);
+		int puddleHeadId = node.getPuddleHeadId();
+		boolean result = false;
+		if(puddleHeadId > 0){
+			PuddleHead puddlehead = (PuddleHead) CloudSim.getEntity(node.getPuddleHeadId());
+			Point nodePoint = node.getLocation(); 
+			Polygon area = puddlehead.getAreaOfCoverage(); 
+			result = area.contains(nodePoint);
+		}
+		return result;
 	}
 	
 	/**
