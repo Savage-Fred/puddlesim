@@ -144,7 +144,7 @@ public class SimArchExample1 {
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1000, 1000), new Point(1,1), new Vector(1,1));
+									new Rectangle(1000, 1000), new Point(1,1), new Vector(1,1), 1);
 		/*FogNode fn1 = SimulationArchitecture.createFogNode("FN1", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
@@ -179,12 +179,12 @@ public class SimArchExample1 {
 		SimulationArchitecture.getInstance().addEndDevice(dev);
 		//SimulationArchitecture.getInstance().addPuddleHead(ph0);
 		//SimulationArchitecture.getInstance().addFogNode(fn1);
-		
+/*		
 		fogDevices.add(fd0);
 		fogDevices.add(fd1);
 		fogDevices.add(fn0);
 		//fogDevices.add(fn1);
-		
+*/	
 		// Now connecting entities with Links
 		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
 		SimulationArchitecture.getInstance().addLink(sw0.getId(), sw1.getId(), 15, 1000);

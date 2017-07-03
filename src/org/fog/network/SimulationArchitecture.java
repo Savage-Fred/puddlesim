@@ -12,6 +12,7 @@ import org.cloudbus.cloudsim.power.PowerHost;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 import org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking;
 import org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking;
+import org.fog.application.Application;
 import org.fog.entities.EndDevice;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
@@ -27,6 +28,19 @@ import org.fog.utils.Point;
 import org.fog.utils.Polygon;
 import org.fog.utils.Rectangle;
 import org.fog.utils.Vector;
+
+/**
+ * @author Avi Rynderman
+ * @version PuddleSim 1.0
+ * @since REU Summer 2017 - Parallel and Distributed Computing
+ * 
+ * This class extends PhysicalTopology to allow the creation of the new hierarchical architecture.
+ * Responsibilities of this class include processing the output of the Voronoi program, and dynamic creation
+ * of the simulation architecture.
+ * 
+ * See SimArchExample1.java for a detailed example on how this class is used. 
+ *
+ */
 
 public class SimulationArchitecture extends PhysicalTopology{
 	private static String LOG_TAG = "SIMUL_ARCH";
@@ -79,6 +93,27 @@ public class SimulationArchitecture extends PhysicalTopology{
 		this.endDeviceIDs = new ArrayList<Integer>();
 		this.switchIDs = new ArrayList<Integer>();
 		this.linkIDs = new ArrayList<Integer>();
+	}
+	
+	
+	/**
+	 * This function creates the architecture.
+	 * @param userId
+	 * @param appId
+	 * @param application
+	 */
+	public void CreateNewTopology(String fileName, int userId, String appId, Application application) {
+		
+	}
+	
+	/**
+	 * This function sets up the file for read in the architecture.
+	 * @param userId
+	 * @param appId
+	 * @param application
+	 */
+	private void ReadVoronoi(String fileName) {
+		
 	}
 	
 	/**

@@ -148,7 +148,7 @@ public class OneFNOnePH {
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(10, 10), new Point(1,1), new Vector(0.5,1), 1);
+									new Rectangle(10, 10), new Point(1,1), new Vector(0.25,0.33), 1);
 		
 		// PuddleHead attempt
 		double[] xcor = {0.0, 6, 6, 0};

@@ -148,12 +148,12 @@ public class TwoFNOnePH {
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(10, 10), new Point(1,1), new Vector(1,0), 1);
+									new Rectangle(10, 10), new Point(1,1), new Vector(0.45), 1);
 		
 		FogNode fn1 = SimulationArchitecture.createFogNode("FN1", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(10, 10), new Point(1,2), new Vector(1,1), 1);
+									new Rectangle(10, 10), new Point(1,2), new Vector(0.23), 1);
 		
 		// PuddleHead attempt
 		double[] xcor = {0.0, 6, 6, 0};
@@ -185,11 +185,6 @@ public class TwoFNOnePH {
 		SimulationArchitecture.getInstance().addSwitch(sw1);
 		SimulationArchitecture.getInstance().addSwitch(sw2);
 		SimulationArchitecture.getInstance().addEndDevice(dev);
-
-		fogDevices.add(fd0);
-		fogDevices.add(fd1);
-		fogDevices.add(fn0);
-		fogDevices.add(fn1);
 		
 		// Now connecting entities with Links
 		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);

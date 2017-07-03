@@ -82,7 +82,7 @@ public class Mobility {
 		// Now update the simulation time stored in the mobility class
 		counter = CloudSim.clock();
 		// Output for testing
-		String str = "---- Location = " + Math.round(100*this.coordinates.getx())/100.0 + " " + Math.round(100*this.coordinates.gety())/100.0;
+		String str = "---- Location = " + Math.round(100*this.coordinates.getx())/100.0 + " " + Math.round(100*this.coordinates.gety())/100.0 + "*";
 		// Update the location of the device
 		if(isMobile){
 			this.coordinates.setx(this.coordinates.getx() + scalar*this.movementVector.getxComponent());
