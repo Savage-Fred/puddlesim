@@ -87,8 +87,8 @@ public class TwoFNOnePH {
 
 			String appId = "simple_app"; // identifier of the application
 			
-			FogBroker broker = new FogBroker("broker");
-			GlobalBroker broker1 = new GlobalBroker("globalbroker");
+			//FogBroker broker = new FogBroker("broker");
+			GlobalBroker broker = new GlobalBroker("globalbroker");
 			
 			Application application = createApplication(appId, broker.getId());
 			application.setUserId(broker.getId());
@@ -96,7 +96,7 @@ public class TwoFNOnePH {
 			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
-			broker1.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
 			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
@@ -134,23 +134,25 @@ public class TwoFNOnePH {
 	 * @param application
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
-		FogDevice fd1 = SimulationArchitecture.createFogDevice("FD1", true, 102400, 
-																4000, 0.01, 103, 83.25, 10000000,
-																1000000, 3.0, 0.05, 0.001, 0.0);
-		FogDevice fd0 = SimulationArchitecture.createFogDevice("FD0", false, 102400, 
-																4000, 0.01, 103, 83.25, 10000000,
-																1000000, 3.0, 0.05, 0.001, 0.0);
+		FogNode fd1 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(10, 10), new Point(1,1), new Vector(0.45), 1);
+		FogNode fd0 = SimulationArchitecture.createFogNode("FN1", false, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(10, 10), new Point(1,2), new Vector(0.23), 1);
 		Switch sw0 = new EdgeSwitch("SW0");
 		Switch sw1 = new Switch("SW1");
 		Switch sw2 = new Switch("SW2");
 		EndDevice dev = new EndDevice("DEV");
 		
-		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", false, 102400, 
+		FogNode fn0 = SimulationArchitecture.createFogNode("FN2", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
 									new Rectangle(10, 10), new Point(1,1), new Vector(0.45), 1);
 		
-		FogNode fn1 = SimulationArchitecture.createFogNode("FN1", false, 102400, 
+		FogNode fn1 = SimulationArchitecture.createFogNode("FN3", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
 									new Rectangle(10, 10), new Point(1,2), new Vector(0.23), 1);
@@ -176,8 +178,8 @@ public class TwoFNOnePH {
 		dev.addSensor(sensor);
 		dev.addActuator(actuator);
 		// TODO: Get rid of switches
-		SimulationArchitecture.getInstance().addFogDevice(fd0);
-		SimulationArchitecture.getInstance().addFogDevice(fd1);
+		SimulationArchitecture.getInstance().addFogNode(fd0);
+		SimulationArchitecture.getInstance().addFogNode(fd1);
 		SimulationArchitecture.getInstance().addFogNode(fn0);
 		SimulationArchitecture.getInstance().addFogNode(fn1);
 		SimulationArchitecture.getInstance().addPuddleHead(ph0);
@@ -198,8 +200,12 @@ public class TwoFNOnePH {
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn1.getId(), 2, 1000);
 
 		
-		
-		
+		/*
+		 * NOTE: Simulation does not truly run unless the if/else block below works.
+		 * Branch "fixswitch" seeks to fix this.
+		 * The problem is that switches are needed in order to connect any 2 devices.
+		 * This must be dealt with.
+		 */
 		
 		// TODO: Create stuff so that these functions work
 		/*

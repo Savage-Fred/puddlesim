@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
@@ -49,7 +50,7 @@ public class GlobalBroker extends FogBroker {
 	/**
 	 * List of IDs of all nodes in the network. 
 	 */
-	protected List<Integer> nodeIds; 
+	//protected List<Integer> nodeIds; 
 	
 	/**
 	 * List of IDs of all sensors in the network.
@@ -68,11 +69,11 @@ public class GlobalBroker extends FogBroker {
 	 * @throws Exception
 	 */
 	public GlobalBroker(String name) throws Exception {
-		super(name);
+		super("broker");
 
 		setPuddleHeadIds(new ArrayList<Integer>());
 		setPuddleHeadsByLevel(new HashMap<Integer, List<Integer>>());
-		setNodeIds(new ArrayList<Integer>());
+		setFogDeviceIds(new ArrayList<Integer>());
 		setSensorIds(new ArrayList<Integer>());
 		setActuatorIds(new ArrayList<Integer>()); 
 	}
@@ -84,7 +85,7 @@ public class GlobalBroker extends FogBroker {
 	 */
 	public void setup(List<Integer> puddleHeadIn, List<Integer> nodeIn){
 		setPuddleHeadIds(puddleHeadIn); 
-		setNodeIds(nodeIn);
+		setFogDeviceIds(nodeIn);
 		for(int puddleHeadId : puddleHeadIds){
 			PuddleHead puddleHead = (PuddleHead) CloudSim.getEntity(puddleHeadId);
 			addPuddleHeadByLevel(puddleHeadId, puddleHead.getLevel());
@@ -96,6 +97,15 @@ public class GlobalBroker extends FogBroker {
 		switch(ev.getTag()){
 		case FogEvents.PROCESS_NODE_MOVE:
 			processNodeMove(ev); 
+			break;
+		case FogEvents.APP_SUBMIT:
+			deployApplication(ev.getData().toString());
+			break;
+		case CloudSimTags.RESOURCE_CHARACTERISTICS_REQUEST:
+			processResourceCharacteristicsRequest(ev);
+			break;
+		case CloudSimTags.RESOURCE_CHARACTERISTICS:
+			processResourceCharacteristics(ev);
 			break;
 		}
 	}
@@ -110,7 +120,7 @@ public class GlobalBroker extends FogBroker {
 	 */
 	public void processNodeMove(SimEvent ev){
 		Log.enable();
-		Log.printLine("GlobalBroker is processing new location: " + ((FogNode) CloudSim.getEntity((int)ev.getData())).getLocation());
+		//Log.printLine("GlobalBroker is processing new location: " + ((FogNode) CloudSim.getEntity((int)ev.getData())).getLocation());
 		
 		
 		int nodeId = (int) ev.getData();
@@ -121,13 +131,13 @@ public class GlobalBroker extends FogBroker {
 			int newPuddleHeadId = findNodeNewPuddleHead(nodeId);
 			
 			if(newPuddleHeadId > 0){
-				Log.printLine("I GOT A NEW PUDDLEHEAD: " + newPuddleHeadId + " I am: " + nodeId);
+				//Log.printLine("I GOT A NEW PUDDLEHEAD: " + newPuddleHeadId + " I am: " + nodeId);
 				send(newPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_RELOCATE_PUDDLE, nodeId);
 			}
 			else {
-				Log.printLine("IM FREEEEEEEEEEEEEE " + nodeId);
+				//Log.printLine("IM FREEEEEEEEEEEEEE " + nodeId);
 				send(nodeId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE);
-				removeNodeId(nodeId);
+				removeFogDeviceId(nodeId);
 			}
 			
 		}
@@ -267,31 +277,31 @@ public class GlobalBroker extends FogBroker {
 	/**
 	 * @return the nodeIds
 	 */
-	public List<Integer> getNodeIds() {
-		return nodeIds;
+	public List<Integer> getFogDeviceIds() {
+		return fogDeviceIds;
 	}
 
 	/**
 	 * @param nodeIds the nodeIds to set
 	 */
-	public void setNodeIds(List<Integer> nodeIds) {
-		this.nodeIds = nodeIds;
+	public void setFogDeviceIds(List<Integer> nodeIds) {
+		this.fogDeviceIds = nodeIds;
 	}
 	
 	/**
 	 * Add a single node id to the list
 	 * @param nodeId
 	 */
-	public void addNodeId(int nodeId){
-		nodeIds.add(nodeId);
+	public void addFogDeviceId(int nodeId){
+		fogDeviceIds.add(nodeId);
 	}
 	
 	/**
 	 * Remove a single node id from the list
 	 * @param nodeId
 	 */
-	public void removeNodeId(int nodeId){
-		nodeIds.remove((Integer)nodeId);
+	public void removeFogDeviceId(int nodeId){
+		fogDeviceIds.remove((Integer)nodeId);
 	}
 
 	/**
