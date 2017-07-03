@@ -303,7 +303,7 @@ public class PhyTopoExample1 {
 					*/
 			fognode = new FogNode(nodeName, characteristics, 
 					new AppModuleAllocationPolicy(hostList), storageList, 10, ratePerMips,
-					bounds, new Point(0, 0), 3.2, true);
+					bounds, new Point(0, 0), 3.2, true, 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
