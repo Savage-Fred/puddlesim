@@ -189,7 +189,7 @@ public class RedFNBluePH {
 						1000000, 3.0, 0.05, 0.001, 0.0,
 						new Rectangle(15, 15), new Point(1,7), new Vector(1,1), 1);
 		
-		FogNode fn8 = SimulationArchitecture.createFogNode("FN8", false, 102400, 
+		 FogNode fn8 = SimulationArchitecture.createFogNode("FN8", false, 102400, 
 						4000, 0.01, 103, 83.25, 10000000,
 						1000000, 3.0, 0.05, 0.001, 0.0,
 						new Rectangle(15, 15), new Point(6,11), new Vector(3,3), 1);
@@ -227,7 +227,7 @@ public class RedFNBluePH {
 		FogNode fn15 = SimulationArchitecture.createFogNode("FN15", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(11,8), new Vector(1,1), 1);
+				new Rectangle(15, 15), new Point(11,8), new Vector(1,1), 1); 
 		
 		///////////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////    PUDDLEHEADS   /////////////////////////////////////////////
@@ -309,8 +309,8 @@ public class RedFNBluePH {
 		Point location6 = new Point(12, 5);
 		PuddleHead ph6 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD6", areaOfCoverage6, location6, 2);
 		////////////////////////////////////////////////////////////////////////////////////////////////////////
-		double[] xcor7 = {8, 14, 14, 8};
-		double[] ycor7 = {3, 3, 13, 13};
+		double[] xcor7 = {0, 2, 2, 0};
+		double[] ycor7 = {5, 5, 8, 8};
 		Polygon areaOfCoverage7 = null;
 		try {
 			areaOfCoverage7 = new Polygon(xcor7, ycor7);
@@ -420,13 +420,13 @@ public class RedFNBluePH {
 		
 		SimulationArchitecture.getInstance().addLink(ph2.getId(), fn5.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph2.getId(), fn6.getId(), 2, 1000);
-		
+
 		SimulationArchitecture.getInstance().addLink(ph3.getId(), fn8.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph3.getId(), fn9.getId(), 2, 1000);
-		
+
 		SimulationArchitecture.getInstance().addLink(ph4.getId(), fn4.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph4.getId(), fn15.getId(), 2, 1000);
-		
+
 		SimulationArchitecture.getInstance().addLink(ph5.getId(), fn11.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph5.getId(), fn14.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph5.getId(), fn13.getId(), 2, 1000);
@@ -434,6 +434,7 @@ public class RedFNBluePH {
 		SimulationArchitecture.getInstance().addLink(ph6.getId(), fn12.getId(), 2, 1000);
 		
 		SimulationArchitecture.getInstance().addLink(ph7.getId(), fn7.getId(), 2, 1000);
+
 
 
 		

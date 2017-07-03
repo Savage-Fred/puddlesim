@@ -205,7 +205,7 @@ public class OneFNTwoPH {
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn0.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
 		
-		ph0.addNodetoPuddleHead(fn0.getId());
+
 		// TODO: Create stuff so that these functions work
 		/*
 		if (SimulationArchitecture.getInstance().validateTopology()) {

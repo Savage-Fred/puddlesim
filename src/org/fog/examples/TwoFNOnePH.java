@@ -196,9 +196,7 @@ public class TwoFNOnePH {
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn1.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn1.getId(), 2, 1000);
-		
-		ph0.addNodetoPuddleHead(fn0.getId());
-		ph0.addNodetoPuddleHead(fn1.getId());
+
 		
 		
 		
