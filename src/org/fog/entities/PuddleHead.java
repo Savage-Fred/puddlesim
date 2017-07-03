@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
@@ -201,7 +202,8 @@ public class PuddleHead extends SimEntity {
 			node.setPuddleHeadId(-1);
 		}
 		else{
-			for(int buddyId : puddleDevices){
+			for(int i = 0; i < puddleDevices.size(); i++){
+				int buddyId = puddleDevices.get(i);
 				FogNode buddy = (FogNode) CloudSim.getEntity(buddyId);
 				buddy.removePuddleBuddy(nodeId);
 			}
@@ -595,14 +597,14 @@ public class PuddleHead extends SimEntity {
 		int otherEnd = theLink.getOtherEndpoint(getId());
 		SimEntity ent = CloudSim.getEntity(otherEnd);
 		String type = ent.getClass().getName(); 
-		if(type.compareToIgnoreCase("PuddleHead") == 0){
+		if(type.contains("PuddleHead")){
 			PuddleHead otherPuddleHead = (PuddleHead) CloudSim.getEntity(otherEnd); 
 			int otherLevel = otherPuddleHead.getLevel();
 			if(level > otherLevel){
 				newChildPuddleHead(otherEnd);
 			}
 		}
-		else if(type.compareToIgnoreCase("FogNode") == 0){
+		else if(type.contains("FogNode")){
 			addNodetoPuddleHead(otherEnd);
 		}
 	}

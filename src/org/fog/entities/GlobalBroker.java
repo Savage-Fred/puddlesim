@@ -125,7 +125,7 @@ public class GlobalBroker extends FogBroker {
 				send(newPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_RELOCATE_PUDDLE, nodeId);
 			}
 			else {
-				Log.printLine("IM FREEEEEEEEEEEEEE" + nodeId);
+				Log.printLine("IM FREEEEEEEEEEEEEE " + nodeId);
 				send(nodeId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE);
 				removeNodeId(nodeId);
 			}
