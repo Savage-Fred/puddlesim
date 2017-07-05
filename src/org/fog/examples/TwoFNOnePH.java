@@ -198,7 +198,6 @@ public class TwoFNOnePH {
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn1.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn1.getId(), 2, 1000);
-
 		
 		/*
 		 * NOTE: Simulation does not truly run unless the if/else block below works.
@@ -207,17 +206,14 @@ public class TwoFNOnePH {
 		 * This must be dealt with.
 		 */
 		
-		// TODO: Create stuff so that these functions work
-		/*
 		if (SimulationArchitecture.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");
 			SimulationArchitecture.getInstance().setUpEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
-		*/
 	}
 
 	public static List<Integer> getIds(List<? extends SimEntity> entities) {

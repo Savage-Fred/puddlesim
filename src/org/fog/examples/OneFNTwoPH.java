@@ -87,8 +87,8 @@ public class OneFNTwoPH {
 
 			String appId = "simple_app"; // identifier of the application
 			
-			FogBroker broker = new FogBroker("broker");
-			GlobalBroker broker1 = new GlobalBroker("globalbroker");
+			// FogBroker broker = new FogBroker("broker");
+			GlobalBroker broker = new GlobalBroker("globalbroker");
 			
 			Application application = createApplication(appId, broker.getId());
 			application.setUserId(broker.getId());
@@ -96,7 +96,7 @@ public class OneFNTwoPH {
 			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
-			broker1.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
 			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
@@ -134,18 +134,21 @@ public class OneFNTwoPH {
 	 * @param application
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
+		/*
 		FogDevice fd1 = SimulationArchitecture.createFogDevice("FD1", true, 102400, 
 																4000, 0.01, 103, 83.25, 10000000,
 																1000000, 3.0, 0.05, 0.001, 0.0);
 		FogDevice fd0 = SimulationArchitecture.createFogDevice("FD0", false, 102400, 
 																4000, 0.01, 103, 83.25, 10000000,
 																1000000, 3.0, 0.05, 0.001, 0.0);
-		Switch sw0 = new EdgeSwitch("SW0");
-		Switch sw1 = new Switch("SW1");
-		Switch sw2 = new Switch("SW2");
+																*/
+		//Switch sw0 = new EdgeSwitch("SW0");
+		//Switch sw1 = new Switch("SW1");
+		//Switch sw2 = new Switch("SW2");
 		EndDevice dev = new EndDevice("DEV");
 		
-		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", false, 102400, 
+		// Important!! A cloud MUST EXIST with the cloudOnly module placement strategy
+		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
 									new Rectangle(10, 10), new Point(1,1), new Vector(1,1), 1);
@@ -182,41 +185,43 @@ public class OneFNTwoPH {
 		dev.addSensor(sensor);
 		dev.addActuator(actuator);
 		// TODO: Get rid of switches
-		SimulationArchitecture.getInstance().addFogDevice(fd0);
-		SimulationArchitecture.getInstance().addFogDevice(fd1);
+		//SimulationArchitecture.getInstance().addFogDevice(fd0);
+		//SimulationArchitecture.getInstance().addFogDevice(fd1);
 		SimulationArchitecture.getInstance().addFogNode(fn0);
 		SimulationArchitecture.getInstance().addPuddleHead(ph0);
 		SimulationArchitecture.getInstance().addPuddleHead(ph1);
-		SimulationArchitecture.getInstance().addSwitch(sw0);
-		SimulationArchitecture.getInstance().addSwitch(sw1);
-		SimulationArchitecture.getInstance().addSwitch(sw2);
+		//SimulationArchitecture.getInstance().addSwitch(sw0);
+		//SimulationArchitecture.getInstance().addSwitch(sw1);
+		//SimulationArchitecture.getInstance().addSwitch(sw2);
 		SimulationArchitecture.getInstance().addEndDevice(dev);
 
-		fogDevices.add(fd0);
-		fogDevices.add(fd1);
+		//fogDevices.add(fd0);
+		//fogDevices.add(fd1);
 		fogDevices.add(fn0);
 		
 		// Now connecting entities with Links
+		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 10, 1000);
+		SimulationArchitecture.getInstance().addLink(fn0.getId(), ph0.getId(), 10, 1000);
+		SimulationArchitecture.getInstance().addLink(ph0.getId(), ph1.getId(), 10, 1000);
+		/*
 		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
 		SimulationArchitecture.getInstance().addLink(sw0.getId(), sw1.getId(), 15, 1000);
 		SimulationArchitecture.getInstance().addLink(sw0.getId(), fd0.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn0.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
+		*/
+		//SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
 		
 
-		// TODO: Create stuff so that these functions work
-		/*
-		if (SimulationArchitecture.getInstance().validateTopology()) {
+		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {
 			System.out.println("Topology validation successful");
 			SimulationArchitecture.getInstance().setUpEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
-		*/
 	}
 
 	public static List<Integer> getIds(List<? extends SimEntity> entities) {

@@ -120,19 +120,26 @@ public class PhysicalTopology {
 	 * @return true if topology is valid
 	 */
 	public boolean validateTopology() {
+		// Note, we're essentially checking that a single link connects a single device.
+		// If one link connects multiple devices, then that's a no no.
 		Map<Integer, Integer> devToNumLinks = new HashMap<Integer, Integer>();
 		for (FogDevice dev : getFogDevices()) {
 			devToNumLinks.put(dev.getId(), 0);
 		}
 		for (Link l : getLinks()) {
+			// Is this link a loop? 
 			if (l.getEndpointNorth() == l.getEndpointSouth())
 				return false;
+			// If the current link's north endpoint connects to a device...
 			if (devToNumLinks.containsKey(l.getEndpointNorth())) {
+				// check if a link repeats/if we've examined it already.
 				if (devToNumLinks.get(l.getEndpointNorth()) == 1)
 					return false;
+				// Otherwise, mark it.
 				else 
 					devToNumLinks.put(l.getEndpointNorth(), 1);
 			}
+			// Now do the same for the south endpoint.
 			if (devToNumLinks.containsKey(l.getEndpointSouth())) {
 				if (devToNumLinks.get(l.getEndpointSouth()) == 1)
 					return false;
@@ -160,7 +167,7 @@ public class PhysicalTopology {
 	 * Determines the switches neighbouring each switch in topology.
 	 * This information is used for forwarding information when calculating routing tables.
 	 */
-	private void calculateNeighbourSwitches() {
+	protected void calculateNeighbourSwitches() {
 		for (Switch sw : getSwitches()) {	// calculate neighbour switches for each switch
 			for (Link l : getLinks()) {
 				// for each link, if this switch is on one end, get ID of entity on other end
@@ -181,7 +188,7 @@ public class PhysicalTopology {
 	/**
 	 * For each switch, calculate the entities (fog devices & end-devices) directly connected to it.
 	 */
-	private void calculateAdjacentEntities() {
+	protected void calculateAdjacentEntities() {
 		Logger.debug(LOG_TAG, "Calculating adjacent entities");
 		// Actuators are just present in the routing table
 		// They are used as the destination ID when sending tuples from modules
@@ -305,8 +312,8 @@ public class PhysicalTopology {
 		}
 		return dev;
 	}
-
-	private void assignLinksToFogDevices() {
+	
+	protected void assignLinksToFogDevices() {
 		for (FogDevice dev : getFogDevices()) {
 			for (Link l : getLinks()) {
 				if (l.getEndpointNorth() == dev.getId() || l.getEndpointSouth() == dev.getId())
@@ -315,7 +322,7 @@ public class PhysicalTopology {
 		}
 	}
 
-	private void assignLinksToEndDevices() {
+	protected void assignLinksToEndDevices() {
 		for (EndDevice dev : getEndDevices()) {
 			for (Link l : getLinks()) {
 				if (l.getEndpointNorth() == dev.getId() || l.getEndpointSouth() == dev.getId())
@@ -376,7 +383,7 @@ public class PhysicalTopology {
 		return null;
 	}
 	
-	private void printAdjacentEntities() {
+	protected void printAdjacentEntities() {
 		for (Switch sw : getSwitches()) {
 			System.out.println(CloudSim.getEntityName(sw.getId()));
 			for (Integer i : sw.getAdjacentEntities()) {
