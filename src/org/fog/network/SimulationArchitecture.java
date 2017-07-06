@@ -160,8 +160,8 @@ public class SimulationArchitecture extends PhysicalTopology{
 			device.addLinkToMap(newLink.getId(), newLink);
 			System.out.println("Fog Node Link: " + device.getId() + " <=" + newLink.getId());
 		} 
-		else if (this.puddleHeadIDs.contains(endpoint1)) {
-			PuddleHead device = (PuddleHead)CloudSim.getEntity(endpoint1);
+		else if (this.puddleHeadIDs.contains(endpoint2)) {
+			PuddleHead device = (PuddleHead)CloudSim.getEntity(endpoint2);
 			device.addLinkToMap(newLink.getId(), newLink);
 			System.out.println("Puddlehead Link: " + device.getId() + " <=" + newLink.getId());
 		} 
