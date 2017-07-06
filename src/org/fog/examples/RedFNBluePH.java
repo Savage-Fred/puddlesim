@@ -87,8 +87,8 @@ public class RedFNBluePH {
 
 			String appId = "simple_app"; // identifier of the application
 			
-			FogBroker broker = new FogBroker("broker");
-			GlobalBroker broker1 = new GlobalBroker("globalbroker");
+//			FogBroker broker = new FogBroker("broker");
+			GlobalBroker broker = new GlobalBroker("globalbroker");
 			
 			Application application = createApplication(appId, broker.getId());
 			application.setUserId(broker.getId());
@@ -96,7 +96,7 @@ public class RedFNBluePH {
 			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
-			broker1.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
 			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
@@ -366,24 +366,24 @@ public class RedFNBluePH {
 		SimulationArchitecture.getInstance().addSwitch(sw4);
 		SimulationArchitecture.getInstance().addEndDevice(dev);
 
-		fogDevices.add(fd0);
-		fogDevices.add(fd1);
-		fogDevices.add(fn0);
-		fogDevices.add(fn1);
-		fogDevices.add(fn2);
-		fogDevices.add(fn3);
-		fogDevices.add(fn4);
-		fogDevices.add(fn5);
-		fogDevices.add(fn6);
-		fogDevices.add(fn7);
-		fogDevices.add(fn8);
-		fogDevices.add(fn9);
-		fogDevices.add(fn10);
-		fogDevices.add(fn11);
-		fogDevices.add(fn12);
-		fogDevices.add(fn13);
-		fogDevices.add(fn14);
-		fogDevices.add(fn15);
+//		fogDevices.add(fd0);
+//		fogDevices.add(fd1);
+//		fogDevices.add(fn0);
+//		fogDevices.add(fn1);
+//		fogDevices.add(fn2);
+//		fogDevices.add(fn3);
+//		fogDevices.add(fn4);
+//		fogDevices.add(fn5);
+//		fogDevices.add(fn6);
+//		fogDevices.add(fn7);
+//		fogDevices.add(fn8);
+//		fogDevices.add(fn9);
+//		fogDevices.add(fn10);
+//		fogDevices.add(fn11);
+//		fogDevices.add(fn12);
+//		fogDevices.add(fn13);
+//		fogDevices.add(fn14);
+//		fogDevices.add(fn15);
 		
 		// Now connecting entities with Links
 		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 2, 1000);

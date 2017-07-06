@@ -60,9 +60,9 @@ public class FogBroker extends PowerDatacenterBroker{
 	protected Map<Integer, SensorCharacteristics> sensorCharacteristics;
 	protected Map<Integer, ActuatorCharacteristics> actuatorCharacteristics;
 	
-	private Map<String, Application> applications;
-	private Map<String, Double> appLaunchDelays;
-	private Map<String, ModulePlacementPolicy> appModulePlacementPolicy;
+	protected Map<String, Application> applications;
+	protected Map<String, Double> appLaunchDelays;
+	protected Map<String, ModulePlacementPolicy> appModulePlacementPolicy;
 
 	public FogBroker(String name) throws Exception {
 		super(name);

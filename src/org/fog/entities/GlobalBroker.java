@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
@@ -54,12 +55,12 @@ public class GlobalBroker extends FogBroker {
 	/**
 	 * List of IDs of all sensors in the network.
 	 */
-	protected List<Integer> sensorIds;
+//	protected List<Integer> sensorIds;
 	
 	/**
 	 * List of IDs of all actuators in the network. 
 	 */
-	protected List<Integer> actuatorIds; 
+//	protected List<Integer> actuatorIds; 
 	
 	
 	/**
@@ -94,6 +95,15 @@ public class GlobalBroker extends FogBroker {
 	@Override
 	public void processEvent(SimEvent ev){
 		switch(ev.getTag()){
+		case FogEvents.APP_SUBMIT:
+			deployApplication(ev.getData().toString());
+			break;
+		case CloudSimTags.RESOURCE_CHARACTERISTICS_REQUEST:
+			processResourceCharacteristicsRequest(ev);
+			break;
+		case CloudSimTags.RESOURCE_CHARACTERISTICS:
+			processResourceCharacteristics(ev);
+			break;
 		case FogEvents.PROCESS_NODE_MOVE:
 			processNodeMove(ev); 
 			break;
@@ -110,7 +120,7 @@ public class GlobalBroker extends FogBroker {
 	 */
 	public void processNodeMove(SimEvent ev){
 		Log.enable();
-		Log.printLine("GlobalBroker is processing new location: " + ((FogNode) CloudSim.getEntity((int)ev.getData())).getLocation());
+		//Log.printLine("GlobalBroker is processing new location: " + ((FogNode) CloudSim.getEntity((int)ev.getData())).getLocation());
 		
 		
 		int nodeId = (int) ev.getData();
@@ -297,16 +307,16 @@ public class GlobalBroker extends FogBroker {
 	/**
 	 * @return the sensorIds
 	 */
-	public List<Integer> getSensorIds() {
-		return sensorIds;
-	}
-
-	/**
-	 * @param sensorIds the sensorIds to set
-	 */
-	public void setSensorIds(List<Integer> sensorIds) {
-		this.sensorIds = sensorIds;
-	}
+//	public List<Integer> getSensorIds() {
+//		return sensorIds;
+//	}
+//
+//	/**
+//	 * @param sensorIds the sensorIds to set
+//	 */
+//	public void setSensorIds(List<Integer> sensorIds) {
+//		this.sensorIds = sensorIds;
+//	} 
 	
 	/**
 	 * Add a single sensor.
@@ -327,16 +337,16 @@ public class GlobalBroker extends FogBroker {
 	/**
 	 * @return the actuatorIds
 	 */
-	public List<Integer> getActuatorIds() {
-		return actuatorIds;
-	}
-
-	/**
-	 * @param actuatorIds the actuatorIds to set
-	 */
-	public void setActuatorIds(List<Integer> actuatorIds) {
-		this.actuatorIds = actuatorIds;
-	}
+//	public List<Integer> getActuatorIds() {
+//		return actuatorIds;
+//	}
+//
+//	/**
+//	 * @param actuatorIds the actuatorIds to set
+//	 */
+//	public void setActuatorIds(List<Integer> actuatorIds) {
+//		this.actuatorIds = actuatorIds;
+//	}
 	
 	/**
 	 * Add a single actuator
