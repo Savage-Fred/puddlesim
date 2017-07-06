@@ -196,6 +196,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		getFogDevices().add((FogDevice)dev);
 		// Add device ID to integer list
 		fogNodeIDs.add(dev.getId());
+		fogDeviceIDs.add(dev.getId());
 		System.out.println("Added Fog Node: " + dev.getId());
 	}
 	

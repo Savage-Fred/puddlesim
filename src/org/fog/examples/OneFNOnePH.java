@@ -97,6 +97,9 @@ public class OneFNOnePH {
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
 			broker1.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker1.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
+			broker1.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
+			broker1.setActuatorIds(getIds(SimulationArchitecture.getInstance().getActuators()));
 			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
@@ -191,10 +194,10 @@ public class OneFNOnePH {
 		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn0.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
+		SimulationArchitecture.getInstance().addLink(ph0.getId(), sw2.getId(), 2, 1000);
+		//SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
 		
-		// TODO: Create stuff so that these functions work
-		/*
+		
 		if (SimulationArchitecture.getInstance().validateTopology()) {
 			System.out.println("Topology validation successful");
 			SimulationArchitecture.getInstance().setUpEntities();
@@ -203,7 +206,7 @@ public class OneFNOnePH {
 			System.out.println("Topology validation UNsuccessful");
 			System.exit(1);
 		}
-		*/
+		
 	}
 
 	public static List<Integer> getIds(List<? extends SimEntity> entities) {
