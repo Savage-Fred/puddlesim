@@ -265,8 +265,9 @@ public class PuddleHead extends SimEntity {
 		
 		//TODO service relocation and placement algorithm
 		//SERVICE STUFF
-		
-		send(oldPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId);
+		if(oldPuddleHeadId > 0){
+			send(oldPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId);
+		}
 	}
 	
 	/**
@@ -622,7 +623,6 @@ public class PuddleHead extends SimEntity {
 			}
 		}
 		else if(type.contains("FogNode")){
-			System.out.println("PuddleHead is getting a node");
 			addNodetoPuddleHead(otherEnd);
 		}
 	}
