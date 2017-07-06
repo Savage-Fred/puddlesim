@@ -197,6 +197,20 @@ public class PuddleHead extends SimEntity {
 		removePuddleDevice(nodeId); 
 		removePuddleDeviceCharacteristics(nodeId);
 		
+		// Find the link that connects to the old puddlehead and delete it.
+		for (Map.Entry<Integer, Link> pair : linksMap.entrySet()) {
+			// If the north endpoint is this device, check to see if the other end is the node
+		    if ((pair.getValue().getEndpointNorth() == getId() && pair.getValue().getEndpointSouth() == node.getId()) ||
+	    		(pair.getValue().getEndpointSouth() == getId() && pair.getValue().getEndpointNorth() == node.getId())) {
+	    		linksMap.remove(pair.getKey());
+	    		node.linksMap.remove(pair.getKey());
+	    		// Remove the entity from the list
+	    		System.out.println("Deleted link: " + pair.getValue().getId() +
+	    				". Connects: " + pair.getValue().getEndpointSouth() + "<=" + pair.getValue().getId() + "=>" + pair.getValue().getEndpointNorth());
+	    		break; 
+		    }
+		}
+		
 		if(node.isGone()){
 			//TODO HANDLE THE SERVICE STUFF HERE since the node is completely gone not relocated.
 			node.setPuddleHeadId(-1);
@@ -233,6 +247,13 @@ public class PuddleHead extends SimEntity {
 		
 		int oldPuddleHeadId = node.getPuddleHeadId();
 		
+		// Create a new one to connect the fog device with this puddlehead.
+		Link newLink = new Link("link-"+node.getId()+"-"+this.getId(), node.getId(), this.getId());
+		node.addLinkToMap(newLink.getId(), newLink);
+		this.addLinkToMap(newLink.getId(), newLink);
+		System.out.println("Added link: " + newLink.getId() +
+				". Connects: " + this.getId() + "<=" + newLink.getId() + "=>" + node.getId());
+		
 		node.setPuddleHeadId(getId());
 		addPuddleDevice(nodeId);
 		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());
@@ -240,16 +261,12 @@ public class PuddleHead extends SimEntity {
 		if(parentId > 0){
 			PuddleHead parent = (PuddleHead) CloudSim.getEntity(parentId);
 			parent.addChildPuddle(getId(), puddleDevices);
-		}
-		
+		}	
 		
 		//TODO service relocation and placement algorithm
 		//SERVICE STUFF
 		
-		
-		send(oldPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId);
-		
-		
+		//send(oldPuddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, nodeId);
 	}
 	
 	/**

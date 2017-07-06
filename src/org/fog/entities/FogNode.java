@@ -322,7 +322,7 @@ public class FogNode extends FogDevice {
 				send(brokerId, CloudSim.getMinTimeBetweenEvents(), FogEvents.PROCESS_NODE_MOVE, getId());
 			}
 			else{
-				//Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
+				Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
 			}
 		}
 		//Logger.debug(LOG_TAG, getName(), "Completed execution of move");
@@ -368,7 +368,7 @@ public class FogNode extends FogDevice {
 			processUpdateLocation(ev);
 			break;
 		case FogEvents.NODE_LEAVE:
-			processNodeLeave();
+			processNodeLeave(ev);
 		default:
 			break;
 		}
@@ -381,7 +381,7 @@ public class FogNode extends FogDevice {
 	 * It removes itself from all of it's puddleBuddies lists of their buddies. It then sends an event to leave its current puddlehead.
 	 * The puddlehead cares for all other maintenance within the network due to the node leaving. 
 	 */
-	public void processNodeLeave(){
+	public void processNodeLeave(SimEvent ev){
 		gone = true; 
 		
 		for(int i = 0; i < puddleBuddies.size(); i++){

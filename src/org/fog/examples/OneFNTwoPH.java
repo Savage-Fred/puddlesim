@@ -87,7 +87,6 @@ public class OneFNTwoPH {
 
 			String appId = "simple_app"; // identifier of the application
 			
-			// FogBroker broker = new FogBroker("broker");
 			GlobalBroker broker = new GlobalBroker("globalbroker");
 			
 			Application application = createApplication(appId, broker.getId());
@@ -102,6 +101,7 @@ public class OneFNTwoPH {
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
 			broker.setActuatorIds(getIds(SimulationArchitecture.getInstance().getActuators()));
 			
+			// Important!! A cloud MUST EXIST with the cloudOnly module placement strategy
 			broker.submitApplication(application, 0, 
 					new ModulePlacementOnlyCloud(SimulationArchitecture.getInstance().getFogDevices(), 
 							SimulationArchitecture.getInstance().getSensors(),
@@ -134,26 +134,23 @@ public class OneFNTwoPH {
 	 * @param application
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
-		/*
-		FogDevice fd1 = SimulationArchitecture.createFogDevice("FD1", true, 102400, 
-																4000, 0.01, 103, 83.25, 10000000,
-																1000000, 3.0, 0.05, 0.001, 0.0);
-		FogDevice fd0 = SimulationArchitecture.createFogDevice("FD0", false, 102400, 
-																4000, 0.01, 103, 83.25, 10000000,
-																1000000, 3.0, 0.05, 0.001, 0.0);
-																*/
-		//Switch sw0 = new EdgeSwitch("SW0");
-		//Switch sw1 = new Switch("SW1");
-		//Switch sw2 = new Switch("SW2");
-		EndDevice dev = new EndDevice("DEV");
 		
+		EndDevice dev = new EndDevice("DEV");
+		int transmissionInterval = 5000;
+		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
+		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
+		dev.addSensor(sensor);
+		dev.addActuator(actuator);
+		
+		// Create fognodes
 		// Important!! A cloud MUST EXIST with the cloudOnly module placement strategy
+		// See main/broker.submitApplication(...).
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(10, 10), new Point(1,1), new Vector(1,1), 1);
+									new Rectangle(10, 10), new Point(1,1), new Vector(0.01), 1);
 		
-		// PuddleHead attempt
+		// Create Puddleheads
 		double[] xcor = {0.0, 6, 6, 0};
 		double[] ycor = {0.0, 0, 2, 2};
 		Polygon areaOfCoverage = null;
@@ -176,47 +173,20 @@ public class OneFNTwoPH {
 		Point location2 = new Point(7, 5);
 		PuddleHead ph1 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD1", areaOfCoverage2, location2, 1);
 		
-		
-		int transmissionInterval = 5000;
-		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
-		sensors.add(sensor);
-		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
-		actuators.add(actuator);
-		dev.addSensor(sensor);
-		dev.addActuator(actuator);
-		// TODO: Get rid of switches
-		//SimulationArchitecture.getInstance().addFogDevice(fd0);
-		//SimulationArchitecture.getInstance().addFogDevice(fd1);
+		// Add all devices to the simulation architecture
 		SimulationArchitecture.getInstance().addFogNode(fn0);
 		SimulationArchitecture.getInstance().addPuddleHead(ph0);
 		SimulationArchitecture.getInstance().addPuddleHead(ph1);
-		//SimulationArchitecture.getInstance().addSwitch(sw0);
-		//SimulationArchitecture.getInstance().addSwitch(sw1);
-		//SimulationArchitecture.getInstance().addSwitch(sw2);
 		SimulationArchitecture.getInstance().addEndDevice(dev);
-
-		//fogDevices.add(fd0);
-		//fogDevices.add(fd1);
-		fogDevices.add(fn0);
 		
-		// Now connecting entities with Links
+		// Now connect entities with links
 		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 10, 1000);
 		SimulationArchitecture.getInstance().addLink(fn0.getId(), ph0.getId(), 10, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), ph1.getId(), 10, 1000);
-		/*
-		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
-		SimulationArchitecture.getInstance().addLink(sw0.getId(), sw1.getId(), 15, 1000);
-		SimulationArchitecture.getInstance().addLink(sw0.getId(), fd0.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn0.getId(), 2, 1000);
-		*/
-		//SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
-		
 
 		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {
 			System.out.println("Topology validation successful");
-			SimulationArchitecture.getInstance().setUpEntities();
+			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
 			
 		} else {
 			System.out.println("Topology validation Unsuccessful");

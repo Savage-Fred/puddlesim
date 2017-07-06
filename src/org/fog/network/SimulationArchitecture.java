@@ -179,7 +179,10 @@ public class SimulationArchitecture extends PhysicalTopology{
 	/**
 	 * This function validates the physical topology on start of simulation. 
 	 * Note, it only checks that a fog node is connected by one parent puddlehead.
-	 * TODO: Functionality needs to be added to account for puddleheads.  
+	 * <p>
+	 * <b>IF THIS FUNCTION IS USED, DO NOT USE SWITCHES </b>
+	 * Switches require their routing tables be set up, and that functionality
+	 * exists as part of PhysicalTopology.validateTopology()  
 	 * <ul>
 	 * <li> No self-loop link should be present.
 	 * <li> Each fog device should be connected to network by a unique link.
@@ -194,9 +197,11 @@ public class SimulationArchitecture extends PhysicalTopology{
 	
 	/** 
 	 * Makes the physical topology ready.
+	 * <b>IF THIS FUNCTION IS USED, DO NOT USE SWITCHES </b>
+	 * Switches require their routing tables be set up, and that functionality
+	 * exists as part of PhysicalTopology.setUpEntities()
 	 */
-	@Override
-	public void setUpEntities() {
+	public void setUpPuddlesimEntities() {
 		// Harmless function, just informs a fog device what it's link is. This link will be the puddlehead.
 		assignLinksToFogDevices();
 		// Harmless function, just informs a fog device what it's link is. This link will be the fognode.

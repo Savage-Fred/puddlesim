@@ -71,6 +71,21 @@ public class Link extends SimEntity {
 		setSouthTupleQueue(new LinkedList<Tuple>());
 	}
 	
+	public Link(String name, int endpointNorth, int endpointSouth) {
+		super(name);
+		processUpdateLatency();
+		processUpdateBandwidth();
+		setEndpointNorth(endpointNorth);
+		setEndpointSouth(endpointSouth);
+		setNorthTupleQueue(new LinkedList<Tuple>());
+		setSouthTupleQueue(new LinkedList<Tuple>());
+	}
+	
+	private void processUpdateBandwidth() {
+		// TODO Auto-generated method stub
+		this.bandwidth = 1000;
+	}
+
 	public Link(String name) {
 		super(name);
 		setNorthTupleQueue(new LinkedList<Tuple>());
@@ -80,6 +95,7 @@ public class Link extends SimEntity {
 	private void processUpdateLatency(){
 		// TODO: Insert latency calculating function
 		// Logger.debug(LOG_TAG, getName(), "Completed execution of latency update");
+		this.latency = 10;
 	}
 	
 	@Override
