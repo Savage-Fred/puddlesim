@@ -12,6 +12,7 @@ import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.entities.Tuple;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
+import org.fog.utils.Config;
 
 /**
  * Point-to-point network link connecting two entities.
@@ -94,6 +95,16 @@ public class Link extends SimEntity {
 	
 	private void processUpdateLatency(){
 		// TODO: Insert latency calculating function
+		// Get location of the two entities 
+		// Point point1 
+		// Point point2
+		// double x1 = point1.getx();
+		// double x2 = point2.getx();
+		// double y1 = point1.gety();
+		// double y2 = point2.gety();
+		// distance = Math.sqrt((x1-x2)(x1-x2) + (y1-y2)(y1-y2));
+		// this.latency = distance / SPEED_OF_LIGHT;
+
 		// Logger.debug(LOG_TAG, getName(), "Completed execution of latency update");
 		this.latency = 10;
 	}
