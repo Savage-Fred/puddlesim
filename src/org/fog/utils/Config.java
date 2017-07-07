@@ -3,6 +3,7 @@ package org.fog.utils;
 public class Config {
 
 	public static final double RESOURCE_MGMT_INTERVAL = 100;
+	public static final int SPEED_OF_LIGHT = 299792458;		/* Speed of Light in m/s */
 	public static int MAX_SIMULATION_TIME = 1000000;
 	public static int RESOURCE_MANAGE_INTERVAL = 100;
 	public static String FOG_DEVICE_ARCH = "x86";
