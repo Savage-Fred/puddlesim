@@ -107,15 +107,6 @@ public class GlobalBroker extends FogBroker {
 		case FogEvents.PROCESS_NODE_MOVE:
 			processNodeMove(ev); 
 			break;
-		case FogEvents.APP_SUBMIT:
-			deployApplication(ev.getData().toString());
-			break;
-		case CloudSimTags.RESOURCE_CHARACTERISTICS_REQUEST:
-			processResourceCharacteristicsRequest(ev);
-			break;
-		case CloudSimTags.RESOURCE_CHARACTERISTICS:
-			processResourceCharacteristics(ev);
-			break;
 		}
 	}
 
