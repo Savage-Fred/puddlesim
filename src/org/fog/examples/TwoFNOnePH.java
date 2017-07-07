@@ -62,11 +62,6 @@ import org.fog.utils.distribution.DeterministicDistribution;
  *
  */
 public class TwoFNOnePH {
-	static List<FogDevice> fogDevices = new ArrayList<FogDevice>();
-	static List<FogNode> fogNodes = new ArrayList<FogNode>();
-	static List<PuddleHead> puddleHeads = new ArrayList<PuddleHead>();
-	static List<Sensor> sensors = new ArrayList<Sensor>();
-	static List<Actuator> actuators = new ArrayList<Actuator>();
 	
 	public static void main(String[] args) {
 
@@ -87,7 +82,6 @@ public class TwoFNOnePH {
 
 			String appId = "simple_app"; // identifier of the application
 			
-			//FogBroker broker = new FogBroker("broker");
 			GlobalBroker broker = new GlobalBroker("globalbroker");
 			
 			Application application = createApplication(appId, broker.getId());
@@ -134,20 +128,15 @@ public class TwoFNOnePH {
 	 * @param application
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
-		FogNode fd1 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
-									4000, 0.01, 103, 83.25, 10000000,
-									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(10, 10), new Point(1,1), new Vector(0.45), 1);
-		FogNode fd0 = SimulationArchitecture.createFogNode("FN1", false, 102400, 
-									4000, 0.01, 103, 83.25, 10000000,
-									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(10, 10), new Point(1,2), new Vector(0.23), 1);
-		Switch sw0 = new EdgeSwitch("SW0");
-		Switch sw1 = new Switch("SW1");
-		Switch sw2 = new Switch("SW2");
+
 		EndDevice dev = new EndDevice("DEV");
 		
-		FogNode fn0 = SimulationArchitecture.createFogNode("FN2", false, 102400, 
+		// Create fognodes
+		// Important!! A cloud MUST EXIST with the cloudOnly module placement strategy
+		// See main/broker.submitApplication(...).
+		// If a cloud does not exist, a you will see a nullPointerException
+		
+		FogNode fn0 = SimulationArchitecture.createFogNode("FN2", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
 									new Rectangle(10, 10), new Point(1,1), new Vector(0.45), 1);
@@ -172,31 +161,17 @@ public class TwoFNOnePH {
 		
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
-		sensors.add(sensor);
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
-		actuators.add(actuator);
 		dev.addSensor(sensor);
 		dev.addActuator(actuator);
-		// TODO: Get rid of switches
-		SimulationArchitecture.getInstance().addFogNode(fd0);
-		SimulationArchitecture.getInstance().addFogNode(fd1);
 		SimulationArchitecture.getInstance().addFogNode(fn0);
 		SimulationArchitecture.getInstance().addFogNode(fn1);
 		SimulationArchitecture.getInstance().addPuddleHead(ph0);
-		SimulationArchitecture.getInstance().addSwitch(sw0);
-		SimulationArchitecture.getInstance().addSwitch(sw1);
-		SimulationArchitecture.getInstance().addSwitch(sw2);
 		SimulationArchitecture.getInstance().addEndDevice(dev);
 		
 		// Now connecting entities with Links
-		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 10, 1000);
-		SimulationArchitecture.getInstance().addLink(sw0.getId(), sw1.getId(), 15, 1000);
-		SimulationArchitecture.getInstance().addLink(sw0.getId(), fd0.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 20, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn0.getId(), 2, 1000);
+		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 10, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn1.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn1.getId(), 2, 1000);
 		
 		/*
@@ -206,9 +181,9 @@ public class TwoFNOnePH {
 		 * This must be dealt with.
 		 */
 		
-		if (SimulationArchitecture.getInstance().validateTopology()) {
+		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {
 			System.out.println("Topology validation successful");
-			SimulationArchitecture.getInstance().setUpEntities();
+			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
 			
 		} else {
 			System.out.println("Topology validation Unsuccessful");

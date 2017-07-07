@@ -300,7 +300,7 @@ public class FogNode extends FogDevice {
 	 */
 	private void setMobilityDelay(){
 		// Minimum time is 0.1. 10 x gives 1 second per location update.
-		FogNode.delayBetweenLocationUpdates = 10*CloudSim.getMinTimeBetweenEvents();
+		FogNode.delayBetweenLocationUpdates = 50*CloudSim.getMinTimeBetweenEvents();
 	}
 	
 	/**
@@ -310,12 +310,10 @@ public class FogNode extends FogDevice {
 	 */
 	protected void processUpdateLocation(SimEvent ev){
 		// If the device is mobile, update the location and send an event to the queue to trigger it again
-		Logger.enableTag(LOG_TAG);
 		if(mobile.isMobile()){
 			mobile.updateLocation();
 			send(super.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LOCATION);
-			this.linksMap.forEach((k,v) -> {send(v.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LATENCY);
-				Logger.debug(LOG_TAG, getName(), "Loop");});
+			this.linksMap.forEach((k,v) -> {send(v.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LATENCY);});
 			
 			//Send to global broker for processing. 
 			int brokerId = CloudSim.getEntityId("globalbroker");
@@ -326,7 +324,7 @@ public class FogNode extends FogDevice {
 				Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
 			}
 		}
-		//Logger.debug(LOG_TAG, getName(), "Completed execution of move");
+		// Logger.debug(LOG_TAG, getName(), "Completed execution of move");
 	}
 
 	@Override

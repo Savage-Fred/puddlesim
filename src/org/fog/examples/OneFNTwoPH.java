@@ -62,11 +62,6 @@ import org.fog.utils.distribution.DeterministicDistribution;
  *
  */
 public class OneFNTwoPH {
-	static List<FogDevice> fogDevices = new ArrayList<FogDevice>();
-	static List<FogNode> fogNodes = new ArrayList<FogNode>();
-	static List<PuddleHead> puddleHeads = new ArrayList<PuddleHead>();
-	static List<Sensor> sensors = new ArrayList<Sensor>();
-	static List<Actuator> actuators = new ArrayList<Actuator>();
 	
 	public static void main(String[] args) {
 
@@ -145,10 +140,11 @@ public class OneFNTwoPH {
 		// Create fognodes
 		// Important!! A cloud MUST EXIST with the cloudOnly module placement strategy
 		// See main/broker.submitApplication(...).
+		// If a cloud does not exist, a you will see a nullPointerException
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(10, 10), new Point(1,1), new Vector(0.01, 0.01), 1);
+									new Rectangle(10, 10), new Point(1,1), new Vector(0.01), 1);
 		
 		// Create Puddleheads
 		double[] xcor = {0.0, 6, 6, 0};
@@ -183,8 +179,6 @@ public class OneFNTwoPH {
 		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 10, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 10, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), ph1.getId(), 10, 1000);
-		
-		System.out.println("FN0: " + fn0.getPuddleHeadId());
 
 		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {
 			System.out.println("Topology validation successful");

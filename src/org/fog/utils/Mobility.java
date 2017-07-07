@@ -105,8 +105,6 @@ public class Mobility {
 				movementVector.setyComponent(-1*movementVector.getyComponent());
 				this.coordinates.sety(this.coordinates.gety() + scalar*this.movementVector.getyComponent());
 			}
-			
-			
 		}
 		
 		/*
