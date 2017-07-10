@@ -7,11 +7,16 @@ package org.fog.network;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.cloudbus.cloudsim.Log;
+import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
+import org.fog.entities.FogNode;
+import org.fog.entities.PuddleHead;
 import org.fog.entities.Tuple;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
+import org.fog.utils.Point;
 import org.fog.utils.Config;
 
 /**
@@ -97,17 +102,20 @@ public class Link extends SimEntity {
 		// TODO: Insert latency calculating function
 		// Get location of the two entities 
 		
-		/*
+		//declare Points
+		Point point1 = null; 
+		Point point2 = null;
+		
 		// North Node 
 		SimEntity 	entNorth = CloudSim.getEntity(endpointNorth);
 		String 		typeNorth = entNorth.getClass().getName(); 
 		if(typeNorth.contains("PuddleHead")){
 			PuddleHead puddleHeadNorth = (PuddleHead) CloudSim.getEntity(endpointNorth); 
-			Point point1 = puddleHeadNorth.getLocation();
+			point1 = puddleHeadNorth.getLocation();
 		}
 		else if(typeNorth.contains("FogNode")){
 			FogNode fogNodeNorth = (FogNode) CloudSim.getEntity(endpointNorth);
-			Point point1 = fogNodeNorth.getLocation();
+			point1 = fogNodeNorth.getLocation();
 		}
 		
 		// South Node
@@ -115,24 +123,30 @@ public class Link extends SimEntity {
 		String 		typeSouth = entSouth.getClass().getName();
 		if(typeSouth.contains("PuddleHead")){
 			PuddleHead puddleHeadSouth = (PuddleHead) CloudSim.getEntity(endpointSouth); 
-			Point point2 = puddleHeadSouth.getLocation();
+			point2 = puddleHeadSouth.getLocation();
 		}
 		else if(typeSouth.contains("FogNode")){
 			FogNode fogNodeSouth = (FogNode) CloudSim.getEntity(endpointSouth);
-			Point point2 = fogNodeNorth.getLocation();
+			point2 = fogNodeSouth.getLocation();
 		}
 
 		// Distance Calculations
-		double x1 = point1.getx();
-		double x2 = point2.getx();
-		double y1 = point1.gety();
-		double y2 = point2.gety();
-		distance = Math.sqrt((x1-x2)(x1-x2) + (y1-y2)(y1-y2));
-		this.latency = (distance / SPEED_OF_LIGHT)
+		if(point1 != null && point2 != null){
+			double x1 = point1.getx();
+			double x2 = point2.getx();
+			double y1 = point1.gety();
+			double y2 = point2.gety();
+			double distance = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+			this.latency = (distance / Config.SPEED_OF_LIGHT);
+			//Logger.debug(LOG_TAG, getName(), "New Latency: " + this.latency);
+		}
+		else{
+			this.latency = 10;
+		}
 
-		// Logger.debug(LOG_TAG, getName(), "Completed execution of latency update");
-		*/
-		this.latency = 10;
+		//Logger.debug(LOG_TAG, getName(), "Completed execution of latency update");
+		
+		//this.latency = 10;
 	}
 	
 	@Override
