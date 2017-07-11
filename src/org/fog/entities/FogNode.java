@@ -334,6 +334,13 @@ public class FogNode extends FogDevice {
 			this.moving = true;
 			processUpdateLocation(ev);
 		}			
+		// If it bounced back
+		if(ev.isReturnToSender()){
+			Logger.debug(LOG_TAG, getName(), "Bounceback.");
+			ev.setReturnToSender(false);
+			processTupleFinished(ev);
+			return;
+		}
 		
 		switch(ev.getTag()){
 		case FogEvents.TUPLE_ARRIVAL:

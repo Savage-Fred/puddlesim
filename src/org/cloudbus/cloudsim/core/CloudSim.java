@@ -310,6 +310,11 @@ public class CloudSim {
 	/** The entities. */
 	private static List<SimEntity> entities;
 
+	/** 
+	 * Puddlesim Addition: The entities to be deleted. 
+	 * */
+	private static List<SimEntity> entitiesToBeDeleted;
+	
 	/** The future event queue. */
 	protected static FutureQueue future;
 
@@ -345,6 +350,8 @@ public class CloudSim {
 	protected static void initialize() {
 		Log.printLine("Initialising...");
 		entities = new ArrayList<SimEntity>();
+		// Puddlesim Addition:
+		entitiesToBeDeleted = new ArrayList<SimEntity>();
 		entitiesByName = new LinkedHashMap<String, SimEntity>();
 		future = new FutureQueue();
 		deferred = new DeferredQueue();
@@ -510,6 +517,11 @@ public class CloudSim {
 		SimEntity ent;
 		boolean queue_empty;
 		
+		// Puddlesim Addition:
+		// This function calls another addition.
+		// Note it's placement: This is done before entities_size or entities is used.
+		deleteEntities();
+		
 		int entities_size = entities.size();
 
 		for (int i = 0; i < entities_size; i++) {
@@ -518,13 +530,22 @@ public class CloudSim {
 				ent.run();
 			}
 		}
-				
+		
 		// If there are more future events then deal with them
 		if (future.size() > 0) {
 			List<SimEvent> toRemove = new ArrayList<SimEvent>();
 			Iterator<SimEvent> fit = future.iterator();
 			queue_empty = false;
 			SimEvent first = fit.next();
+			// Puddlesim Addition:
+			// Check if the destination exists and that it matches the destination ID. If it doesn't, return to sender.
+			if(entities.size() > first.getDestination()){
+				if(!first.equals(entities.get(first.getDestination()))){
+					// Looks like it doesn't match. Return to sender.
+					first.setReturnToSender(true);
+					first.setDestination(first.scheduledBy());
+				}
+			}
 			processEvent(first);
 			future.remove(first);
 
@@ -534,6 +555,16 @@ public class CloudSim {
 			boolean trymore = fit.hasNext();
 			while (trymore) {
 				SimEvent next = fit.next();
+				// Puddlesim Addition:
+				// Check if the destination exists and that it matches the destination ID. If it doesn't, return to sender.
+				if(entities.size() > next.getDestination()){
+					
+					if(!next.equals(entities.get(next.getDestination()))){
+						// Looks like it doesn't match. Return to sender.
+						next.setReturnToSender(true);
+						next.setDestination(next.scheduledBy());
+					}
+				}
 				if (next.eventTime() == first.eventTime()) {
 					processEvent(next);
 					toRemove.add(next);
@@ -972,4 +1003,25 @@ public class CloudSim {
 		return paused;
 	}
 
+	/**
+	 * Puddlesim Addition: Removes an entity from the entity list and removes any items it scheduled.
+	 * Note: Entities are deleted when the new clock tick starts. If they're deleted mid-clock, the entities
+	 * list shortens which causes an error for changing data being iterated over. 
+	 * @param entity to be deleted.
+	 */
+	public static void shutdownEntity(SimEntity entity){
+		entitiesToBeDeleted.add(entity);
+	}
+	/**
+	 * Puddlesim Addition: Iterates over items in entitiesToBeDeleted and deletes them from entities. 
+	 */
+	private static void deleteEntities(){
+		if(entitiesToBeDeleted != null){
+			for(SimEntity e : entitiesToBeDeleted){
+				entities.remove(e);
+			}
+		}
+		entitiesToBeDeleted.clear();
+	}
+	
 }

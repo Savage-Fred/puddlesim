@@ -49,6 +49,25 @@ public class SimEvent implements Cloneable, Comparable<SimEvent> {
 	public static final int HOLD_DONE = 2;
 
 	public static final int CREATE = 3;
+	
+	// Puddlesim Addition:
+	private boolean returnToSender = false;
+
+	/**
+	 * Puddlesim Addition:
+	 * @return the returnToSender
+	 */
+	public boolean isReturnToSender() {
+		return returnToSender;
+	}
+
+	/**
+	 * Puddlesim Addition:
+	 * @param returnToSender the returnToSender to set
+	 */
+	public void setReturnToSender(boolean returnToSender) {
+		this.returnToSender = returnToSender;
+	}
 
 	/**
 	 * Create a blank event.

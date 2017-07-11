@@ -7,6 +7,7 @@ package org.fog.network;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.entities.Tuple;
@@ -135,7 +136,7 @@ public class Link extends SimEntity {
 
 	@Override
 	public void shutdownEntity() {
-		
+		CloudSim.shutdownEntity(this);
 	}
 
 	/**

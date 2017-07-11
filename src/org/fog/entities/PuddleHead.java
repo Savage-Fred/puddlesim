@@ -196,7 +196,7 @@ public class PuddleHead extends SimEntity {
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
 		removePuddleDevice(nodeId); 
 		removePuddleDeviceCharacteristics(nodeId);
-		/*
+
 		// Find the link that connects to the old puddlehead and delete it.
 		for (Map.Entry<Integer, Link> pair : linksMap.entrySet()) {
 			// If the north endpoint is this device, check to see if the other end is the node
@@ -205,12 +205,15 @@ public class PuddleHead extends SimEntity {
 	    		linksMap.remove(pair.getKey());
 	    		node.linksMap.remove(pair.getKey());
 	    		// Remove the entity from the list
+	    		pair.getValue().shutdownEntity();
+	    		
 	    		System.out.println("Deleted link: " + pair.getValue().getId() +
 	    				". Connects: " + pair.getValue().getEndpointSouth() + "<=" + pair.getValue().getId() + "=>" + pair.getValue().getEndpointNorth());
+	    		
 	    		break; 
 		    }
 		}
-		*/
+	
 		if(node.isGone()){
 			//TODO HANDLE THE SERVICE STUFF HERE since the node is completely gone not relocated.
 			node.setPuddleHeadId(-1);
@@ -246,14 +249,14 @@ public class PuddleHead extends SimEntity {
 		FogNode node = (FogNode) CloudSim.getEntity(nodeId); 
 		
 		int oldPuddleHeadId = node.getPuddleHeadId();
-	/*	
+		
 		// Create a new one to connect the fog device with this puddlehead.
 		Link newLink = new Link("link-"+node.getId()+"-"+this.getId(), node.getId(), this.getId());
 		node.addLinkToMap(newLink.getId(), newLink);
 		this.addLinkToMap(newLink.getId(), newLink);
 		System.out.println("Added link: " + newLink.getId() +
 				". Connects: " + this.getId() + "<=" + newLink.getId() + "=>" + node.getId());
-	*/	
+		
 		node.setPuddleHeadId(getId());
 		addPuddleDevice(nodeId);
 		addPuddleDeviceCharacteristics(nodeId, node.getDeviceCharactersitics());

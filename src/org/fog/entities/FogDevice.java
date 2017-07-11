@@ -250,7 +250,6 @@ public class FogDevice extends PowerDatacenter {
 		for(Tuple resTuple : resultantTuples){
 			Logger.debug(LOG_TAG, getName(), "Finished executing "+tuple.getTupleType()+" , generating " + resTuple.getTupleType());
 			routeTuple(resTuple, module);
-
 		}
 		sendNow(tuple.getUserId(), CloudSimTags.CLOUDLET_RETURN, tuple);	
 	}
