@@ -1,4 +1,5 @@
 /**
+
  * Title: PuddleSim
  * Description: PuddleSim is an extension to the iFogSim simulator
  */
@@ -300,7 +301,7 @@ public class FogNode extends FogDevice {
 	 */
 	private void setMobilityDelay(){
 		// Minimum time is 0.1. 10 x gives 1 second per location update.
-		FogNode.delayBetweenLocationUpdates = 50*CloudSim.getMinTimeBetweenEvents();
+		FogNode.delayBetweenLocationUpdates = 10*CloudSim.getMinTimeBetweenEvents();
 	}
 	
 	/**
@@ -313,7 +314,8 @@ public class FogNode extends FogDevice {
 		if(mobile.isMobile()){
 			mobile.updateLocation();
 			send(super.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LOCATION);
-			this.linksMap.forEach((k,v) -> {send(v.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LATENCY);});
+			this.linksMap.forEach((k,v) -> {send(v.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LATENCY);
+				Logger.debug("LINKMAP", getName(), "Loop");});
 			
 			//Send to global broker for processing. 
 			int brokerId = CloudSim.getEntityId("globalbroker");
@@ -321,10 +323,10 @@ public class FogNode extends FogDevice {
 				send(brokerId, CloudSim.getMinTimeBetweenEvents(), FogEvents.PROCESS_NODE_MOVE, getId());
 			}
 			else{
-				Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
+				//Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
 			}
 		}
-		// Logger.debug(LOG_TAG, getName(), "Completed execution of move");
+		//Logger.debug(LOG_TAG, getName(), "Completed execution of move");
 	}
 
 	@Override
@@ -374,7 +376,7 @@ public class FogNode extends FogDevice {
 			processUpdateLocation(ev);
 			break;
 		case FogEvents.NODE_LEAVE:
-			processNodeLeave(ev);
+			processNodeLeave();
 		default:
 			break;
 		}
@@ -387,7 +389,7 @@ public class FogNode extends FogDevice {
 	 * It removes itself from all of it's puddleBuddies lists of their buddies. It then sends an event to leave its current puddlehead.
 	 * The puddlehead cares for all other maintenance within the network due to the node leaving. 
 	 */
-	public void processNodeLeave(SimEvent ev){
+	public void processNodeLeave(){
 		gone = true; 
 		
 		for(int i = 0; i < puddleBuddies.size(); i++){
