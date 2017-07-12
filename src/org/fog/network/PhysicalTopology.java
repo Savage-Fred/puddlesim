@@ -38,27 +38,27 @@ public class PhysicalTopology {
 	/**
 	 * List of fog devices in the physical topology
 	 */
-	private List<FogDevice> fogDevices;
+	protected List<FogDevice> fogDevices;
 	/**
 	 * List of fog nodes in the physical topology
 	 */
-	private List<FogNode> fogNodes;
+	protected List<FogNode> fogNodes;
 	/**
 	 * List of puddleheads in the physical topology
 	 */
-	private List<PuddleHead> puddleheads;
+	protected List<PuddleHead> puddleheads;
 	/**
 	 * List of end-devices in the physical topology
 	 */
-	private List<EndDevice> endDevices;
+	protected List<EndDevice> endDevices;
 	/**
 	 * List of switches in the physical topology
 	 */
-	private List<Switch> switches;
+	protected List<Switch> switches;
 	/**
 	 * List of links in the physical topology
 	 */
-	private List<Link> links;
+	protected List<Link> links;
 
 	/**
 	 * Add link in physical topology

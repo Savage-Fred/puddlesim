@@ -1,5 +1,9 @@
 package org.fog.network;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +27,7 @@ import org.fog.entities.PuddleHead;
 import org.fog.entities.Sensor;
 import org.fog.policy.AppModuleAllocationPolicy;
 import org.fog.scheduler.AppModuleScheduler;
+import org.fog.utils.CSVReader;
 import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
@@ -104,19 +109,166 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * @param appId
 	 * @param application
 	 */
-	public void CreateNewTopology(String fileName, int userId, String appId, Application application) {
-		
+	public static void createNewTopology(String fileName, int userId, String appId, Application application) {
+		readPuddleHeadCSV(fileName);
 	}
 	
 	/**
-	 * This function sets up the file for read in the architecture.
-	 * @param userId
-	 * @param appId
-	 * @param application
+	 * This function adds all PuddleHeads based on the information
+	 * passed in from a CSV file. 
+	 * 
+	 * File is assumed to be a list where each line is type, dx, dy, level, xcoordinate, ycoordinate. 
+	 * Any subsequent line with the same information for the first four values adds the new xcoordinate
+	 * and ycoordinate to the polygon which is the area of coverage for the PuddleHead. 
+	 * 
+	 * @param fileName of the CSV file with the Voronoi information
 	 */
-	private void ReadVoronoi(String fileName) {
-		
+	private static void readPuddleHeadCSV(String fileName) {
+	   BufferedReader br = null;
+        String line = "";
+        String csvSplitBy = ",";
+
+        try {
+            br = new BufferedReader(new FileReader(fileName));
+            ArrayList<Double> areaPointsX = new ArrayList<Double>();
+            ArrayList<Double> areaPointsY = new ArrayList<Double>();
+            double lastX = 0.0;
+            double lastY = 0.0;
+            boolean first = true;
+            while((line = br.readLine()) !=null) {
+                String[] row = line.split(csvSplitBy);
+                Integer type = Integer.parseInt(row[0]);
+                Double xcoord = Double.parseDouble(row[1]);
+                Double ycoord = Double.parseDouble(row[2]);
+                Integer level = Integer.parseInt(row[3]);
+                Double areaX = Double.parseDouble(row[4]);
+                Double areaY = Double.parseDouble(row[5]);
+                
+                //TODO: remove this, it isn't needed, just here for running tests
+                if(type != 80){
+                	
+                }
+                else if(first){
+                	areaPointsX.add(areaX);
+                	areaPointsY.add(areaY);
+                	lastX = xcoord;
+                	lastY = ycoord;
+                	first = false;
+                }
+                else if(lastX == xcoord && lastY == ycoord){
+                	areaPointsX.add(areaX);
+                	areaPointsY.add(areaY);
+                }
+                else if(!br.ready() || (lastX != xcoord && lastY != ycoord)){
+                	int numPoints = areaPointsX.size();
+                	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
+                	double[] xIn = new double[numPoints];
+                	for(int i = 0; i < numPoints; i++){
+                		xIn[i] = xDouble[i];
+                	}
+                	Double[] yDouble = areaPointsY.toArray(new Double[numPoints]);
+                	double[] yIn = new double[numPoints];
+                	for(int i = 0; i < numPoints; i++){
+                		yIn[i] = yDouble[i];
+                	}
+                	Polygon areaOfCoverage = new Polygon(xIn, yIn);
+                	int numOfPuddleHead = getInstance().getPuddleHeadIDs().size() + 1;
+                	String name = "PH" + numOfPuddleHead; 
+                	Point point = new Point(lastX, lastY);
+                	PuddleHead newPH = createPuddleHead(name, areaOfCoverage, point, level);
+                	getInstance().addPuddleHead(newPH);
+                	areaPointsX = new ArrayList<Double>();
+                	areaPointsY = new ArrayList<Double>();
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 	}
+	
+	//TODO: make this not a hardcoded function
+	/**
+	 * This function adds all FogNodes based on the information passed in from a CSV file.
+	 * 
+	 * File is assumed to be a list where each line is dx, dy, level. 
+	 * Nodes are given different values for their other characteristics based on their level.
+	 * 
+	 * NOTE: THIS FUNCTION IS HARDCODED FOR THE NUMBERS DESIGNATED PER LEVEL OF FOG NODE
+	 * 
+	 * @param fileName CSV file containing FogNode information
+	 */
+	private void readFogNodeCSV(String fileName) {
+		   BufferedReader br = null;
+	        String line = "";
+	        String csvSplitBy = ",";
+
+	        try {
+	            br = new BufferedReader(new FileReader(fileName));
+	            while((line = br.readLine()) !=null) {
+	                String[] row = line.split(csvSplitBy);
+	                Double xcoord = Double.parseDouble(row[0]);
+	                Double ycoord = Double.parseDouble(row[1]);
+	                Integer level = Integer.parseInt(row[2]);
+	                Point location = new Point(xcoord, ycoord);
+	                int numNodes = fogNodes.size();
+	                String name = "FN" + numNodes;
+	                
+	                //TODO: NEED INFO FOR EACH LEVEL. 
+	                //mips, ram, ratePerMips, busyPower, idlePower, storage, bw, costProcessing, costPerMem, costPerStorage, costPerBw, bounds, (coordinates-Point), (level)
+	                switch(level){
+	                case 1: 
+	                	
+//	                	FogNode newNode1 = createFogNode(name, false,  );
+//	                	addFogNode(newNode1);
+	                	break;
+	                case 2:
+	                	
+//	                	FogNode newNode2 = createFogNode(name, false, );
+//	                	addFogNode(newNode2);
+	                	break;
+	                case 3:
+	                	
+//	                	FogNode newNode3 = createFogNode(name, false, );
+//	                	addFogNode(newNode3);
+	                	break;
+	                case 4:
+	                	
+//	                	FogNode newNode4 = createFogNode(name, false, );
+//	                	addFogNode(newNode4);
+	                	break;
+	                default:
+	                	break;
+	                }
+	             
+	            }
+	        } catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        } catch (NumberFormatException e) {
+	            e.printStackTrace();
+	        } finally {
+	            if (br != null) {
+	                try {
+	                    br.close();
+	                } catch (IOException e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+		}
 	
 	/**
 	 * This function adds links and link IDs to the link maps in each device. Links
