@@ -62,12 +62,7 @@ import org.fog.utils.distribution.DeterministicDistribution;
  *
  */
 public class RedFNBluePH {
-	static List<FogDevice> fogDevices = new ArrayList<FogDevice>();
-	static List<FogNode> fogNodes = new ArrayList<FogNode>();
-	static List<PuddleHead> puddleHeads = new ArrayList<PuddleHead>();
-	static List<Sensor> sensors = new ArrayList<Sensor>();
-	static List<Actuator> actuators = new ArrayList<Actuator>();
-	
+
 	public static void main(String[] args) {
 
 		Log.printLine("Starting SimArch...");
@@ -86,8 +81,7 @@ public class RedFNBluePH {
 			CloudSim.init(num_user, calendar, trace_flag);
 
 			String appId = "simple_app"; // identifier of the application
-			
-//			FogBroker broker = new FogBroker("broker");
+
 			GlobalBroker broker = new GlobalBroker("globalbroker");
 			
 			Application application = createApplication(appId, broker.getId());
@@ -134,100 +128,90 @@ public class RedFNBluePH {
 	 * @param application
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
-		FogDevice fd1 = SimulationArchitecture.createFogDevice("FD1", true, 102400, 
-																4000, 0.01, 103, 83.25, 10000000,
-																1000000, 3.0, 0.05, 0.001, 0.0);
-		FogDevice fd0 = SimulationArchitecture.createFogDevice("FD0", false, 102400, 
-																4000, 0.01, 103, 83.25, 10000000,
-																1000000, 3.0, 0.05, 0.001, 0.0);
-		Switch sw0 = new EdgeSwitch("SW0");
-		Switch sw1 = new Switch("SW1");
-		Switch sw2 = new Switch("SW2");
-		Switch sw3 = new Switch("SW3");
-		Switch sw4 = new Switch("SW4");
+
 		EndDevice dev = new EndDevice("DEV");
 		///////////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////     FOG NODES    /////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////
-		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", false, 102400, 
+		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(15, 15), new Point(1,1), new Vector(1,0), 1);
+									new Rectangle(15, 15), new Point(1,1), new Vector(0.1), 1);
 		
 		FogNode fn1 = SimulationArchitecture.createFogNode("FN1", false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(15, 15), new Point(1,2), new Vector(1,1), 1);
+									new Rectangle(15, 15), new Point(1,2), new Vector(0.1), 1);
 		
 		FogNode fn2 = SimulationArchitecture.createFogNode("FN2", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(5,1), new Vector(1,0), 1);
+				new Rectangle(15, 15), new Point(5,1), new Vector(0.1), 1);
 
 		FogNode fn3 = SimulationArchitecture.createFogNode("FN3", false, 102400, 
 						4000, 0.01, 103, 83.25, 10000000,
 						1000000, 3.0, 0.05, 0.001, 0.0,
-						new Rectangle(15, 15), new Point(8,6), new Vector(0,1), 1);
+						new Rectangle(15, 15), new Point(8,6), new Vector(0.1), 1);
 		
 		FogNode fn4 = SimulationArchitecture.createFogNode("FN4", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(10,10), new Vector(1,2), 1);
+				new Rectangle(15, 15), new Point(10,10), new Vector(0.1), 1);
 		
 		FogNode fn5 = SimulationArchitecture.createFogNode("FN5", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(2,11), new Vector(2,1), 1);
+				new Rectangle(15, 15), new Point(2,11), new Vector(0.1), 1);
 			
 		FogNode fn6 = SimulationArchitecture.createFogNode("FN6", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(3,10), new Vector(3,0), 1);
+				new Rectangle(15, 15), new Point(3,10), new Vector(0.1), 1);
 
 		FogNode fn7 = SimulationArchitecture.createFogNode("FN7", false, 102400, 
 						4000, 0.01, 103, 83.25, 10000000,
 						1000000, 3.0, 0.05, 0.001, 0.0,
-						new Rectangle(15, 15), new Point(1,7), new Vector(1,1), 1);
+						new Rectangle(15, 15), new Point(1,7), new Vector(0.1), 1);
 		
 		 FogNode fn8 = SimulationArchitecture.createFogNode("FN8", false, 102400, 
 						4000, 0.01, 103, 83.25, 10000000,
 						1000000, 3.0, 0.05, 0.001, 0.0,
-						new Rectangle(15, 15), new Point(6,11), new Vector(3,3), 1);
+						new Rectangle(15, 15), new Point(6,11), new Vector(0.1), 1);
 		
 		FogNode fn9 = SimulationArchitecture.createFogNode("FN9", false, 102400, 
 						4000, 0.01, 103, 83.25, 10000000,
 						1000000, 3.0, 0.05, 0.001, 0.0,
-						new Rectangle(15, 15), new Point(6,10), new Vector(1,1), 1);
+						new Rectangle(15, 15), new Point(6,10), new Vector(0.1), 1);
 		
 		FogNode fn10 = SimulationArchitecture.createFogNode("FN10", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(7,7), new Vector(2,0), 1);
+				new Rectangle(15, 15), new Point(7,7), new Vector(0.1), 1);
 
 		FogNode fn11 = SimulationArchitecture.createFogNode("FN11", false, 102400, 
 						4000, 0.01, 103, 83.25, 10000000,
 						1000000, 3.0, 0.05, 0.001, 0.0,
-						new Rectangle(15, 15), new Point(4,5), new Vector(1,3), 2);
+						new Rectangle(15, 15), new Point(4,5), new Vector(0.1), 2);
 		
 		FogNode fn12 = SimulationArchitecture.createFogNode("FN12", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(13,11), new Vector(3,3), 2);
+				new Rectangle(15, 15), new Point(13,11), new Vector(0.1), 2);
 		
 		FogNode fn13 = SimulationArchitecture.createFogNode("FN13", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(1,13), new Vector(1,1), 2);
+				new Rectangle(15, 15), new Point(1,13), new Vector(0.1), 2);
 			
 		FogNode fn14 = SimulationArchitecture.createFogNode("FN14", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(4,1), new Vector(1,0), 2);
+				new Rectangle(15, 15), new Point(4,1), new Vector(0.1), 2);
 		
 		FogNode fn15 = SimulationArchitecture.createFogNode("FN15", false, 102400, 
 				4000, 0.01, 103, 83.25, 10000000,
 				1000000, 3.0, 0.05, 0.001, 0.0,
-				new Rectangle(15, 15), new Point(11,8), new Vector(1,1), 1); 
+				new Rectangle(15, 15), new Point(11,8), new Vector(0.1), 1); 
 		
 		///////////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////    PUDDLEHEADS   /////////////////////////////////////////////
@@ -323,15 +307,9 @@ public class RedFNBluePH {
 		
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
-		sensors.add(sensor);
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
-		actuators.add(actuator);
 		dev.addSensor(sensor);
 		dev.addActuator(actuator);
-		
-		// TODO: Get rid of switches
-		SimulationArchitecture.getInstance().addFogDevice(fd0);
-		SimulationArchitecture.getInstance().addFogDevice(fd1);
 		
 		SimulationArchitecture.getInstance().addFogNode(fn0);
 		SimulationArchitecture.getInstance().addFogNode(fn1);
@@ -359,11 +337,6 @@ public class RedFNBluePH {
 		SimulationArchitecture.getInstance().addPuddleHead(ph6);
 		SimulationArchitecture.getInstance().addPuddleHead(ph7);
 		
-		SimulationArchitecture.getInstance().addSwitch(sw0);
-		SimulationArchitecture.getInstance().addSwitch(sw1);
-		SimulationArchitecture.getInstance().addSwitch(sw2);
-		SimulationArchitecture.getInstance().addSwitch(sw3);
-		SimulationArchitecture.getInstance().addSwitch(sw4);
 		SimulationArchitecture.getInstance().addEndDevice(dev);
 
 //		fogDevices.add(fd0);
@@ -386,30 +359,7 @@ public class RedFNBluePH {
 //		fogDevices.add(fn15);
 		
 		// Now connecting entities with Links
-		SimulationArchitecture.getInstance().addLink(dev.getId(), sw0.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw0.getId(), sw1.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw0.getId(), fd0.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fd1.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw1.getId(), sw2.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), sw3.getId(), 2, 1000);
-		
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn0.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn1.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw3.getId(), fn2.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw3.getId(), fn3.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn4.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn5.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw3.getId(), fn6.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw3.getId(), fn7.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn8.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn9.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw3.getId(), fn10.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw3.getId(), fn11.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn12.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw3.getId(), fn13.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw3.getId(), fn14.getId(), 2, 1000);
-		SimulationArchitecture.getInstance().addLink(sw2.getId(), fn15.getId(), 2, 1000);
+		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);
 		
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn0.getId(), 2, 1000);
 		SimulationArchitecture.getInstance().addLink(ph0.getId(), fn1.getId(), 2, 1000);
@@ -439,16 +389,14 @@ public class RedFNBluePH {
 
 		
 		// TODO: Create stuff so that these functions work
-		/*
-		if (SimulationArchitecture.getInstance().validateTopology()) {
+		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {
 			System.out.println("Topology validation successful");
-			SimulationArchitecture.getInstance().setUpEntities();
+			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
-		*/
 	}
 
 	public static List<Integer> getIds(List<? extends SimEntity> entities) {

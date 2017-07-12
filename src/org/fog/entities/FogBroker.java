@@ -93,15 +93,15 @@ public class FogBroker extends PowerDatacenterBroker{
 	protected void processResourceCharacteristicsRequest(SimEvent ev) {
 		// Send Resource Characteristics message to all Fog Devices
 		for (Integer fogDeviceId : getFogDeviceIds()) {
-			System.out.println("Sending charac req to "+fogDeviceId);
+			System.out.println("FD: Sending charac req to "+fogDeviceId);
 			send(fogDeviceId, CloudSim.getMinTimeBetweenEvents(), CloudSimTags.RESOURCE_CHARACTERISTICS, getId());
 		}
 		for (Integer sensorId : getSensorIds()) {
-			System.out.println("Sending charac req to "+sensorId);
+			System.out.println("S: Sending charac req to "+sensorId);
 			send(sensorId, CloudSim.getMinTimeBetweenEvents(), CloudSimTags.RESOURCE_CHARACTERISTICS, getId());
 		}
 		for (Integer actuatorId : getActuatorIds()) {
-			System.out.println("Sending charac req to "+actuatorId);
+			System.out.println("A: Sending charac req to "+actuatorId);
 			send(actuatorId, CloudSim.getMinTimeBetweenEvents(), CloudSimTags.RESOURCE_CHARACTERISTICS, getId());
 		}
 	}

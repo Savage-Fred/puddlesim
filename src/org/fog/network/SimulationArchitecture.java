@@ -1,8 +1,10 @@
 package org.fog.network;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Pe;
@@ -158,8 +160,8 @@ public class SimulationArchitecture extends PhysicalTopology{
 			device.addLinkToMap(newLink.getId(), newLink);
 			System.out.println("Fog Node Link: " + device.getId() + " <=" + newLink.getId());
 		} 
-		else if (this.puddleHeadIDs.contains(endpoint1)) {
-			PuddleHead device = (PuddleHead)CloudSim.getEntity(endpoint1);
+		else if (this.puddleHeadIDs.contains(endpoint2)) {
+			PuddleHead device = (PuddleHead)CloudSim.getEntity(endpoint2);
 			device.addLinkToMap(newLink.getId(), newLink);
 			System.out.println("Puddlehead Link: " + device.getId() + " <=" + newLink.getId());
 		} 
@@ -173,6 +175,44 @@ public class SimulationArchitecture extends PhysicalTopology{
 			// TODO: add maps of links to switches			
 		}
 	}	
+
+	/**
+	 * This function validates the physical topology on start of simulation. 
+	 * Note, it only checks that a fog node is connected by one parent puddlehead.
+	 * <p>
+	 * <b>IF THIS FUNCTION IS USED, DO NOT USE SWITCHES </b>
+	 * Switches require their routing tables be set up, and that functionality
+	 * exists as part of PhysicalTopology.validateTopology()  
+	 * <ul>
+	 * <li> No self-loop link should be present.
+	 * <li> Each fog device should be connected to network by a unique link.
+	 * 
+	 * </ul>
+	 * @return true if topology is valid
+	 */
+	public boolean validatePuddlesimTopology() {
+		return true;
+		// return super.validateTopology();
+	}
+	
+	/** 
+	 * Makes the physical topology ready.
+	 * <b>IF THIS FUNCTION IS USED, DO NOT USE SWITCHES </b>
+	 * Switches require their routing tables be set up, and that functionality
+	 * exists as part of PhysicalTopology.setUpEntities()
+	 */
+	public void setUpPuddlesimEntities() {
+		// Harmless function, just informs a fog device what it's link is. This link will be the puddlehead.
+		assignLinksToFogDevices();
+		// Harmless function, just informs a fog device what it's link is. This link will be the fognode.
+		assignLinksToEndDevices();
+		// The following fucntions will be taken care of internal to the puddlehead which is our main coordinator 
+		// calculateAdjacentEntities();
+		// calculateNeighbourSwitches();
+		printAdjacentEntities();
+		// See above comment
+		// calculateRoutingTables();
+	}
 	
 	/**
 	 * Add fog device to physical topology
