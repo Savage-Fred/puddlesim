@@ -1,7 +1,9 @@
 package org.fog.placement.flow;
 
-import org.fog.placement.FlowEdge;
-import org.fog.placement.FlowNetwork;
+import org.fog.placement.flow.FlowEdge;
+import org.fog.placement.flow.FlowNetwork;
+import org.fog.utils.Bag;
+import org.fog.utils.Queue;
 import java.lang.Math;
 import java.util.*;
 

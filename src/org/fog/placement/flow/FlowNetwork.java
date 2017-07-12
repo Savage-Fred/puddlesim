@@ -1,5 +1,9 @@
 package org.fog.placement.flow;
 
+import org.fog.placement.flow.FlowEdge;
+import org.fog.utils.Bag;
+import org.fog.utils.Queue;
+import java.lang.*;
 /******************************************************************************
  *  Compilation:  javac FlowNetwork.java
  *  Execution:    java FlowNetwork V E
@@ -177,17 +181,6 @@ public class FlowNetwork {
             s.append(NEWLINE);
         }
         return s.toString();
-    }
-
-    /**
-     * Unit tests the {@code FlowNetwork} data type.
-     *
-     * @param args the command-line arguments
-     */
-    public static void main(String[] args) {
-        In in = new In(args[0]);
-        FlowNetwork G = new FlowNetwork(in);
-        StdOut.println(G);
     }
 
 }
