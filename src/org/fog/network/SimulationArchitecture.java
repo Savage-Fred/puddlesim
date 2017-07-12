@@ -87,6 +87,11 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 */
 	private List<Integer> linkIDs;
 	
+	/**
+	 * Map of all the PuddleHeads in the network by level. The key is the level and the list is all the PuddleHeads at that level.
+	 */
+	protected Map<Integer, List<PuddleHead>> puddleHeadsByLevel; 
+	
 	protected SimulationArchitecture(){
 		setLinks(new ArrayList<Link>());
 		setFogDevices(new ArrayList<FogDevice>());
@@ -100,6 +105,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		this.endDeviceIDs = new ArrayList<Integer>();
 		this.switchIDs = new ArrayList<Integer>();
 		this.linkIDs = new ArrayList<Integer>();
+		this.puddleHeadsByLevel = new HashMap<Integer, List<PuddleHead>>();
 	}
 	
 	
@@ -111,6 +117,21 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 */
 	public static void createNewTopology(String fileName, int userId, String appId, Application application) {
 		readPuddleHeadCSV(fileName);
+		linkNodestoPuddleHeads();
+	}
+	
+	/**
+	 * Function to be called to structure the architecture. 
+	 * @param puddleHeadFile
+	 * @param nodeFile
+	 * @param userId
+	 * @param appId
+	 * @param application
+	 */
+	public static void createNewTopology(String puddleHeadFile, String nodeFile, int userId, String appId, Application application) {
+		readPuddleHeadCSV(puddleHeadFile);
+		readFogNodeCSV(nodeFile);
+		linkNodestoPuddleHeads();
 	}
 	
 	/**
@@ -137,16 +158,38 @@ public class SimulationArchitecture extends PhysicalTopology{
             boolean first = true;
             while((line = br.readLine()) !=null) {
                 String[] row = line.split(csvSplitBy);
-                Integer type = Integer.parseInt(row[0]);
+                
+                //if type, dx, dy, level, areaX, areaY
+//                Integer type = Integer.parseInt(row[0]);
+//                Double xcoord = Double.parseDouble(row[1]);
+//                Double ycoord = Double.parseDouble(row[2]);
+//                Integer level = Integer.parseInt(row[3]);
+//                Double areaX = Double.parseDouble(row[4]);
+//                Double areaY = Double.parseDouble(row[5]);
+                
+                //if level, dx, dy, areaX, areaY
+                Integer type = 80;
+                Integer level = Integer.parseInt(row[0]);
                 Double xcoord = Double.parseDouble(row[1]);
                 Double ycoord = Double.parseDouble(row[2]);
-                Integer level = Integer.parseInt(row[3]);
-                Double areaX = Double.parseDouble(row[4]);
-                Double areaY = Double.parseDouble(row[5]);
+                Double areaX = Double.parseDouble(row[3]);
+                Double areaY = Double.parseDouble(row[4]);
+          
                 
                 //TODO: remove this, it isn't needed, just here for running tests
                 if(type != 80){
-                	
+                	if(!(lastX == xcoord && lastY == ycoord)){
+		            	Point location = new Point(xcoord, ycoord);
+		                int numNodes = getInstance().getFogNodeIDs().size();
+		                String name = "FN" + numNodes;
+		                FogNode node = createFogNode(name, false, 102400, 
+								4000, 0.01, 103, 83.25, 10000000,
+								1000000, 3.0, 0.05, 0.001, 0.0,
+								new Rectangle(1001, 1001), location, new Vector(1), level);
+		                getInstance().addFogNode(node);
+		                lastX = xcoord;
+		                lastY = ycoord; 
+                	}
                 }
                 else if(first){
                 	areaPointsX.add(areaX);
@@ -159,7 +202,11 @@ public class SimulationArchitecture extends PhysicalTopology{
                 	areaPointsX.add(areaX);
                 	areaPointsY.add(areaY);
                 }
-                else if(!br.ready() || (lastX != xcoord && lastY != ycoord)){
+                else if(!br.ready() || !(lastX == xcoord && lastY == ycoord)){
+                	if(!br.ready()){
+                		areaPointsX.add(areaX);
+                		areaPointsY.add(areaY);
+                	}
                 	int numPoints = areaPointsX.size();
                 	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
                 	double[] xIn = new double[numPoints];
@@ -179,6 +226,10 @@ public class SimulationArchitecture extends PhysicalTopology{
                 	getInstance().addPuddleHead(newPH);
                 	areaPointsX = new ArrayList<Double>();
                 	areaPointsY = new ArrayList<Double>();
+                	lastX = xcoord;
+                	lastY = ycoord;
+                	areaPointsX.add(areaX);
+                	areaPointsY.add(areaY);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -202,14 +253,14 @@ public class SimulationArchitecture extends PhysicalTopology{
 	/**
 	 * This function adds all FogNodes based on the information passed in from a CSV file.
 	 * 
-	 * File is assumed to be a list where each line is dx, dy, level. 
+	 * File is assumed to be a list where each line is level, dx, dy. 
 	 * Nodes are given different values for their other characteristics based on their level.
 	 * 
 	 * NOTE: THIS FUNCTION IS HARDCODED FOR THE NUMBERS DESIGNATED PER LEVEL OF FOG NODE
 	 * 
 	 * @param fileName CSV file containing FogNode information
 	 */
-	private void readFogNodeCSV(String fileName) {
+	private static void readFogNodeCSV(String fileName) {
 		   BufferedReader br = null;
 	        String line = "";
 	        String csvSplitBy = ",";
@@ -218,12 +269,18 @@ public class SimulationArchitecture extends PhysicalTopology{
 	            br = new BufferedReader(new FileReader(fileName));
 	            while((line = br.readLine()) !=null) {
 	                String[] row = line.split(csvSplitBy);
-	                Double xcoord = Double.parseDouble(row[0]);
-	                Double ycoord = Double.parseDouble(row[1]);
-	                Integer level = Integer.parseInt(row[2]);
+	                Double xcoord = Double.parseDouble(row[1]);
+	                Double ycoord = Double.parseDouble(row[2]);
+	                Integer level = Integer.parseInt(row[0]);
 	                Point location = new Point(xcoord, ycoord);
-	                int numNodes = fogNodes.size();
+	                int numNodes = getInstance().getFogNodes().size();
 	                String name = "FN" + numNodes;
+
+	                FogNode node = createFogNode(name, false, 102400, 
+							4000, 0.01, 103, 83.25, 10000000,
+							1000000, 3.0, 0.05, 0.001, 0.0,
+							new Rectangle(1001, 1001), location, new Vector(1), level);
+	                getInstance().addFogNode(node);
 	                
 	                //TODO: NEED INFO FOR EACH LEVEL. 
 	                //mips, ram, ratePerMips, busyPower, idlePower, storage, bw, costProcessing, costPerMem, costPerStorage, costPerBw, bounds, (coordinates-Point), (level)
@@ -268,7 +325,39 @@ public class SimulationArchitecture extends PhysicalTopology{
 	                }
 	            }
 	        }
+	}
+	
+	private static void linkNodestoPuddleHeads(){
+		double latency = 2.0;
+		double bandwidth = 1000.0;
+		for(FogNode node : getInstance().getFogNodes()){
+			PuddleHead puddlehead = findNodeNewPuddleHead(node);
+			if(puddlehead != null){
+				getInstance().addLink(node.getId(), puddlehead.getId(), latency, bandwidth);
+			}
 		}
+	}
+	
+	/**
+	 * finds which PuddleHead's area of coverage a node is in. If one is not found it returns null
+	 * @param node
+	 * @return puddlehead
+	 */
+	private static PuddleHead findNodeNewPuddleHead(FogNode node){
+		Point nodePoint = node.getLocation();
+		
+		List<PuddleHead> viablePuddleHeads = getInstance().getPuddleHeadsByLevel().get(node.getLevel());
+		
+		if(viablePuddleHeads != null){
+			for(PuddleHead puddlehead : viablePuddleHeads){
+				Polygon area = puddlehead.getAreaOfCoverage(); 
+				if(area.contains(nodePoint)){
+					return puddlehead; 
+				}
+			}
+		}
+		return null; 
+	}
 	
 	/**
 	 * This function adds links and link IDs to the link maps in each device. Links
@@ -389,7 +478,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		// Add device ID to integer list
 		fogNodeIDs.add(dev.getId());
 		fogDeviceIDs.add(dev.getId());
-		System.out.println("Added Fog Node: " + dev.getId());
+		System.out.println("Added Fog Node: " + dev.getId() + " Point: " + dev.getLocation());
 	}
 	
 	/**
@@ -399,9 +488,10 @@ public class SimulationArchitecture extends PhysicalTopology{
 	@Override
 	public void addPuddleHead(PuddleHead dev) {
 		getPuddleHeads().add(dev);
+		addPuddleHeadByLevel(dev, dev.getLevel());
 		// Add device ID to integer list
 		puddleHeadIDs.add(dev.getId());
-		System.out.println("Added PuddleHead: " + dev.getId());
+		System.out.println("Added PuddleHead: " + dev.getId() + " Point: " + dev.getLocation() + " Polygon: " + dev.getAreaOfCoverage());
 	}
 	
 	/**
@@ -651,5 +741,35 @@ public class SimulationArchitecture extends PhysicalTopology{
 	public void setLinkIDs(List<Integer> linkIDs) {
 		this.linkIDs = linkIDs;
 	}
+	/**
+	 * @return the puddleHeadsByLevel
+	 */
+	public Map<Integer, List<PuddleHead>> getPuddleHeadsByLevel() {
+		return puddleHeadsByLevel;
+	}
+
+	/**
+	 * @param puddleHeadsByLevel the puddleHeadsByLevel to set
+	 */
+	public void setPuddleHeadsByLevel(Map<Integer, List<PuddleHead>> puddleHeadsByLevel) {
+		this.puddleHeadsByLevel = puddleHeadsByLevel;
+	}
 	
+	/**
+	 * Adds a single PuddleHead into the by level map. If there are no PuddleHeads at that level, a new list is created. 
+	 * @param puddleHeadId
+	 * @param level
+	 */
+	public void addPuddleHeadByLevel(PuddleHead dev, int level){
+		List<PuddleHead> levelList = puddleHeadsByLevel.get(level); 
+		if(levelList == null){
+			ArrayList<PuddleHead> newLevelList = new ArrayList<PuddleHead>();
+			newLevelList.add(dev); 
+			puddleHeadsByLevel.put(level, newLevelList);
+		}
+		else{
+			levelList.add(dev);
+			puddleHeadsByLevel.put(level, levelList); 
+		}
+	}
 }

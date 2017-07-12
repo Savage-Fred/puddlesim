@@ -1,5 +1,6 @@
 package org.fog.examples;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,15 +84,20 @@ public class FromFileExample {
 			application.setUserId(broker.getId());
 			
 			// Create Architecture/Topology
-			String fileName = "trial.csv";
-			createSimulationArchitecture(fileName, broker.getId(), appId, application);
+//			String fileName = "trial2.csv";
+//			createSimulationArchitecture(fileName, broker.getId(), appId, application);
 			
-			
+			String nodeFile = "points_nodes.csv";
+			String puddleHeadFile = "points_heads.csv";
+			createSimulationArchitecture(puddleHeadFile, nodeFile, broker.getId(), appId, application);
 			
 			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
 			broker.setActuatorIds(getIds(SimulationArchitecture.getInstance().getActuators()));
+			
+			
+			
 			
 			broker.submitApplication(application, 0, 
 					new ModulePlacementOnlyCloud(SimulationArchitecture.getInstance().getFogDevices(), 
@@ -127,6 +133,22 @@ public class FromFileExample {
 									new Rectangle(10, 10), new Point(1,1), new Vector(0.25,0.33), 1);
 		
 		SimulationArchitecture.createNewTopology(fileName, userId, appId, application);
+	}
+	
+	private static void createSimulationArchitecture(String puddleHeadFile, String nodeFile, int userId, String appId, Application application){
+		EndDevice dev = new EndDevice("DEV");
+		int transmissionInterval = 5000;
+		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
+		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
+		dev.addSensor(sensor);
+		dev.addActuator(actuator);
+		
+		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(10, 10), new Point(1,1), new Vector(0.25,0.33), 1);
+		
+		SimulationArchitecture.createNewTopology(puddleHeadFile, nodeFile, userId, appId, application);
 	}
 	
 	// Creates the architecture

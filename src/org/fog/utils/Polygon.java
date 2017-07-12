@@ -203,9 +203,9 @@ public class Polygon {
     {
         StringBuffer buffer = new StringBuffer();
         buffer.append("Shape: ");
-        if (numberOfPoints <= 10)
+        if (numberOfPoints < 10)
             buffer.append(polygonTypes[numberOfPoints] + "\n");
-        else if (numberOfPoints > 10)
+        else if (numberOfPoints >= 10)
             buffer.append(numberOfPoints + "-gon \n");
         buffer.append("Points: ");
         for (Point p: points)
