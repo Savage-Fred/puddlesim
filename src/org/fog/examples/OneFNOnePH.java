@@ -62,11 +62,6 @@ import org.fog.utils.distribution.DeterministicDistribution;
  *
  */
 public class OneFNOnePH {
-	static List<FogDevice> fogDevices = new ArrayList<FogDevice>();
-	static List<FogNode> fogNodes = new ArrayList<FogNode>();
-	static List<PuddleHead> puddleHeads = new ArrayList<PuddleHead>();
-	static List<Sensor> sensors = new ArrayList<Sensor>();
-	static List<Actuator> actuators = new ArrayList<Actuator>();
 	
 	public static void main(String[] args) {
 
@@ -133,7 +128,7 @@ public class OneFNOnePH {
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
 		
-		EndDevice dev = new EndDevice("DEV");
+		EndDevice dev = new EndDevice("DEV", new Rectangle(10, 10), new Point(1,1), 0.25, true);
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);

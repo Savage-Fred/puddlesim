@@ -2,12 +2,20 @@ package org.fog.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
+import org.fog.network.Link;
+import org.fog.utils.Config;
 import org.fog.utils.FogEvents;
 import org.fog.utils.GeoLocation;
+import org.fog.utils.Logger;
+import org.fog.utils.Mobility;
+import org.fog.utils.Point;
+import org.fog.utils.Rectangle;
+import org.fog.utils.Vector;
 
 public class EndDevice extends SimEntity {
 
@@ -17,12 +25,64 @@ public class EndDevice extends SimEntity {
 	private int edgeSwitchId;
 	private int linkId;
 
+	/**
+	 * Used for debugging purposes. Adds a label onto the output. Note, only used in Logger.debug
+	 */
+	private static String LOG_TAG = "END_DEVICE";
+	
+	/**
+	 * Used to check whether or not the device has started moving.
+	 */
+	private boolean moving = false;
+	/**
+	 * Mobility object for FogNode.
+	 */
+	private Mobility mobile = null;
+	
 	private GeoLocation geoLocation;
 	
-	public EndDevice(String name) {
+	public EndDevice(String name, Rectangle bounds, Point coordinates, double movementMagnitude, boolean isMobile) {
 		super(name);
+		this.mobile = new Mobility(bounds, coordinates, movementMagnitude, isMobile);
 		setSensors(new ArrayList<Sensor>());
 		setActuators(new ArrayList<Actuator>());
+	}
+
+	/**
+	 * Updates the location and latency continually
+	 * Note: it will send the process node move event only if the name of the global broker is "globalbroker"
+	 * @param ev (SimEvent)
+	 */
+	protected void processUpdateLocation(SimEvent ev){
+		// If the device is mobile, update the location and send an event to the queue to trigger it again
+		if(mobile.isMobile()){
+			mobile.updateLocation();
+			updateDeviceLocations();
+			
+			Logger.debug(LOG_TAG, "End device moved");
+			
+			send(super.getId(), Config.LOCATION_UPDATE_INTERVAL, FogEvents.UPDATE_LOCATION);
+			
+			//Send to global broker for processing. 
+			int brokerId = CloudSim.getEntityId("globalbroker");
+			if(brokerId > 0){
+				send(brokerId, CloudSim.getMinTimeBetweenEvents(), FogEvents.PROCESS_END_DEVICE_MOVE, getId());
+			}
+			else{
+				//Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
+			}
+		}
+		//Logger.debug(LOG_TAG, getName(), "Completed execution of move");
+	}
+	
+	private void updateDeviceLocations() {
+		// Set the location of the sensors and actuators
+		for(Actuator a : this.actuators){
+			a.setLocation(mobile.getPoint());
+		}
+		for(Sensor s : this.sensors){
+			s.setLocation(mobile.getPoint());
+		}
 	}
 
 	protected void sendTuple(Tuple tuple, int dstDeviceId, int dstVmId) {
@@ -37,6 +97,7 @@ public class EndDevice extends SimEntity {
 	}
 	
 	public void addSensor(Sensor sensor) {
+		sensor.setLocation(this.mobile.getPoint());
 		getSensors().add(sensor);
 		sensor.setGatewayDeviceId(getEdgeSwitchId());
 		sensor.setEndDeviceId(getId());
@@ -44,6 +105,7 @@ public class EndDevice extends SimEntity {
 	}
 	
 	public void addActuator(Actuator actuator) {
+		actuator.setLocation(this.mobile.getPoint());
 		getActuators().add(actuator);
 		actuator.setGatewayDeviceId(getEdgeSwitchId());
 		actuator.setEndDeviceId(getId());
@@ -56,10 +118,20 @@ public class EndDevice extends SimEntity {
 
 	@Override
 	public void processEvent(SimEvent ev) {
+		// This kickstarts the movement. 
+		if(!this.moving){
+			this.moving = true;
+			processUpdateLocation(ev);
+		}
+		
 		int tag = ev.getTag();
+		
 		switch(tag) {
 		case FogEvents.TUPLE_ARRIVAL:
 			processTupleArrival(ev);
+			break;
+		case FogEvents.UPDATE_LOCATION:
+			processUpdateLocation(ev);
 			break;
 		}
 
@@ -79,6 +151,47 @@ public class EndDevice extends SimEntity {
 	public void shutdownEntity() {
 
 	}
+
+	/**
+	 * Gets the location of the fog device.
+	 * @return locations of the fog device as a Point.
+	 */
+	public Point getLocation(){
+		return this.mobile.getPoint();
+	}
+	
+	/**
+	 * Sets the location of the fog device.
+	 * @param point 
+	 */
+	public void setLocation(Point point){
+		this.mobile.setPoint(point);
+	}
+	
+	/**
+	 * This function changes the old direction of movement and velocity of the device.
+	 * @param v new value for movement of device
+	 */
+	public void updateDirection(Vector v){
+		this.mobile.updateDirection(v);
+	}
+	
+	/**
+	 * Determines if the device is mobile.
+	 * @return a boolean indicating whether or not the device is mobile.
+	 */
+	public boolean isMobile() {
+		return this.mobile.isMobile();
+	}
+	
+	/**
+	 * Sets the mobility of the device. If it is mobile, it will move. 
+	 * @param isMobile
+	 */
+	public void setMobility(boolean isMobile) {
+		this.mobile.setMobile(isMobile);
+	}
+
 	public List<Sensor> getSensors() {
 		return sensors;
 	}
