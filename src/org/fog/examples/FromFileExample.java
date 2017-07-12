@@ -131,8 +131,10 @@ public class FromFileExample {
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
 									new Rectangle(10, 10), new Point(1,1), new Vector(0.25,0.33), 1);
+		SimulationArchitecture.getInstance().addFogNode(fn0);
 		
 		SimulationArchitecture.createNewTopology(fileName, userId, appId, application);
+		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 10, 1000);
 	}
 	
 	private static void createSimulationArchitecture(String puddleHeadFile, String nodeFile, int userId, String appId, Application application){
