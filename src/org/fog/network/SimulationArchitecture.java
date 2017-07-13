@@ -161,20 +161,20 @@ public class SimulationArchitecture extends PhysicalTopology{
                 
                 //TODO: make sure this is for the right kind of file
                 //if type, dx, dy, level, areaX, areaY
-                Integer type = Integer.parseInt(row[0]);
-                Double xcoord = Double.parseDouble(row[1]);
-                Double ycoord = Double.parseDouble(row[2]);
-                Integer level = Integer.parseInt(row[3]);
-                Double areaX = Double.parseDouble(row[4]);
-                Double areaY = Double.parseDouble(row[5]);
-                
-                //if level, dx, dy, areaX, areaY
-//                Integer type = 80;
-//                Integer level = Integer.parseInt(row[0]);
+//                Integer type = Integer.parseInt(row[0]);
 //                Double xcoord = Double.parseDouble(row[1]);
 //                Double ycoord = Double.parseDouble(row[2]);
-//                Double areaX = Double.parseDouble(row[3]);
-//                Double areaY = Double.parseDouble(row[4]);
+//                Integer level = Integer.parseInt(row[3]);
+//                Double areaX = Double.parseDouble(row[4]);
+//                Double areaY = Double.parseDouble(row[5]);
+                
+                //if level, dx, dy, areaX, areaY
+                Integer type = 80;
+                Integer level = Integer.parseInt(row[0]);
+                Double xcoord = Double.parseDouble(row[1]);
+                Double ycoord = Double.parseDouble(row[2]);
+                Double areaX = Double.parseDouble(row[3]);
+                Double areaY = Double.parseDouble(row[4]);
           
                 
                 //TODO: remove this, it isn't needed, just here for running tests
@@ -492,7 +492,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		addPuddleHeadByLevel(dev, dev.getLevel());
 		// Add device ID to integer list
 		puddleHeadIDs.add(dev.getId());
-		System.out.println("Added PuddleHead: " + dev.getId() + " Point: " + dev.getLocation() + " My level: " + dev.getLevel());
+		System.out.println("Added PuddleHead: " + dev.getId() + " Point: " + dev.getLocation() + " " + dev.getAreaOfCoverage());
 	}
 	
 	/**

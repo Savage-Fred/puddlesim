@@ -85,12 +85,12 @@ public class FromFileExample {
 			application.setUserId(broker.getId());
 			
 			// Create Architecture/Topology
-			String fileName = "trial3.csv";
-			createSimulationArchitecture(fileName, broker.getId(), appId, application);
+//			String fileName = "trial2.csv";
+//			createSimulationArchitecture(fileName, broker.getId(), appId, application);
 			
-//			String nodeFile = "points_nodes.csv";
-//			String puddleHeadFile = "points_heads.csv";
-//			createSimulationArchitecture(puddleHeadFile, nodeFile, broker.getId(), appId, application);
+			String nodeFile = "points_nodes.csv";
+			String puddleHeadFile = "points_heads.csv";
+			createSimulationArchitecture(puddleHeadFile, nodeFile, broker.getId(), appId, application);
 			
 			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
@@ -159,7 +159,7 @@ public class FromFileExample {
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1001, 1001), new Point(1,1), new Vector(0.25,0.33), 1);
+									new Rectangle(1001, 1001), new Point(-85.5,32.607), new Vector(0.25,0.33), 1);
 		SimulationArchitecture.getInstance().addFogNode(fn0);
 		
 		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);
