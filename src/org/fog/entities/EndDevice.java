@@ -41,9 +41,16 @@ public class EndDevice extends SimEntity {
 	
 	private GeoLocation geoLocation;
 	
+	// Puddlesim addition:
 	public EndDevice(String name, Rectangle bounds, Point coordinates, double movementMagnitude, boolean isMobile) {
 		super(name);
 		this.mobile = new Mobility(bounds, coordinates, movementMagnitude, isMobile);
+		setSensors(new ArrayList<Sensor>());
+		setActuators(new ArrayList<Actuator>());
+	}
+	
+	public EndDevice(String name) {
+		super(name);
 		setSensors(new ArrayList<Sensor>());
 		setActuators(new ArrayList<Actuator>());
 	}
@@ -97,7 +104,6 @@ public class EndDevice extends SimEntity {
 	}
 	
 	public void addSensor(Sensor sensor) {
-		sensor.setLocation(this.mobile.getPoint());
 		getSensors().add(sensor);
 		sensor.setGatewayDeviceId(getEdgeSwitchId());
 		sensor.setEndDeviceId(getId());
@@ -105,6 +111,20 @@ public class EndDevice extends SimEntity {
 	}
 	
 	public void addActuator(Actuator actuator) {
+		getActuators().add(actuator);
+		actuator.setGatewayDeviceId(getEdgeSwitchId());
+		actuator.setEndDeviceId(getId());
+	}
+	
+	public void addPuddlesimSensor(Sensor sensor) {
+		sensor.setLocation(this.mobile.getPoint());
+		getSensors().add(sensor);
+		sensor.setGatewayDeviceId(getEdgeSwitchId());
+		sensor.setEndDeviceId(getId());
+		sensor.setDevice(this);
+	}
+	
+	public void addPuddlesimActuator(Actuator actuator) {
 		actuator.setLocation(this.mobile.getPoint());
 		getActuators().add(actuator);
 		actuator.setGatewayDeviceId(getEdgeSwitchId());

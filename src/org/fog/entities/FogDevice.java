@@ -221,7 +221,7 @@ public class FogDevice extends PowerDatacenter {
 
 	protected void sendTuple(Tuple tuple, int actuatorId) {
 		//send(actuatorId, CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
-		Logger.debug("actuator_send", getName(), "Sending to actuator "+CloudSim.getEntityName(actuatorId)+"via Link ID : "+getLinkId());
+		Logger.debug(LOG_TAG, getName(), "Sending to actuator "+CloudSim.getEntityName(actuatorId)+"via Link ID : "+getLinkId());
 		tuple.setDestinationDeviceId(actuatorId);
 		send(getLinkId(), CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
 	}

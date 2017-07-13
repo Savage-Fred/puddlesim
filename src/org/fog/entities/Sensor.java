@@ -211,6 +211,7 @@ public class Sensor extends SimEntity{
 			break;
 		case FogEvents.EMIT_TUPLE:
 			transmit();
+			Logger.debug(LOG_TAG, "Emitting tuple.");
 			send(getId(), getTransmitDistribution().getNextValue(), FogEvents.EMIT_TUPLE);
 			break;
 		case FogEvents.ENDPOINT_CONNECTION:

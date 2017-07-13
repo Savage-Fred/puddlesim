@@ -67,6 +67,9 @@ public class OneFNOnePH {
 
 		Log.printLine("Starting SimArch...");
 		Logger.ENABLED = false;
+		Logger.enableTag("END_DEVICE");
+		Logger.enableTag("ACTUATOR");
+		Logger.enableTag("SENSOR");
 		Logger.enableTag("FOG_DEVICE");
 		Logger.enableTag("FOG_NODE");
 		Logger.enableTag("SWITCH");

@@ -79,6 +79,7 @@ public class Actuator extends SimEntity{
 			sendNow(srcId, ev.getTag(), getCharacteristics());
 			break;
 		case FogEvents.TUPLE_ARRIVAL:
+			Logger.debug(LOG_TAG, "Tuple arrival.");
 			processTupleArrival(ev);
 			break;
 		}		
