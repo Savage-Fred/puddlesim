@@ -35,6 +35,7 @@ import org.fog.network.EdgeSwitch;
 import org.fog.network.PhysicalTopology;
 import org.fog.network.SimulationArchitecture;
 import org.fog.network.Switch;
+import org.fog.placement.ModulePlacement;
 import org.fog.placement.ModulePlacementOnlyCloud;
 import org.fog.policy.AppModuleAllocationPolicy;
 import org.fog.scheduler.AppModuleScheduler;
@@ -84,19 +85,17 @@ public class FromFileExample {
 			application.setUserId(broker.getId());
 			
 			// Create Architecture/Topology
-//			String fileName = "trial2.csv";
-//			createSimulationArchitecture(fileName, broker.getId(), appId, application);
+			String fileName = "trial3.csv";
+			createSimulationArchitecture(fileName, broker.getId(), appId, application);
 			
-			String nodeFile = "points_nodes.csv";
-			String puddleHeadFile = "points_heads.csv";
-			createSimulationArchitecture(puddleHeadFile, nodeFile, broker.getId(), appId, application);
+//			String nodeFile = "points_nodes.csv";
+//			String puddleHeadFile = "points_heads.csv";
+//			createSimulationArchitecture(puddleHeadFile, nodeFile, broker.getId(), appId, application);
 			
 			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
 			broker.setActuatorIds(getIds(SimulationArchitecture.getInstance().getActuators()));
-			
-			
 			
 			
 			broker.submitApplication(application, 0, 
@@ -126,15 +125,26 @@ public class FromFileExample {
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
 		dev.addSensor(sensor);
 		dev.addActuator(actuator);
+		SimulationArchitecture.getInstance().addEndDevice(dev);
 		
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(10, 10), new Point(1,1), new Vector(0.25,0.33), 1);
+									new Rectangle(1001, 1001), new Point(1,1), new Vector(0.25,0.33), 1);
 		SimulationArchitecture.getInstance().addFogNode(fn0);
 		
+		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);		
 		SimulationArchitecture.createNewTopology(fileName, userId, appId, application);
-		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 10, 1000);
+	
+		
+		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {
+			System.out.println("Topology validation successful");
+			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
+			
+		} else {
+			System.out.println("Topology validation UNsuccessful");
+			System.exit(1);
+		}
 	}
 	
 	private static void createSimulationArchitecture(String puddleHeadFile, String nodeFile, int userId, String appId, Application application){
@@ -144,13 +154,26 @@ public class FromFileExample {
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
 		dev.addSensor(sensor);
 		dev.addActuator(actuator);
+		SimulationArchitecture.getInstance().addEndDevice(dev);
 		
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(10, 10), new Point(1,1), new Vector(0.25,0.33), 1);
+									new Rectangle(1001, 1001), new Point(1,1), new Vector(0.25,0.33), 1);
+		SimulationArchitecture.getInstance().addFogNode(fn0);
 		
+		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);
 		SimulationArchitecture.createNewTopology(puddleHeadFile, nodeFile, userId, appId, application);
+		
+		
+		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {
+			System.out.println("Topology validation successful");
+			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
+			
+		} else {
+			System.out.println("Topology validation UNsuccessful");
+			System.exit(1);
+		}
 	}
 	
 	// Creates the architecture

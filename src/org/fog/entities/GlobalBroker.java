@@ -28,7 +28,7 @@ import org.fog.utils.Polygon;
  * The GlobalBroker should contain information about every device in the network. It is used to send events between different devices
  * and track their movement in relation to each other. 
  * 
- * Note: It should have the name 'broker' for the capabilities to work with mobility and updating between devices.
+ * Note: It should have the name 'globalbroker' for the capabilities to work with mobility and updating between devices.
  * (If this name would like to be changed, code in the FogNode function processUpdateLocation needs to reflect the change).
  *
  */
@@ -64,7 +64,7 @@ public class GlobalBroker extends FogBroker {
 	
 	
 	/**
-	 * Constructor of a GlobalBroker. The input name should be 'broker' for use with PuddleSim capabilities. (See Note above)
+	 * Constructor of a GlobalBroker. The input name should be 'globalbroker' for use with PuddleSim capabilities. (See Note above)
 	 * @param name
 	 * @throws Exception
 	 */
