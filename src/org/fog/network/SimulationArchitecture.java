@@ -161,20 +161,20 @@ public class SimulationArchitecture extends PhysicalTopology{
                 
                 //TODO: make sure this is for the right kind of file
                 //if type, dx, dy, level, areaX, areaY
-//                Integer type = Integer.parseInt(row[0]);
-//                Double xcoord = Double.parseDouble(row[1]);
-//                Double ycoord = Double.parseDouble(row[2]);
-//                Integer level = Integer.parseInt(row[3]);
-//                Double areaX = Double.parseDouble(row[4]);
-//                Double areaY = Double.parseDouble(row[5]);
-                
-                //if level, dx, dy, areaX, areaY
-                Integer type = 80;
-                Integer level = Integer.parseInt(row[0]);
+                Integer type = Integer.parseInt(row[0]);
                 Double xcoord = Double.parseDouble(row[1]);
                 Double ycoord = Double.parseDouble(row[2]);
-                Double areaX = Double.parseDouble(row[3]);
-                Double areaY = Double.parseDouble(row[4]);
+                Integer level = Integer.parseInt(row[3]);
+                Double areaX = Double.parseDouble(row[4]);
+                Double areaY = Double.parseDouble(row[5]);
+                
+                //if level, dx, dy, areaX, areaY
+//                Integer type = 80;
+//                Integer level = Integer.parseInt(row[0]);
+//                Double xcoord = Double.parseDouble(row[1]);
+//                Double ycoord = Double.parseDouble(row[2]);
+//                Double areaX = Double.parseDouble(row[3]);
+//                Double areaY = Double.parseDouble(row[4]);
           
                 
                 //TODO: remove this, it isn't needed, just here for running tests
@@ -186,7 +186,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		                FogNode node = createFogNode(name, false, 102400, 
 								4000, 0.01, 103, 83.25, 10000000,
 								1000000, 3.0, 0.05, 0.001, 0.0,
-								new Rectangle(1001, 1001), location, new Vector(1), level);
+								new Rectangle(20, 20), location, new Vector(0.1), level);
 		                getInstance().addFogNode(node);
 		                lastX = xcoord;
 		                lastY = ycoord; 

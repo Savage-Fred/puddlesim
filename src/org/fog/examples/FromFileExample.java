@@ -86,12 +86,12 @@ public class FromFileExample {
 			application.setUserId(broker.getId());
 			
 			// Create Architecture/Topology
-//			String fileName = "trial2.csv";
-//			createSimulationArchitecture(fileName, broker.getId(), appId, application);
+			String fileName = "basictest.csv";
+			createSimulationArchitecture(fileName, broker.getId(), appId, application);
 			
-			String nodeFile = "points_nodes2.csv";
-			String puddleHeadFile = "points_heads2.csv";
-			createSimulationArchitecture(puddleHeadFile, nodeFile, broker.getId(), appId, application);
+//			String nodeFile = "points_nodes2.csv";
+//			String puddleHeadFile = "points_heads2.csv";
+//			createSimulationArchitecture(puddleHeadFile, nodeFile, broker.getId(), appId, application);
 			
 			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
