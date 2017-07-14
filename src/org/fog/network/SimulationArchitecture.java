@@ -277,7 +277,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	                int numNodes = getInstance().getFogNodes().size();
 	                String name = "FN" + numNodes;
 
-	                FogNode node = createFogNode(name, false, 102400, 
+	                FogNode node = createFogNode(name, true, 102400, 
 							4000, 0.01, 103, 83.25, 10000000,
 							1000000, 3.0, 0.05, 0.001, 0.0,
 							new Rectangle(1001, 1001), location, new Vector(1), level);

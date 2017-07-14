@@ -68,6 +68,7 @@ public class FromFileExample {
 		Logger.enableTag("FOG_NODE");
 		Logger.enableTag("SWITCH");
 		Logger.enableTag("LINK");
+		Logger.enableTag("SENSOR");
 		
 		try {
 			Log.disable();
@@ -88,8 +89,8 @@ public class FromFileExample {
 //			String fileName = "trial2.csv";
 //			createSimulationArchitecture(fileName, broker.getId(), appId, application);
 			
-			String nodeFile = "points_nodes.csv";
-			String puddleHeadFile = "points_heads.csv";
+			String nodeFile = "points_nodes2.csv";
+			String puddleHeadFile = "points_heads2.csv";
 			createSimulationArchitecture(puddleHeadFile, nodeFile, broker.getId(), appId, application);
 			
 			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
@@ -159,7 +160,7 @@ public class FromFileExample {
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1001, 1001), new Point(-85.5,32.607), new Vector(0.25,0.33), 1);
+									new Rectangle(1001, 1001), new Point(-8549.5,3260.9), new Vector(0.25,0.33), 1);
 		SimulationArchitecture.getInstance().addFogNode(fn0);
 		
 		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);
