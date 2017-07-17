@@ -86,7 +86,7 @@ public class FromFileExample {
 			application.setUserId(broker.getId());
 			
 			// Create Architecture/Topology
-			String fileName = "basictest.csv";
+			String fileName = "trail3.csv";
 			createSimulationArchitecture(fileName, broker.getId(), appId, application);
 			
 //			String nodeFile = "points_nodes2.csv";
@@ -119,7 +119,16 @@ public class FromFileExample {
 	}
 
 	
-	private static void createSimulationArchitecture(String fileName, int userId, String appId, Application application){
+	private static void createSimulationArchitecture(String fileName, int userId, String appId, Application application){		
+		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(20, 20), new Point(2,1), new Vector(0.25,0.33), 1);
+		SimulationArchitecture.getInstance().addFogNode(fn0);
+		
+			
+		SimulationArchitecture.getInstance().createNewTopology(fileName, userId, appId, application);
+		
 		EndDevice dev = new EndDevice("DEV");
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
@@ -127,16 +136,17 @@ public class FromFileExample {
 		dev.addSensor(sensor);
 		dev.addActuator(actuator);
 		SimulationArchitecture.getInstance().addEndDevice(dev);
+		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);
 		
-		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
-									4000, 0.01, 103, 83.25, 10000000,
-									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1001, 1001), new Point(1,1), new Vector(0.25,0.33), 1);
-		SimulationArchitecture.getInstance().addFogNode(fn0);
+//		EndDevice dev2 = new EndDevice("DEV2");
+//		Sensor sensor2 = new Sensor("s-1", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
+//		Actuator actuator2 = new Actuator("a-1", userId, appId, "ACTION", application);
+//		dev2.addSensor(sensor2);
+//		dev2.addActuator(actuator2);
+//		SimulationArchitecture.getInstance().addEndDevice(dev2);
 		
-		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);		
-		SimulationArchitecture.createNewTopology(fileName, userId, appId, application);
-	
+//		List<Integer> ids = SimulationArchitecture.getInstance().getFogNodeIDs();
+//		SimulationArchitecture.getInstance().addLink(dev2.getId(), ids.get(5), 2, 1000);
 		
 		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {
 			System.out.println("Topology validation successful");
@@ -164,7 +174,7 @@ public class FromFileExample {
 		SimulationArchitecture.getInstance().addFogNode(fn0);
 		
 		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);
-		SimulationArchitecture.createNewTopology(puddleHeadFile, nodeFile, userId, appId, application);
+		SimulationArchitecture.getInstance().createNewTopology(puddleHeadFile, nodeFile, userId, appId, application);
 		
 		
 		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {

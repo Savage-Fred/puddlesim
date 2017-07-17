@@ -76,6 +76,7 @@ public class OneFNOnePH {
 		Logger.enableTag("FOG_NODE");
 		Logger.enableTag("SWITCH");
 		Logger.enableTag("LINK");
+		Logger.enableTag("SENSOR");
 		
 		try {
 			Log.disable();

@@ -115,7 +115,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * @param appId
 	 * @param application
 	 */
-	public static void createNewTopology(String fileName, int userId, String appId, Application application) {
+	public void createNewTopology(String fileName, int userId, String appId, Application application) {
 		readPuddleHeadCSV(fileName);
 		linkNodestoPuddleHeads();
 	}
@@ -128,7 +128,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * @param appId
 	 * @param application
 	 */
-	public static void createNewTopology(String puddleHeadFile, String nodeFile, int userId, String appId, Application application) {
+	public void createNewTopology(String puddleHeadFile, String nodeFile, int userId, String appId, Application application) {
 		readPuddleHeadCSV(puddleHeadFile);
 		readFogNodeCSV(nodeFile);
 		linkNodestoPuddleHeads();
@@ -144,7 +144,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * 
 	 * @param fileName of the CSV file with the Voronoi information
 	 */
-	private static void readPuddleHeadCSV(String fileName) {
+	private void readPuddleHeadCSV(String fileName) {
 	   BufferedReader br = null;
         String line = "";
         String csvSplitBy = ",";
@@ -156,7 +156,8 @@ public class SimulationArchitecture extends PhysicalTopology{
             double lastX = 0.0;
             double lastY = 0.0;
             boolean first = true;
-            while((line = br.readLine()) !=null) {
+            line = br.readLine();
+            while(line !=null) {
                 String[] row = line.split(csvSplitBy);
                 
                 //TODO: make sure this is for the right kind of file
@@ -203,11 +204,33 @@ public class SimulationArchitecture extends PhysicalTopology{
                 	areaPointsX.add(areaX);
                 	areaPointsY.add(areaY);
                 }
-                else if(!br.ready() || !(lastX == xcoord && lastY == ycoord)){
-                	if(!br.ready()){
-                		areaPointsX.add(areaX);
-                		areaPointsY.add(areaY);
+                else if(!(lastX == xcoord && lastY == ycoord)){
+                	int numPoints = areaPointsX.size();
+                	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
+                	double[] xIn = new double[numPoints];
+                	for(int i = 0; i < numPoints; i++){
+                		xIn[i] = xDouble[i];
                 	}
+                	Double[] yDouble = areaPointsY.toArray(new Double[numPoints]);
+                	double[] yIn = new double[numPoints];
+                	for(int i = 0; i < numPoints; i++){
+                		yIn[i] = yDouble[i];
+                	}
+                	Polygon areaOfCoverage = new Polygon(xIn, yIn);
+                	int numOfPuddleHead = getInstance().getPuddleHeadIDs().size() + 1;
+                	String name = "PH" + numOfPuddleHead; 
+                	Point point = new Point(lastX, lastY);
+                	PuddleHead newPH = createPuddleHead(name, areaOfCoverage, point, level);
+                	getInstance().addPuddleHead(newPH);
+                	areaPointsX = new ArrayList<Double>();
+                	areaPointsY = new ArrayList<Double>();
+                	lastX = xcoord;
+                	lastY = ycoord;
+                	areaPointsX.add(areaX);
+                	areaPointsY.add(areaY);
+                }
+                line = br.readLine();
+                if(line == null){
                 	int numPoints = areaPointsX.size();
                 	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
                 	double[] xIn = new double[numPoints];
@@ -261,7 +284,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * 
 	 * @param fileName CSV file containing FogNode information
 	 */
-	private static void readFogNodeCSV(String fileName) {
+	private void readFogNodeCSV(String fileName) {
 		   BufferedReader br = null;
 	        String line = "";
 	        String csvSplitBy = ",";
@@ -277,7 +300,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	                int numNodes = getInstance().getFogNodes().size();
 	                String name = "FN" + numNodes;
 
-	                FogNode node = createFogNode(name, true, 102400, 
+	                FogNode node = createFogNode(name, false, 102400, 
 							4000, 0.01, 103, 83.25, 10000000,
 							1000000, 3.0, 0.05, 0.001, 0.0,
 							new Rectangle(1001, 1001), location, new Vector(1), level);
@@ -328,7 +351,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	        }
 	}
 	
-	private static void linkNodestoPuddleHeads(){
+	private void linkNodestoPuddleHeads(){
 		double latency = 2.0;
 		double bandwidth = 1000.0;
 		for(FogNode node : getInstance().getFogNodes()){
@@ -344,7 +367,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * @param node
 	 * @return puddlehead
 	 */
-	private static PuddleHead findNodeNewPuddleHead(FogNode node){
+	private PuddleHead findNodeNewPuddleHead(FogNode node){
 		Point nodePoint = node.getLocation();
 		
 		List<PuddleHead> viablePuddleHeads = getInstance().getPuddleHeadsByLevel().get(node.getLevel());
