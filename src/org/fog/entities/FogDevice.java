@@ -220,19 +220,20 @@ public class FogDevice extends PowerDatacenter {
 	}
 
 	protected void sendTuple(Tuple tuple, int actuatorId) {
-		//send(actuatorId, CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
-		Logger.debug(LOG_TAG, getName(), "Sending to actuator "+CloudSim.getEntityName(actuatorId)+"via Link ID : "+getLinkId());
+		Logger.debug(LOG_TAG, getName(), "Sending to actuator "+ CloudSim.getEntityName(actuatorId)+" via Link ID : "+getLinkId());
 		tuple.setDestinationDeviceId(actuatorId);
-		send(getLinkId(), CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
+		send(actuatorId, CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
+		//send(getLinkId(), CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
 	}
 
 	protected void routeTuple(Tuple resTuple, AppModule module) {
 		if (resTuple.getDirection() != Tuple.ACTUATOR) {
 			for (AppModuleAddress addr : module.getDestModules().get(resTuple.getTupleType())) {
-				sendTuple(resTuple, addr.getFogDeviceId(), addr.getVmId());				
+				sendTuple(resTuple, addr.getFogDeviceId(), addr.getVmId());
 			}
 		} else {
 			for (Integer actuatorId : module.getActuatorSubscriptions().get(resTuple.getTupleType())) {
+				((GlobalBroker)CloudSim.getEntity("globalbroker")).nextNodeInMST(this.getId(), ((Actuator)CloudSim.getEntity(actuatorId)).getGatewayDeviceId());
 				sendTuple(resTuple, actuatorId);
 			}
 		}

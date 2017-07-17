@@ -22,6 +22,7 @@ public class EndDevice extends SimEntity {
 	private List<Sensor> sensors;
 	private List<Actuator> actuators;
 	
+	// Essentially the other other end of the link when used in puddlesim.
 	private int edgeSwitchId;
 	private int linkId;
 

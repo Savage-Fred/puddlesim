@@ -90,7 +90,10 @@ public class RedFNBluePH {
 			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
-			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), 
+					SimulationArchitecture.getInstance().getFogNodeIDs(), 
+					SimulationArchitecture.getInstance().getLinkIDs(), 
+					SimulationArchitecture.getInstance().getEndDeviceIDs());
 			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
@@ -129,7 +132,6 @@ public class RedFNBluePH {
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
 
-		EndDevice dev = new EndDevice("DEV");
 		///////////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////     FOG NODES    /////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////
@@ -304,7 +306,7 @@ public class RedFNBluePH {
 		Point location7 = new Point(12, 5);
 		PuddleHead ph7 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD7", areaOfCoverage7, location7, 1);
 		////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+		EndDevice dev = new EndDevice("DEV");
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
