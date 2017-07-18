@@ -138,15 +138,6 @@ public class FromFileExample {
 		SimulationArchitecture.getInstance().addEndDevice(dev);
 		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);
 		
-//		EndDevice dev2 = new EndDevice("DEV2");
-//		Sensor sensor2 = new Sensor("s-1", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
-//		Actuator actuator2 = new Actuator("a-1", userId, appId, "ACTION", application);
-//		dev2.addSensor(sensor2);
-//		dev2.addActuator(actuator2);
-//		SimulationArchitecture.getInstance().addEndDevice(dev2);
-		
-//		List<Integer> ids = SimulationArchitecture.getInstance().getFogNodeIDs();
-//		SimulationArchitecture.getInstance().addLink(dev2.getId(), ids.get(5), 2, 1000);
 		
 		if (SimulationArchitecture.getInstance().validatePuddlesimTopology()) {
 			System.out.println("Topology validation successful");

@@ -116,7 +116,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * @param application
 	 */
 	public void createNewTopology(String fileName, int userId, String appId, Application application) {
-		readPuddleHeadCSV(fileName);
+		readPuddleHeadNodeCSV(fileName);
 		linkNodestoPuddleHeads();
 	}
 	
@@ -135,16 +135,17 @@ public class SimulationArchitecture extends PhysicalTopology{
 	}
 	
 	/**
-	 * This function adds all PuddleHeads based on the information
+	 * This function adds all PuddleHeads and Nodes based on the information
 	 * passed in from a CSV file. 
 	 * 
 	 * File is assumed to be a list where each line is type, dx, dy, level, xcoordinate, ycoordinate. 
 	 * Any subsequent line with the same information for the first four values adds the new xcoordinate
-	 * and ycoordinate to the polygon which is the area of coverage for the PuddleHead. 
+	 * and ycoordinate to the polygon which is the area of coverage for the PuddleHead. If there are 
+	 * multiple lines for the same node, the additional lines are ignored. 
 	 * 
 	 * @param fileName of the CSV file with the Voronoi information
 	 */
-	private void readPuddleHeadCSV(String fileName) {
+	private void readPuddleHeadNodeCSV(String fileName) {
 	   BufferedReader br = null;
         String line = "";
         String csvSplitBy = ",";
@@ -272,6 +273,119 @@ public class SimulationArchitecture extends PhysicalTopology{
             }
         }
 	}
+	
+	/**
+	 * This function adds all PuddleHeads based on the information
+	 * passed in from a CSV file. 
+	 * 
+	 * File is assumed to be a list where each line is level, xcoordinate, ycoordinate, areaX point, areaY point. 
+	 * Any subsequent line with the same information for the first four values adds the new xcoordinate
+	 * and ycoordinate to the polygon which is the area of coverage for the PuddleHead. 
+	 * 
+	 * @param fileName of the CSV file with the PuddleHead Voronoi information
+	 */
+	private void readPuddleHeadCSV(String fileName) {
+		   BufferedReader br = null;
+	        String line = "";
+	        String csvSplitBy = ",";
+
+	        try {
+	            br = new BufferedReader(new FileReader(fileName));
+	            ArrayList<Double> areaPointsX = new ArrayList<Double>();
+	            ArrayList<Double> areaPointsY = new ArrayList<Double>();
+	            double lastX = 0.0;
+	            double lastY = 0.0;
+	            boolean first = true;
+	            line = br.readLine();
+	            while(line !=null) {
+	                String[] row = line.split(csvSplitBy);
+	                
+	                //if level, dx, dy, areaX, areaY
+	                Integer level = Integer.parseInt(row[0]);
+	                Double xcoord = Double.parseDouble(row[1]);
+	                Double ycoord = Double.parseDouble(row[2]);
+	                Double areaX = Double.parseDouble(row[3]);
+	                Double areaY = Double.parseDouble(row[4]);
+
+	               if(first){
+	                	areaPointsX.add(areaX);
+	                	areaPointsY.add(areaY);
+	                	lastX = xcoord;
+	                	lastY = ycoord;
+	                	first = false;
+	                }
+	                else if(lastX == xcoord && lastY == ycoord){
+	                	areaPointsX.add(areaX);
+	                	areaPointsY.add(areaY);
+	                }
+	                else if(!(lastX == xcoord && lastY == ycoord)){
+	                	int numPoints = areaPointsX.size();
+	                	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
+	                	double[] xIn = new double[numPoints];
+	                	for(int i = 0; i < numPoints; i++){
+	                		xIn[i] = xDouble[i];
+	                	}
+	                	Double[] yDouble = areaPointsY.toArray(new Double[numPoints]);
+	                	double[] yIn = new double[numPoints];
+	                	for(int i = 0; i < numPoints; i++){
+	                		yIn[i] = yDouble[i];
+	                	}
+	                	Polygon areaOfCoverage = new Polygon(xIn, yIn);
+	                	int numOfPuddleHead = getInstance().getPuddleHeadIDs().size() + 1;
+	                	String name = "PH" + numOfPuddleHead; 
+	                	Point point = new Point(lastX, lastY);
+	                	PuddleHead newPH = createPuddleHead(name, areaOfCoverage, point, level);
+	                	getInstance().addPuddleHead(newPH);
+	                	areaPointsX = new ArrayList<Double>();
+	                	areaPointsY = new ArrayList<Double>();
+	                	lastX = xcoord;
+	                	lastY = ycoord;
+	                	areaPointsX.add(areaX);
+	                	areaPointsY.add(areaY);
+	                }
+	                line = br.readLine();
+	                if(line == null){
+	                	int numPoints = areaPointsX.size();
+	                	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
+	                	double[] xIn = new double[numPoints];
+	                	for(int i = 0; i < numPoints; i++){
+	                		xIn[i] = xDouble[i];
+	                	}
+	                	Double[] yDouble = areaPointsY.toArray(new Double[numPoints]);
+	                	double[] yIn = new double[numPoints];
+	                	for(int i = 0; i < numPoints; i++){
+	                		yIn[i] = yDouble[i];
+	                	}
+	                	Polygon areaOfCoverage = new Polygon(xIn, yIn);
+	                	int numOfPuddleHead = getInstance().getPuddleHeadIDs().size() + 1;
+	                	String name = "PH" + numOfPuddleHead; 
+	                	Point point = new Point(lastX, lastY);
+	                	PuddleHead newPH = createPuddleHead(name, areaOfCoverage, point, level);
+	                	getInstance().addPuddleHead(newPH);
+	                	areaPointsX = new ArrayList<Double>();
+	                	areaPointsY = new ArrayList<Double>();
+	                	lastX = xcoord;
+	                	lastY = ycoord;
+	                	areaPointsX.add(areaX);
+	                	areaPointsY.add(areaY);
+	                }
+	            }
+	        } catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        } catch (NumberFormatException e) {
+	            e.printStackTrace();
+	        } finally {
+	            if (br != null) {
+	                try {
+	                    br.close();
+	                } catch (IOException e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+		}
 	
 	//TODO: make this not a hardcoded function
 	/**
