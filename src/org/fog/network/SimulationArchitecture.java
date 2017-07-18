@@ -160,9 +160,6 @@ public class SimulationArchitecture extends PhysicalTopology{
             line = br.readLine();
             while(line !=null) {
                 String[] row = line.split(csvSplitBy);
-                
-                //TODO: make sure this is for the right kind of file
-                //if type, dx, dy, level, areaX, areaY
                 Integer type = Integer.parseInt(row[0]);
                 Double xcoord = Double.parseDouble(row[1]);
                 Double ycoord = Double.parseDouble(row[2]);
@@ -170,30 +167,64 @@ public class SimulationArchitecture extends PhysicalTopology{
                 Double areaX = Double.parseDouble(row[4]);
                 Double areaY = Double.parseDouble(row[5]);
                 
-                //if level, dx, dy, areaX, areaY
-//                Integer type = 80;
-//                Integer level = Integer.parseInt(row[0]);
-//                Double xcoord = Double.parseDouble(row[1]);
-//                Double ycoord = Double.parseDouble(row[2]);
-//                Double areaX = Double.parseDouble(row[3]);
-//                Double areaY = Double.parseDouble(row[4]);
-          
-                
-                //TODO: remove this, it isn't needed, just here for running tests
+                //FogNode addition
                 if(type != 80){
                 	if(!(lastX == xcoord && lastY == ycoord)){
 		            	Point location = new Point(xcoord, ycoord);
 		                int numNodes = getInstance().getFogNodeIDs().size();
 		                String name = "FN" + numNodes;
-		                FogNode node = createFogNode(name, false, 102400, 
-								4000, 0.01, 103, 83.25, 10000000,
-								1000000, 3.0, 0.05, 0.001, 0.0,
-								new Rectangle(20, 20), location, new Vector(0.1), level);
-		                getInstance().addFogNode(node);
+		                
+		                //TODO: NEED INFO FOR EACH LEVEL. Currently all the same 
+		                //mips, ram, ratePerMips, busyPower, idlePower, storage, bw, costProcessing, costPerMem, costPerStorage, costPerBw, bounds, (coordinates-Point), (level)
+		                switch(level){
+		                case 1: 
+		                	
+		                	FogNode newNode1 = createFogNode(name, false, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(1001, 1001), location, new Vector(0.1), 1);
+		                	getInstance().addFogNode(newNode1);
+		                	break;
+		                case 2:
+		                	
+		                	FogNode newNode2 = createFogNode(name, false, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(1001, 1001), location, new Vector(0.1), 2 );
+		                	getInstance().addFogNode(newNode2);
+		                	break;
+		                case 3:
+		                	
+		                	FogNode newNode3 = createFogNode(name, false, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(1001, 1001), location, new Vector(0.1), 3);
+		                	getInstance().addFogNode(newNode3);
+		                	break;
+		                case 4:
+		                	
+		                	FogNode newNode4 = createFogNode(name, false, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(1001, 1001), location, new Vector(0.1), 4);
+		                	getInstance().addFogNode(newNode4);
+		                	break;
+		                case 5:
+		                	FogNode newNode5 = createFogNode(name, false, 102400, 
+									4000, 0.01, 103, 83.25, 10000000,
+									1000000, 3.0, 0.05, 0.001, 0.0,
+									new Rectangle(1001, 1001), location, new Vector(0.1), 4);
+		                	getInstance().addFogNode(newNode5);
+		                	break;
+		                default:
+		                	break;
+		                }
+		                
 		                lastX = xcoord;
 		                lastY = ycoord; 
                 	}
                 }
+                //PuddleHead addition
                 else if(first){
                 	areaPointsX.add(areaX);
                 	areaPointsY.add(areaY);
@@ -231,6 +262,7 @@ public class SimulationArchitecture extends PhysicalTopology{
                 	areaPointsY.add(areaY);
                 }
                 line = br.readLine();
+                //add the last PuddleHead
                 if(line == null){
                 	int numPoints = areaPointsX.size();
                 	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
@@ -299,8 +331,6 @@ public class SimulationArchitecture extends PhysicalTopology{
 	            line = br.readLine();
 	            while(line !=null) {
 	                String[] row = line.split(csvSplitBy);
-	                
-	                //if level, dx, dy, areaX, areaY
 	                Integer level = Integer.parseInt(row[0]);
 	                Double xcoord = Double.parseDouble(row[1]);
 	                Double ycoord = Double.parseDouble(row[2]);
@@ -426,23 +456,27 @@ public class SimulationArchitecture extends PhysicalTopology{
 	                case 1: 
 	                	
 //	                	FogNode newNode1 = createFogNode(name, false,  );
-//	                	addFogNode(newNode1);
+//	                	getInstance().addFogNode(newNode1);
 	                	break;
 	                case 2:
 	                	
 //	                	FogNode newNode2 = createFogNode(name, false, );
-//	                	addFogNode(newNode2);
+//	                	getInstance().addFogNode(newNode2);
 	                	break;
 	                case 3:
 	                	
 //	                	FogNode newNode3 = createFogNode(name, false, );
-//	                	addFogNode(newNode3);
+//	                	getInstance().addFogNode(newNode3);
 	                	break;
 	                case 4:
 	                	
 //	                	FogNode newNode4 = createFogNode(name, false, );
-//	                	addFogNode(newNode4);
+//	                	getInstance().addFogNode(newNode4);
 	                	break;
+	                case 5: 
+	                	
+//	                	FogNode newNode5 = createFogNode(name, false, );
+//	                	getInstance().addFogNode(newNode5);
 	                default:
 	                	break;
 	                }
@@ -465,6 +499,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 	        }
 	}
 	
+	//TODO: Make this not hardcoded values.
 	private void linkNodestoPuddleHeads(){
 		double latency = 2.0;
 		double bandwidth = 1000.0;
@@ -561,6 +596,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		}
 	}	
 
+	//TODO: Fill this in. 
 	/**
 	 * This function validates the physical topology on start of simulation. 
 	 * Note, it only checks that a fog node is connected by one parent puddlehead.
