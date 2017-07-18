@@ -233,10 +233,11 @@ public class FogDevice extends PowerDatacenter {
 			}
 		} else {
 			for (Integer actuatorId : module.getActuatorSubscriptions().get(resTuple.getTupleType())) {
-				int nextNetworkDevice = ((GlobalBroker)CloudSim.getEntity("globalbroker")).nextNodeInMST(this.getId(), ((Actuator)CloudSim.getEntity(actuatorId)).getEndDeviceId());
-				int linkId = ((GlobalBroker)CloudSim.getEntity("globalbroker")).getLinkIdBetweenTwoDevices(nextNetworkDevice, this.getId());
+				//int nextNetworkDevice = ((GlobalBroker)CloudSim.getEntity("globalbroker")).nextNodeInMST(this.getId(), ((Actuator)CloudSim.getEntity(actuatorId)).getEndDeviceId());
+				//int linkId = ((GlobalBroker)CloudSim.getEntity("globalbroker")).getLinkIdBetweenTwoDevices(nextNetworkDevice, this.getId());
 				resTuple.setDestinationDeviceId(actuatorId);
-				sendTuple(resTuple, linkId);
+				//sendTuple(resTuple, linkId);
+				sendTuple(resTuple, actuatorId);
 			}
 		}
 		updateTimingsOnSending(resTuple);

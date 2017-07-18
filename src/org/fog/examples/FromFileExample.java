@@ -69,6 +69,7 @@ public class FromFileExample {
 		Logger.enableTag("SWITCH");
 		Logger.enableTag("LINK");
 		Logger.enableTag("SENSOR");
+		Logger.enableTag("KRUSKALS");
 		
 		try {
 			Log.disable();

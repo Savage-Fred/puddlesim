@@ -15,6 +15,7 @@ import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.network.Link;
+import org.fog.utils.Config;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
 import org.fog.utils.Mobility;
@@ -42,11 +43,6 @@ public class FogNode extends FogDevice {
 	 * Used for debugging purposes. Adds a label onto the output. Note, only used in Logger.debug
 	 */
 	private static String LOG_TAG = "FOG_NODE";
-	
-	/**
-	 * The delay between location updates.
-	 */
-	private static double delayBetweenLocationUpdates = 1000;
 	
 	/**
 	 * Used to check whether or not the device has started moving.
@@ -159,7 +155,6 @@ public class FogNode extends FogDevice {
 			Rectangle bounds, Point coordinates, Vector movementVector, boolean isMobile, int level) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
-		this.setMobilityDelay();
 	 		
 		//puddlebuddies addition 
 		setPuddleBuddies(new ArrayList<Integer>());
@@ -197,7 +192,6 @@ public class FogNode extends FogDevice {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, movementVector, isMobile);
-		this.setMobilityDelay();
 		
 		//puddlebuddies addition 
 		setPuddleBuddies(new ArrayList<Integer>());
@@ -229,7 +223,6 @@ public class FogNode extends FogDevice {
 			Rectangle bounds, Point coordinates, double scalar, boolean isMobile, int level) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
-		this.setMobilityDelay();
 		
 		//puddlebuddies addition 
 		setPuddleBuddies(new ArrayList<Integer>());
@@ -267,7 +260,6 @@ public class FogNode extends FogDevice {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth,
 				downlinkBandwidth, uplinkLatency, ratePerMips);
 		this.mobile = new Mobility(bounds, coordinates, scalar, isMobile);
-		this.setMobilityDelay();
 		
 		//puddlebuddies addition 
 		setPuddleBuddies(new ArrayList<Integer>());
@@ -297,14 +289,6 @@ public class FogNode extends FogDevice {
 	}
 	
 	/**
-	 * Choose the mobility step delay
-	 */
-	private void setMobilityDelay(){
-		// Minimum time is 0.1. 10 x gives 1 second per location update.
-		FogNode.delayBetweenLocationUpdates = 1000*CloudSim.getMinTimeBetweenEvents();
-	}
-	
-	/**
 	 * Updates the location and latency continually
 	 * Note: it will send the process node move event only if the name of the global broker is "globalbroker"
 	 * @param ev (SimEvent)
@@ -313,8 +297,8 @@ public class FogNode extends FogDevice {
 		// If the device is mobile, update the location and send an event to the queue to trigger it again
 		if(mobile.isMobile()){
 			mobile.updateLocation();
-			send(super.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LOCATION);
-			this.linksMap.forEach((k,v) -> {send(v.getId(), FogNode.delayBetweenLocationUpdates, FogEvents.UPDATE_LATENCY);
+			send(super.getId(), Config.LOCATION_UPDATE_INTERVAL, FogEvents.UPDATE_LOCATION);
+			this.linksMap.forEach((k,v) -> {send(v.getId(), Config.LOCATION_UPDATE_INTERVAL, FogEvents.UPDATE_LATENCY);
 				Logger.debug("LINKMAP", getName(), "Loop");});
 			
 			//Send to global broker for processing. 
