@@ -211,8 +211,8 @@ public class Link extends SimEntity {
 		double sizeInBits = tuple.getCloudletFileSize() * 8;
 		double bwInBitsPerSecond = getBandwidth() * 1024 * 1024;
 		double transmissionDelay = 1000*(sizeInBits/bwInBitsPerSecond);
-		Logger.debug(LOG_TAG, "SizeInBits = "+sizeInBits);
-		Logger.debug(LOG_TAG, "Transmission delay = "+transmissionDelay );
+		Logger.debug(LOG_TAG, this.getId()+" ", "SizeInBits = "+sizeInBits);
+		Logger.debug(LOG_TAG, this.getId()+" ","Transmission delay = "+transmissionDelay );
 		setSouthLinkBusy(true); // South link has begun sending this tuple. Marking it as busy so next tuples are queued until this is sent. 
 		send(getId(), transmissionDelay , FogEvents.UPDATE_SOUTH_TUPLE_QUEUE);	// update South link once transmission is complete
 		send(endpointSouth, transmissionDelay  + getLatency(), FogEvents.TUPLE_ARRIVAL, tuple);	// Sent tuple arrives at other end of link after given delay
@@ -254,7 +254,7 @@ public class Link extends SimEntity {
 		double sizeInBits = tuple.getCloudletFileSize() * 8;
 		double bwInBitsPerSecond = getBandwidth() * 1024 * 1024;
 		double networkDelay = 1000*(sizeInBits/bwInBitsPerSecond);
-		Logger.debug(LOG_TAG, "Transmission delay = "+networkDelay);
+		Logger.debug(LOG_TAG, this.getId()+" ","Transmission delay = "+networkDelay);
 		setNorthLinkBusy(true);  // North link has begun sending this tuple. Marking it as busy so next tuples are queued until this is sent.
 		send(getId(), networkDelay, FogEvents.UPDATE_NORTH_TUPLE_QUEUE);  // update North link once transmission is complete
 		send(endpointNorth, networkDelay + getLatency(), FogEvents.TUPLE_ARRIVAL, tuple);  // Sent tuple arrives at other end of link after given delay

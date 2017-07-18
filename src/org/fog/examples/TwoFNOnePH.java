@@ -71,6 +71,8 @@ public class TwoFNOnePH {
 		Logger.enableTag("FOG_NODE");
 		Logger.enableTag("SWITCH");
 		Logger.enableTag("LINK");
+		Logger.enableTag("END_DEVICE");
+		Logger.enableTag("ACTUATOR");
 		
 		try {
 			Log.disable();
@@ -90,7 +92,10 @@ public class TwoFNOnePH {
 			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
-			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), 
+					SimulationArchitecture.getInstance().getFogNodeIDs(), 
+					SimulationArchitecture.getInstance().getLinkIDs(), 
+					SimulationArchitecture.getInstance().getEndDeviceIDs());
 			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
@@ -129,7 +134,7 @@ public class TwoFNOnePH {
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
 
-		EndDevice dev = new EndDevice("DEV");
+		EndDevice dev = new EndDevice("DEV", new Rectangle(10, 10), new Point(1,2), new Vector(0.23), false);
 		
 		// Create fognodes
 		// Important!! A cloud MUST EXIST with the cloudOnly module placement strategy

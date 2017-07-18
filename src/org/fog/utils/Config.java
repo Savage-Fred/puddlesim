@@ -14,4 +14,5 @@ public class Config {
 	public static double FOG_DEVICE_COST_PER_MEMORY = 0.05;
 	public static double FOG_DEVICE_COST_PER_STORAGE = 0.001;
 	public static double FOG_DEVICE_COST_PER_BW = 0.0;
+	public static double LOCATION_UPDATE_INTERVAL = 10; /* Interval between location updates. */
 }

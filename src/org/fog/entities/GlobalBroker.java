@@ -6,17 +6,22 @@ package org.fog.entities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
+import org.fog.network.Link;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
 import org.fog.utils.Point;
 import org.fog.utils.Polygon;
+import org.fog.utils.Graph;
+import org.fog.utils.KruskalAlgorithm;
 
 /**
  * @author Jessica Knezha
@@ -62,6 +67,20 @@ public class GlobalBroker extends FogBroker {
 	 */
 //	protected List<Integer> actuatorIds; 
 	
+	/**
+	 * List of all link IDs that have been created.
+	 */
+	protected List<Integer> linkIds;
+	
+	/**
+	 * List of all end device IDs that have been created.
+	 */
+	protected List<Integer> endDeviceIds;
+	
+	/**
+	 * Minimum spanning tree object
+	 */
+	KruskalAlgorithm MST= null;
 	
 	/**
 	 * Constructor of a GlobalBroker. The input name should be 'globalbroker' for use with PuddleSim capabilities. (See Note above)
@@ -70,12 +89,13 @@ public class GlobalBroker extends FogBroker {
 	 */
 	public GlobalBroker(String name) throws Exception {
 		super(name);
-		System.out.println("Creating GlobalBroker with name " + name + " ID: " + this.getId());
+		Logger.debug(LOG_TAG, "Creating GlobalBroker with name " + name + " ID: " + this.getId());
 		setPuddleHeadIds(new ArrayList<Integer>());
 		setPuddleHeadsByLevel(new HashMap<Integer, List<Integer>>());
 		setFogDeviceIds(new ArrayList<Integer>());
 		setSensorIds(new ArrayList<Integer>());
-		setActuatorIds(new ArrayList<Integer>()); 
+		setActuatorIds(new ArrayList<Integer>());
+		setLinkIds(new ArrayList<Integer>());
 	}
 	
 	/**
@@ -83,13 +103,75 @@ public class GlobalBroker extends FogBroker {
 	 * @param puddleHeadIn
 	 * @param nodeIn
 	 */
-	public void setup(List<Integer> puddleHeadIn, List<Integer> nodeIn){
+	public void setup(List<Integer> puddleHeadIn, 
+					List<Integer> nodeIn, 
+					List<Integer> linkIds, 
+					List<Integer> endDeviceIds){
 		setPuddleHeadIds(puddleHeadIn); 
 		setFogDeviceIds(nodeIn);
+		setLinkIds(linkIds);
+		setEndDeviceIds(endDeviceIds);
+		setMST();
 		for(int puddleHeadId : puddleHeadIds){
 			PuddleHead puddleHead = (PuddleHead) CloudSim.getEntity(puddleHeadId);
 			addPuddleHeadByLevel(puddleHeadId, puddleHead.getLevel());
 		}
+		
+		
+	}
+	
+	public int getLinkIdBetweenTwoDevices(int id1, int id2){
+		int id = -1;
+		Logger.debug(LOG_TAG, "Finding link between: "+id1+"<->"+id2);
+		for(Integer linkId : linkIds){
+			Link possibleLink = (Link)CloudSim.getEntity(linkId);
+			if(possibleLink.getEndpointNorth() == id1 && possibleLink.getEndpointSouth() == id2 || 
+				possibleLink.getEndpointNorth() == id2 && possibleLink.getEndpointSouth() == id1)
+				id = possibleLink.getId();
+		}
+		return id;
+	}
+	
+	/**
+	 * Setup function for the minimum spanning tree. Requires that fog device, puddlehead, end device, and link lists be set up beforehand.
+	 */
+	private void setMST(){
+		// Set up the minimum spanning tree
+		int maxIndex = 0;
+		int minIndex = puddleHeadIds.get(0);
+		for(int puddleHeadId : puddleHeadIds){
+			if (puddleHeadId > maxIndex)
+				maxIndex = puddleHeadId;
+			else if (puddleHeadId < minIndex)
+				minIndex = puddleHeadId;
+		}
+		for(int fogNodeId : fogDeviceIds){
+			if (fogNodeId > maxIndex)
+				maxIndex = fogNodeId;
+			else if (fogNodeId < minIndex)
+				minIndex = fogNodeId;
+		}
+		for(int endDeviceId : endDeviceIds){
+			if (endDeviceId > maxIndex)
+				maxIndex = endDeviceId;
+			else if (endDeviceId < minIndex)
+				minIndex = endDeviceId;
+		}
+		
+		int dimensions = puddleHeadIds.size()+fogDeviceIds.size()+endDeviceIds.size();
+		if(dimensions == 0)
+			throw new IllegalArgumentException("Error: Puddleheads + Nodes == 0");
+		MST = new KruskalAlgorithm(maxIndex);
+		int [][] adjacencyMatrix = new int[maxIndex+1][maxIndex+1];
+		Link link;
+		for(Integer linkId : linkIds){
+			link = (Link)CloudSim.getEntity(linkId);
+			Logger.debug(LOG_TAG, "Link: " + link.getId());
+			// Make a connection between the 2. Links are bi-directional.
+			adjacencyMatrix[link.getEndpointNorth()][link.getEndpointSouth()] = 1;
+			adjacencyMatrix[link.getEndpointSouth()][link.getEndpointNorth()] = 1;
+		}
+		MST.kruskalAlgorithm(adjacencyMatrix);
 	}
 	
 	@Override
@@ -274,6 +356,18 @@ public class GlobalBroker extends FogBroker {
 			Logger.debug(LOG_TAG, "GLOBAL_BROKER", "Tried to remove a puddlehead from a level that doesn't exist");
 		}
 	}
+
+	/**
+	 * Gets the next node in a minimum spanning tree towards the destination from the source.</p>
+	 * Used for module routing.
+	 * @param sourceId the id of the entity requesting the next node id. 
+	 * @param destinationId the id of the entity the module must eventually be sent to.
+	 * @return Integer indicating the next node/entity a module should be sent to.
+	 * <p><b>-1 if no node.
+	 */
+	public int nextNodeInMST(int sourceId, int destinationId){
+		return MST.nextNodeInMST(sourceId, destinationId);
+	}
 	
 
 	/**
@@ -364,6 +458,34 @@ public class GlobalBroker extends FogBroker {
 	 */
 	public void removeActuatorId(int actuatorId){
 		actuatorIds.remove((Integer)actuatorId);
+	}
+
+	/**
+	 * @return the linkIDs
+	 */
+	public List<Integer> getLinkIds() {
+		return linkIds;
+	}
+
+	/**
+	 * @param linkIDs the linkIDs to set
+	 */
+	public void setLinkIds(List<Integer> linkIds) {
+		this.linkIds = linkIds;
+	}
+
+	/**
+	 * @return the endDeviceIds
+	 */
+	public List<Integer> getEndDeviceIds() {
+		return endDeviceIds;
+	}
+
+	/**
+	 * @param endDeviceIds the endDeviceIds to set
+	 */
+	public void setEndDeviceIds(List<Integer> endDeviceIds) {
+		this.endDeviceIds = endDeviceIds;
 	}
 	
 }

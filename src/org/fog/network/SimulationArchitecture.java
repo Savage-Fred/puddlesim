@@ -528,7 +528,10 @@ public class SimulationArchitecture extends PhysicalTopology{
 			// TODO: add maps of links to fogDevices
 		} 
 		else if (this.endDeviceIDs.contains(endpoint1)) {
-			// TODO: add maps of links to endDevices 
+			EndDevice device = (EndDevice)CloudSim.getEntity(endpoint1);
+			device.setLinkId(newLink.getId());
+			device.setEdgeSwitchId(endpoint2);
+			System.out.println("EndDevice Link: " + device.getId() + " <=" + newLink.getId());
 		} 
 		else if (this.switchIDs.contains(endpoint1)) {
 			// TODO: add maps of links to switches			
@@ -548,7 +551,10 @@ public class SimulationArchitecture extends PhysicalTopology{
 			// TODO: add maps of links to fogDevices
 		} 
 		else if (this.endDeviceIDs.contains(endpoint2)) {
-			// TODO: add maps of links to endDevices 
+			EndDevice device = (EndDevice)CloudSim.getEntity(endpoint2);
+			device.setLinkId(newLink.getId());
+			device.setEdgeSwitchId(endpoint1);
+			System.out.println("EndDevice Link: " + device.getId() + " <=" + newLink.getId()); 
 		} 
 		else if (this.switchIDs.contains(endpoint2)) {
 			// TODO: add maps of links to switches			
