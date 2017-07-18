@@ -93,7 +93,10 @@ public class FromFileExample {
 //			String puddleHeadFile = "points_heads2.csv";
 //			createSimulationArchitecture(puddleHeadFile, nodeFile, broker.getId(), appId, application);
 			
-			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), 
+					SimulationArchitecture.getInstance().getFogNodeIDs(), 
+					SimulationArchitecture.getInstance().getLinkIDs(), 
+					SimulationArchitecture.getInstance().getEndDeviceIDs());
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
 			broker.setActuatorIds(getIds(SimulationArchitecture.getInstance().getActuators()));
@@ -129,7 +132,7 @@ public class FromFileExample {
 			
 		SimulationArchitecture.getInstance().createNewTopology(fileName, userId, appId, application);
 		
-		EndDevice dev = new EndDevice("DEV");
+		EndDevice dev = new EndDevice("DEV", new Rectangle(10, 10), new Point(1,2), new Vector(0.23), false);
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
@@ -150,7 +153,7 @@ public class FromFileExample {
 	}
 	
 	private static void createSimulationArchitecture(String puddleHeadFile, String nodeFile, int userId, String appId, Application application){
-		EndDevice dev = new EndDevice("DEV");
+		EndDevice dev = new EndDevice("DEV", new Rectangle(10, 10), new Point(1,2), new Vector(0.23), false);
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
@@ -192,7 +195,7 @@ public class FromFileExample {
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
 		
-		EndDevice dev = new EndDevice("DEV");
+		EndDevice dev = new EndDevice("DEV", new Rectangle(10, 10), new Point(1,2), new Vector(0.23), false);
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
