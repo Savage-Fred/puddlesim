@@ -71,6 +71,10 @@ public class RedFNBluePH {
 		Logger.enableTag("FOG_NODE");
 		Logger.enableTag("SWITCH");
 		Logger.enableTag("LINK");
+		Logger.enableTag("END_DEVICE");
+		Logger.enableTag("ACTUATOR");
+		Logger.enableTag("SENSOR");
+		//Logger.enableTag("GLOBAL_BROKER");
 		
 		try {
 			Log.disable();
@@ -90,7 +94,10 @@ public class RedFNBluePH {
 			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
-			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), 
+					SimulationArchitecture.getInstance().getFogNodeIDs(), 
+					SimulationArchitecture.getInstance().getLinkIDs(), 
+					SimulationArchitecture.getInstance().getEndDeviceIDs());
 			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
@@ -129,7 +136,6 @@ public class RedFNBluePH {
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
 
-		EndDevice dev = new EndDevice("DEV");
 		///////////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////     FOG NODES    /////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////
@@ -304,7 +310,7 @@ public class RedFNBluePH {
 		Point location7 = new Point(12, 5);
 		PuddleHead ph7 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD7", areaOfCoverage7, location7, 1);
 		////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+		EndDevice dev = new EndDevice("DEV", new Rectangle(10, 10), new Point(1,2), new Vector(0.23), false);
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
@@ -339,6 +345,25 @@ public class RedFNBluePH {
 		
 		SimulationArchitecture.getInstance().addEndDevice(dev);
 
+//		fogDevices.add(fd0);
+//		fogDevices.add(fd1);
+//		fogDevices.add(fn0);
+//		fogDevices.add(fn1);
+//		fogDevices.add(fn2);
+//		fogDevices.add(fn3);
+//		fogDevices.add(fn4);
+//		fogDevices.add(fn5);
+//		fogDevices.add(fn6);
+//		fogDevices.add(fn7);
+//		fogDevices.add(fn8);
+//		fogDevices.add(fn9);
+//		fogDevices.add(fn10);
+//		fogDevices.add(fn11);
+//		fogDevices.add(fn12);
+//		fogDevices.add(fn13);
+//		fogDevices.add(fn14);
+//		fogDevices.add(fn15);
+		
 		// Now connecting entities with Links
 		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);
 		

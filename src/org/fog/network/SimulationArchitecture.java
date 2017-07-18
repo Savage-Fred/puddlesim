@@ -1,5 +1,9 @@
 package org.fog.network;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +27,7 @@ import org.fog.entities.PuddleHead;
 import org.fog.entities.Sensor;
 import org.fog.policy.AppModuleAllocationPolicy;
 import org.fog.scheduler.AppModuleScheduler;
+import org.fog.utils.CSVReader;
 import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
@@ -82,6 +87,11 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 */
 	private List<Integer> linkIDs;
 	
+	/**
+	 * Map of all the PuddleHeads in the network by level. The key is the level and the list is all the PuddleHeads at that level.
+	 */
+	protected Map<Integer, List<PuddleHead>> puddleHeadsByLevel; 
+	
 	protected SimulationArchitecture(){
 		setLinks(new ArrayList<Link>());
 		setFogDevices(new ArrayList<FogDevice>());
@@ -95,6 +105,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		this.endDeviceIDs = new ArrayList<Integer>();
 		this.switchIDs = new ArrayList<Integer>();
 		this.linkIDs = new ArrayList<Integer>();
+		this.puddleHeadsByLevel = new HashMap<Integer, List<PuddleHead>>();
 	}
 	
 	
@@ -104,18 +115,386 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * @param appId
 	 * @param application
 	 */
-	public void CreateNewTopology(String fileName, int userId, String appId, Application application) {
-		
+	public void createNewTopology(String fileName, int userId, String appId, Application application) {
+		readPuddleHeadNodeCSV(fileName);
+		linkNodestoPuddleHeads();
 	}
 	
 	/**
-	 * This function sets up the file for read in the architecture.
+	 * Function to be called to structure the architecture. 
+	 * @param puddleHeadFile
+	 * @param nodeFile
 	 * @param userId
 	 * @param appId
 	 * @param application
 	 */
-	private void ReadVoronoi(String fileName) {
+	public void createNewTopology(String puddleHeadFile, String nodeFile, int userId, String appId, Application application) {
+		readPuddleHeadCSV(puddleHeadFile);
+		readFogNodeCSV(nodeFile);
+		linkNodestoPuddleHeads();
+	}
+	
+	/**
+	 * This function adds all PuddleHeads and Nodes based on the information
+	 * passed in from a CSV file. 
+	 * 
+	 * File is assumed to be a list where each line is type, dx, dy, level, xcoordinate, ycoordinate. 
+	 * Any subsequent line with the same information for the first four values adds the new xcoordinate
+	 * and ycoordinate to the polygon which is the area of coverage for the PuddleHead. If there are 
+	 * multiple lines for the same node, the additional lines are ignored. 
+	 * 
+	 * @param fileName of the CSV file with the Voronoi information
+	 */
+	private void readPuddleHeadNodeCSV(String fileName) {
+	   BufferedReader br = null;
+        String line = "";
+        String csvSplitBy = ",";
+
+        try {
+            br = new BufferedReader(new FileReader(fileName));
+            ArrayList<Double> areaPointsX = new ArrayList<Double>();
+            ArrayList<Double> areaPointsY = new ArrayList<Double>();
+            double lastX = 0.0;
+            double lastY = 0.0;
+            boolean first = true;
+            line = br.readLine();
+            while(line !=null) {
+                String[] row = line.split(csvSplitBy);
+                
+                //TODO: make sure this is for the right kind of file
+                //if type, dx, dy, level, areaX, areaY
+                Integer type = Integer.parseInt(row[0]);
+                Double xcoord = Double.parseDouble(row[1]);
+                Double ycoord = Double.parseDouble(row[2]);
+                Integer level = Integer.parseInt(row[3]);
+                Double areaX = Double.parseDouble(row[4]);
+                Double areaY = Double.parseDouble(row[5]);
+                
+                //if level, dx, dy, areaX, areaY
+//                Integer type = 80;
+//                Integer level = Integer.parseInt(row[0]);
+//                Double xcoord = Double.parseDouble(row[1]);
+//                Double ycoord = Double.parseDouble(row[2]);
+//                Double areaX = Double.parseDouble(row[3]);
+//                Double areaY = Double.parseDouble(row[4]);
+          
+                
+                //TODO: remove this, it isn't needed, just here for running tests
+                if(type != 80){
+                	if(!(lastX == xcoord && lastY == ycoord)){
+		            	Point location = new Point(xcoord, ycoord);
+		                int numNodes = getInstance().getFogNodeIDs().size();
+		                String name = "FN" + numNodes;
+		                FogNode node = createFogNode(name, false, 102400, 
+								4000, 0.01, 103, 83.25, 10000000,
+								1000000, 3.0, 0.05, 0.001, 0.0,
+								new Rectangle(20, 20), location, new Vector(0.1), level);
+		                getInstance().addFogNode(node);
+		                lastX = xcoord;
+		                lastY = ycoord; 
+                	}
+                }
+                else if(first){
+                	areaPointsX.add(areaX);
+                	areaPointsY.add(areaY);
+                	lastX = xcoord;
+                	lastY = ycoord;
+                	first = false;
+                }
+                else if(lastX == xcoord && lastY == ycoord){
+                	areaPointsX.add(areaX);
+                	areaPointsY.add(areaY);
+                }
+                else if(!(lastX == xcoord && lastY == ycoord)){
+                	int numPoints = areaPointsX.size();
+                	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
+                	double[] xIn = new double[numPoints];
+                	for(int i = 0; i < numPoints; i++){
+                		xIn[i] = xDouble[i];
+                	}
+                	Double[] yDouble = areaPointsY.toArray(new Double[numPoints]);
+                	double[] yIn = new double[numPoints];
+                	for(int i = 0; i < numPoints; i++){
+                		yIn[i] = yDouble[i];
+                	}
+                	Polygon areaOfCoverage = new Polygon(xIn, yIn);
+                	int numOfPuddleHead = getInstance().getPuddleHeadIDs().size() + 1;
+                	String name = "PH" + numOfPuddleHead; 
+                	Point point = new Point(lastX, lastY);
+                	PuddleHead newPH = createPuddleHead(name, areaOfCoverage, point, level);
+                	getInstance().addPuddleHead(newPH);
+                	areaPointsX = new ArrayList<Double>();
+                	areaPointsY = new ArrayList<Double>();
+                	lastX = xcoord;
+                	lastY = ycoord;
+                	areaPointsX.add(areaX);
+                	areaPointsY.add(areaY);
+                }
+                line = br.readLine();
+                if(line == null){
+                	int numPoints = areaPointsX.size();
+                	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
+                	double[] xIn = new double[numPoints];
+                	for(int i = 0; i < numPoints; i++){
+                		xIn[i] = xDouble[i];
+                	}
+                	Double[] yDouble = areaPointsY.toArray(new Double[numPoints]);
+                	double[] yIn = new double[numPoints];
+                	for(int i = 0; i < numPoints; i++){
+                		yIn[i] = yDouble[i];
+                	}
+                	Polygon areaOfCoverage = new Polygon(xIn, yIn);
+                	int numOfPuddleHead = getInstance().getPuddleHeadIDs().size() + 1;
+                	String name = "PH" + numOfPuddleHead; 
+                	Point point = new Point(lastX, lastY);
+                	PuddleHead newPH = createPuddleHead(name, areaOfCoverage, point, level);
+                	getInstance().addPuddleHead(newPH);
+                	areaPointsX = new ArrayList<Double>();
+                	areaPointsY = new ArrayList<Double>();
+                	lastX = xcoord;
+                	lastY = ycoord;
+                	areaPointsX.add(areaX);
+                	areaPointsY.add(areaY);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+	}
+	
+	/**
+	 * This function adds all PuddleHeads based on the information
+	 * passed in from a CSV file. 
+	 * 
+	 * File is assumed to be a list where each line is level, xcoordinate, ycoordinate, areaX point, areaY point. 
+	 * Any subsequent line with the same information for the first four values adds the new xcoordinate
+	 * and ycoordinate to the polygon which is the area of coverage for the PuddleHead. 
+	 * 
+	 * @param fileName of the CSV file with the PuddleHead Voronoi information
+	 */
+	private void readPuddleHeadCSV(String fileName) {
+		   BufferedReader br = null;
+	        String line = "";
+	        String csvSplitBy = ",";
+
+	        try {
+	            br = new BufferedReader(new FileReader(fileName));
+	            ArrayList<Double> areaPointsX = new ArrayList<Double>();
+	            ArrayList<Double> areaPointsY = new ArrayList<Double>();
+	            double lastX = 0.0;
+	            double lastY = 0.0;
+	            boolean first = true;
+	            line = br.readLine();
+	            while(line !=null) {
+	                String[] row = line.split(csvSplitBy);
+	                
+	                //if level, dx, dy, areaX, areaY
+	                Integer level = Integer.parseInt(row[0]);
+	                Double xcoord = Double.parseDouble(row[1]);
+	                Double ycoord = Double.parseDouble(row[2]);
+	                Double areaX = Double.parseDouble(row[3]);
+	                Double areaY = Double.parseDouble(row[4]);
+
+	               if(first){
+	                	areaPointsX.add(areaX);
+	                	areaPointsY.add(areaY);
+	                	lastX = xcoord;
+	                	lastY = ycoord;
+	                	first = false;
+	                }
+	                else if(lastX == xcoord && lastY == ycoord){
+	                	areaPointsX.add(areaX);
+	                	areaPointsY.add(areaY);
+	                }
+	                else if(!(lastX == xcoord && lastY == ycoord)){
+	                	int numPoints = areaPointsX.size();
+	                	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
+	                	double[] xIn = new double[numPoints];
+	                	for(int i = 0; i < numPoints; i++){
+	                		xIn[i] = xDouble[i];
+	                	}
+	                	Double[] yDouble = areaPointsY.toArray(new Double[numPoints]);
+	                	double[] yIn = new double[numPoints];
+	                	for(int i = 0; i < numPoints; i++){
+	                		yIn[i] = yDouble[i];
+	                	}
+	                	Polygon areaOfCoverage = new Polygon(xIn, yIn);
+	                	int numOfPuddleHead = getInstance().getPuddleHeadIDs().size() + 1;
+	                	String name = "PH" + numOfPuddleHead; 
+	                	Point point = new Point(lastX, lastY);
+	                	PuddleHead newPH = createPuddleHead(name, areaOfCoverage, point, level);
+	                	getInstance().addPuddleHead(newPH);
+	                	areaPointsX = new ArrayList<Double>();
+	                	areaPointsY = new ArrayList<Double>();
+	                	lastX = xcoord;
+	                	lastY = ycoord;
+	                	areaPointsX.add(areaX);
+	                	areaPointsY.add(areaY);
+	                }
+	                line = br.readLine();
+	                if(line == null){
+	                	int numPoints = areaPointsX.size();
+	                	Double[] xDouble = areaPointsX.toArray(new Double[numPoints]);
+	                	double[] xIn = new double[numPoints];
+	                	for(int i = 0; i < numPoints; i++){
+	                		xIn[i] = xDouble[i];
+	                	}
+	                	Double[] yDouble = areaPointsY.toArray(new Double[numPoints]);
+	                	double[] yIn = new double[numPoints];
+	                	for(int i = 0; i < numPoints; i++){
+	                		yIn[i] = yDouble[i];
+	                	}
+	                	Polygon areaOfCoverage = new Polygon(xIn, yIn);
+	                	int numOfPuddleHead = getInstance().getPuddleHeadIDs().size() + 1;
+	                	String name = "PH" + numOfPuddleHead; 
+	                	Point point = new Point(lastX, lastY);
+	                	PuddleHead newPH = createPuddleHead(name, areaOfCoverage, point, level);
+	                	getInstance().addPuddleHead(newPH);
+	                	areaPointsX = new ArrayList<Double>();
+	                	areaPointsY = new ArrayList<Double>();
+	                	lastX = xcoord;
+	                	lastY = ycoord;
+	                	areaPointsX.add(areaX);
+	                	areaPointsY.add(areaY);
+	                }
+	            }
+	        } catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        } catch (NumberFormatException e) {
+	            e.printStackTrace();
+	        } finally {
+	            if (br != null) {
+	                try {
+	                    br.close();
+	                } catch (IOException e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+		}
+	
+	//TODO: make this not a hardcoded function
+	/**
+	 * This function adds all FogNodes based on the information passed in from a CSV file.
+	 * 
+	 * File is assumed to be a list where each line is level, dx, dy. 
+	 * Nodes are given different values for their other characteristics based on their level.
+	 * 
+	 * NOTE: THIS FUNCTION IS HARDCODED FOR THE NUMBERS DESIGNATED PER LEVEL OF FOG NODE
+	 * 
+	 * @param fileName CSV file containing FogNode information
+	 */
+	private void readFogNodeCSV(String fileName) {
+		   BufferedReader br = null;
+	        String line = "";
+	        String csvSplitBy = ",";
+
+	        try {
+	            br = new BufferedReader(new FileReader(fileName));
+	            while((line = br.readLine()) !=null) {
+	                String[] row = line.split(csvSplitBy);
+	                Double xcoord = Double.parseDouble(row[1]);
+	                Double ycoord = Double.parseDouble(row[2]);
+	                Integer level = Integer.parseInt(row[0]);
+	                Point location = new Point(xcoord, ycoord);
+	                int numNodes = getInstance().getFogNodes().size();
+	                String name = "FN" + numNodes;
+
+	                FogNode node = createFogNode(name, false, 102400, 
+							4000, 0.01, 103, 83.25, 10000000,
+							1000000, 3.0, 0.05, 0.001, 0.0,
+							new Rectangle(1001, 1001), location, new Vector(1), level);
+	                getInstance().addFogNode(node);
+	                
+	                //TODO: NEED INFO FOR EACH LEVEL. 
+	                //mips, ram, ratePerMips, busyPower, idlePower, storage, bw, costProcessing, costPerMem, costPerStorage, costPerBw, bounds, (coordinates-Point), (level)
+	                switch(level){
+	                case 1: 
+	                	
+//	                	FogNode newNode1 = createFogNode(name, false,  );
+//	                	addFogNode(newNode1);
+	                	break;
+	                case 2:
+	                	
+//	                	FogNode newNode2 = createFogNode(name, false, );
+//	                	addFogNode(newNode2);
+	                	break;
+	                case 3:
+	                	
+//	                	FogNode newNode3 = createFogNode(name, false, );
+//	                	addFogNode(newNode3);
+	                	break;
+	                case 4:
+	                	
+//	                	FogNode newNode4 = createFogNode(name, false, );
+//	                	addFogNode(newNode4);
+	                	break;
+	                default:
+	                	break;
+	                }
+	             
+	            }
+	        } catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        } catch (NumberFormatException e) {
+	            e.printStackTrace();
+	        } finally {
+	            if (br != null) {
+	                try {
+	                    br.close();
+	                } catch (IOException e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+	}
+	
+	private void linkNodestoPuddleHeads(){
+		double latency = 2.0;
+		double bandwidth = 1000.0;
+		for(FogNode node : getInstance().getFogNodes()){
+			PuddleHead puddlehead = findNodeNewPuddleHead(node);
+			if(puddlehead != null){
+				getInstance().addLink(node.getId(), puddlehead.getId(), latency, bandwidth);
+			}
+		}
+	}
+	
+	/**
+	 * finds which PuddleHead's area of coverage a node is in. If one is not found it returns null
+	 * @param node
+	 * @return puddlehead
+	 */
+	private PuddleHead findNodeNewPuddleHead(FogNode node){
+		Point nodePoint = node.getLocation();
 		
+		List<PuddleHead> viablePuddleHeads = getInstance().getPuddleHeadsByLevel().get(node.getLevel());
+		
+		if(viablePuddleHeads != null){
+			for(PuddleHead puddlehead : viablePuddleHeads){
+				Polygon area = puddlehead.getAreaOfCoverage(); 
+				if(area.contains(nodePoint)){
+					return puddlehead; 
+				}
+			}
+		}
+		return null; 
 	}
 	
 	/**
@@ -149,7 +528,10 @@ public class SimulationArchitecture extends PhysicalTopology{
 			// TODO: add maps of links to fogDevices
 		} 
 		else if (this.endDeviceIDs.contains(endpoint1)) {
-			// TODO: add maps of links to endDevices 
+			EndDevice device = (EndDevice)CloudSim.getEntity(endpoint1);
+			device.setLinkId(newLink.getId());
+			device.setEdgeSwitchId(endpoint2);
+			System.out.println("EndDevice Link: " + device.getId() + " <=" + newLink.getId());
 		} 
 		else if (this.switchIDs.contains(endpoint1)) {
 			// TODO: add maps of links to switches			
@@ -169,7 +551,10 @@ public class SimulationArchitecture extends PhysicalTopology{
 			// TODO: add maps of links to fogDevices
 		} 
 		else if (this.endDeviceIDs.contains(endpoint2)) {
-			// TODO: add maps of links to endDevices 
+			EndDevice device = (EndDevice)CloudSim.getEntity(endpoint2);
+			device.setLinkId(newLink.getId());
+			device.setEdgeSwitchId(endpoint1);
+			System.out.println("EndDevice Link: " + device.getId() + " <=" + newLink.getId()); 
 		} 
 		else if (this.switchIDs.contains(endpoint2)) {
 			// TODO: add maps of links to switches			
@@ -237,7 +622,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		// Add device ID to integer list
 		fogNodeIDs.add(dev.getId());
 		fogDeviceIDs.add(dev.getId());
-		System.out.println("Added Fog Node: " + dev.getId());
+		System.out.println("Added Fog Node: " + dev.getId() + " Point: " + dev.getLocation() + " My level: " + dev.getLevel());
 	}
 	
 	/**
@@ -247,9 +632,10 @@ public class SimulationArchitecture extends PhysicalTopology{
 	@Override
 	public void addPuddleHead(PuddleHead dev) {
 		getPuddleHeads().add(dev);
+		addPuddleHeadByLevel(dev, dev.getLevel());
 		// Add device ID to integer list
 		puddleHeadIDs.add(dev.getId());
-		System.out.println("Added PuddleHead: " + dev.getId());
+		System.out.println("Added PuddleHead: " + dev.getId() + " Point: " + dev.getLocation() + " " + dev.getAreaOfCoverage());
 	}
 	
 	/**
@@ -499,5 +885,35 @@ public class SimulationArchitecture extends PhysicalTopology{
 	public void setLinkIDs(List<Integer> linkIDs) {
 		this.linkIDs = linkIDs;
 	}
+	/**
+	 * @return the puddleHeadsByLevel
+	 */
+	public Map<Integer, List<PuddleHead>> getPuddleHeadsByLevel() {
+		return puddleHeadsByLevel;
+	}
+
+	/**
+	 * @param puddleHeadsByLevel the puddleHeadsByLevel to set
+	 */
+	public void setPuddleHeadsByLevel(Map<Integer, List<PuddleHead>> puddleHeadsByLevel) {
+		this.puddleHeadsByLevel = puddleHeadsByLevel;
+	}
 	
+	/**
+	 * Adds a single PuddleHead into the by level map. If there are no PuddleHeads at that level, a new list is created. 
+	 * @param puddleHeadId
+	 * @param level
+	 */
+	public void addPuddleHeadByLevel(PuddleHead dev, int level){
+		List<PuddleHead> levelList = puddleHeadsByLevel.get(level); 
+		if(levelList == null){
+			ArrayList<PuddleHead> newLevelList = new ArrayList<PuddleHead>();
+			newLevelList.add(dev); 
+			puddleHeadsByLevel.put(level, newLevelList);
+		}
+		else{
+			levelList.add(dev);
+			puddleHeadsByLevel.put(level, levelList); 
+		}
+	}
 }

@@ -37,5 +37,5 @@ public class FogEvents {
 	public static final int NODE_LEAVE = BASE+33;
 	public static final int PROCESS_NODE_MOVE = BASE+34; 
 	public static final int NODE_RELOCATE_PUDDLE = BASE+35; 
- 
+	public static final int PROCESS_END_DEVICE_MOVE = BASE+36;
 }

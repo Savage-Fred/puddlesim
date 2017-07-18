@@ -21,6 +21,7 @@ import org.fog.utils.FogEvents;
 import org.fog.utils.FogUtils;
 import org.fog.utils.GeoLocation;
 import org.fog.utils.Logger;
+import org.fog.utils.Point;
 import org.fog.utils.TimeKeeper;
 import org.fog.utils.distribution.Distribution;
 
@@ -43,7 +44,9 @@ public class Sensor extends SimEntity{
 	private AppModuleAddress destModuleAddr;
 	private EndDevice device;
 	private int endDeviceId;
-	
+
+	private Point location = null;
+
 	public Sensor(String name, int userId, String appId, int gatewayDeviceId, double latency, GeoLocation geoLocation, 
 			Distribution transmitDistribution, int cpuLength, int nwLength, String tupleType, String destModuleName, Application application) {
 		super(name);
@@ -190,9 +193,13 @@ public class Sensor extends SimEntity{
 		//send(gatewayDeviceId, CloudSim.getMinTimeBetweenEvents(), FogEvents.SENSOR_JOINED, geoLocation);
 		send(getId(), getTransmitDistribution().getNextValue(), FogEvents.EMIT_TUPLE);
 	}
+	
+	
+	
 
 	@Override
 	public void processEvent(SimEvent ev) {
+				
 		switch(ev.getTag()){
 		case CloudSimTags.RESOURCE_CHARACTERISTICS:
 			System.out.println(getName()+" received charac req");
@@ -204,12 +211,14 @@ public class Sensor extends SimEntity{
 			break;
 		case FogEvents.EMIT_TUPLE:
 			transmit();
+			Logger.debug(LOG_TAG, "Emitting tuple.");
 			send(getId(), getTransmitDistribution().getNextValue(), FogEvents.EMIT_TUPLE);
 			break;
 		case FogEvents.ENDPOINT_CONNECTION:
 			AppModuleAddress addr = (AppModuleAddress) ev.getData();
 			processSensorConnection(addr);
 			break;
+
 		}
 			
 	}
@@ -222,7 +231,7 @@ public class Sensor extends SimEntity{
 	public void shutdownEntity() {
 		
 	}
-
+	
 	public int getGatewayDeviceId() {
 		return gatewayDeviceId;
 	}
@@ -342,5 +351,18 @@ public class Sensor extends SimEntity{
 	public void setEndDeviceId(int endDeviceId) {
 		this.endDeviceId = endDeviceId;
 	}
+	/**
+	 * @return the location
+	 */
+	public Point getLocation() {
+		return location;
+	}
 
+	/**
+	 * @param location the location to set
+	 */
+	public void setLocation(Point location) {
+		this.location = location;
+	}
+	
 }

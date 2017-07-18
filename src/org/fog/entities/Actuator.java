@@ -15,6 +15,7 @@ import org.fog.application.Application;
 import org.fog.utils.FogEvents;
 import org.fog.utils.GeoLocation;
 import org.fog.utils.Logger;
+import org.fog.utils.Point;
 import org.fog.utils.TimeKeeper;
 
 public class Actuator extends SimEntity{
@@ -30,6 +31,8 @@ public class Actuator extends SimEntity{
 	private ActuatorCharacteristics characteristics;
 	private Application application;
 	private int endDeviceId;
+	
+	private Point location = null;
 	
 	public Actuator(String name, int userId, String appId, int gatewayDeviceId, double latency, GeoLocation geoLocation, String actuatorType, String srcModuleName) {
 		super(name);
@@ -76,6 +79,7 @@ public class Actuator extends SimEntity{
 			sendNow(srcId, ev.getTag(), getCharacteristics());
 			break;
 		case FogEvents.TUPLE_ARRIVAL:
+			Logger.debug(LOG_TAG, "Tuple arrival.");
 			processTupleArrival(ev);
 			break;
 		}		
@@ -193,6 +197,20 @@ public class Actuator extends SimEntity{
 
 	public void setEndDeviceId(int endDeviceId) {
 		this.endDeviceId = endDeviceId;
+	}
+
+	/**
+	 * @return the location
+	 */
+	public Point getLocation() {
+		return location;
+	}
+
+	/**
+	 * @param location the location to set
+	 */
+	public void setLocation(Point location) {
+		this.location = location;
 	}
 
 }

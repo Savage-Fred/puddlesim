@@ -62,20 +62,19 @@ import org.fog.utils.distribution.DeterministicDistribution;
  *
  */
 public class OneFNOnePH {
-	static List<FogDevice> fogDevices = new ArrayList<FogDevice>();
-	static List<FogNode> fogNodes = new ArrayList<FogNode>();
-	static List<PuddleHead> puddleHeads = new ArrayList<PuddleHead>();
-	static List<Sensor> sensors = new ArrayList<Sensor>();
-	static List<Actuator> actuators = new ArrayList<Actuator>();
 	
 	public static void main(String[] args) {
 
 		Log.printLine("Starting SimArch...");
 		Logger.ENABLED = false;
+		Logger.enableTag("END_DEVICE");
+		Logger.enableTag("ACTUATOR");
+		Logger.enableTag("SENSOR");
 		Logger.enableTag("FOG_DEVICE");
 		Logger.enableTag("FOG_NODE");
 		Logger.enableTag("SWITCH");
 		Logger.enableTag("LINK");
+		Logger.enableTag("SENSOR");
 		
 		try {
 			Log.disable();
@@ -95,7 +94,11 @@ public class OneFNOnePH {
 			// Create Architecture/Topology
 			createSimulationArchitecture(broker.getId(), appId, application);
 			
-			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), SimulationArchitecture.getInstance().getFogNodeIDs());
+			broker.setup(SimulationArchitecture.getInstance().getPuddleHeadIDs(), 
+					SimulationArchitecture.getInstance().getFogNodeIDs(), 
+					SimulationArchitecture.getInstance().getLinkIDs(), 
+					SimulationArchitecture.getInstance().getEndDeviceIDs());
+			
 			broker.setFogDeviceIds(getIds(SimulationArchitecture.getInstance().getFogDevices()));
 			broker.setSensorIds(getIds(SimulationArchitecture.getInstance().getSensors()));
 			broker.setActuatorIds(getIds(SimulationArchitecture.getInstance().getActuators()));
@@ -133,13 +136,6 @@ public class OneFNOnePH {
 	 */
 	private static void createSimulationArchitecture(int userId, String appId, Application application) {
 		
-		EndDevice dev = new EndDevice("DEV");
-		int transmissionInterval = 5000;
-		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
-		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
-		dev.addSensor(sensor);
-		dev.addActuator(actuator);
-		
 		FogNode fn0 = SimulationArchitecture.createFogNode("FN0", true, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
@@ -156,6 +152,13 @@ public class OneFNOnePH {
 		}
 		Point location = new Point(3, 1);
 		PuddleHead ph0 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD0", areaOfCoverage, location, 1);
+		
+		EndDevice dev = new EndDevice("DEV", new Rectangle(10, 10), new Point(1,2), new Vector(0.23), false);
+		int transmissionInterval = 5000;
+		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
+		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);
+		dev.addSensor(sensor);
+		dev.addActuator(actuator);
 		
 		SimulationArchitecture.getInstance().addEndDevice(dev);
 		SimulationArchitecture.getInstance().addFogNode(fn0);

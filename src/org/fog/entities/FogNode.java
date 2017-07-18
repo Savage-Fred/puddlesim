@@ -46,7 +46,7 @@ public class FogNode extends FogDevice {
 	/**
 	 * The delay between location updates.
 	 */
-	private static double delayBetweenLocationUpdates = 0;
+	private static double delayBetweenLocationUpdates = 1000;
 	
 	/**
 	 * Used to check whether or not the device has started moving.
@@ -56,7 +56,7 @@ public class FogNode extends FogDevice {
 	/**
 	 * The id of the PuddleHead that this node belongs to. 
 	 */
-	protected int puddleHeadId;
+	protected int puddleHeadId = -1;
 	
 	/**
 	 * List of all the other nodes in this node's puddle.
@@ -301,7 +301,7 @@ public class FogNode extends FogDevice {
 	 */
 	private void setMobilityDelay(){
 		// Minimum time is 0.1. 10 x gives 1 second per location update.
-		FogNode.delayBetweenLocationUpdates = 10*CloudSim.getMinTimeBetweenEvents();
+		FogNode.delayBetweenLocationUpdates = 1000*CloudSim.getMinTimeBetweenEvents();
 	}
 	
 	/**
@@ -323,7 +323,7 @@ public class FogNode extends FogDevice {
 				send(brokerId, CloudSim.getMinTimeBetweenEvents(), FogEvents.PROCESS_NODE_MOVE, getId());
 			}
 			else{
-				//Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
+				Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
 			}
 		}
 		//Logger.debug(LOG_TAG, getName(), "Completed execution of move");
@@ -393,7 +393,9 @@ public class FogNode extends FogDevice {
 		
 		
 		//This stuff might need to be altered to properly handle what happens when a node leaves the system completely. 
-		send(puddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, getId()); 
+		if(puddleHeadId > 0){
+			send(puddleHeadId, CloudSim.getMinTimeBetweenEvents(), FogEvents.NODE_LEAVE_PUDDLEHEAD, getId()); 
+		}
 	}
 	
 	/**
