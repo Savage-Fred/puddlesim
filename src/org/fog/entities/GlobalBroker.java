@@ -111,11 +111,31 @@ public class GlobalBroker extends FogBroker {
 		setFogDeviceIds(nodeIn);
 		setLinkIds(linkIds);
 		setEndDeviceIds(endDeviceIds);
+		setMST();
 		for(int puddleHeadId : puddleHeadIds){
 			PuddleHead puddleHead = (PuddleHead) CloudSim.getEntity(puddleHeadId);
 			addPuddleHeadByLevel(puddleHeadId, puddleHead.getLevel());
 		}
 		
+		
+	}
+	
+	public int getLinkIdBetweenTwoDevices(int id1, int id2){
+		int id = -1;
+		Logger.debug(LOG_TAG, "Finding link between: "+id1+"<->"+id2);
+		for(Integer linkId : linkIds){
+			Link possibleLink = (Link)CloudSim.getEntity(linkId);
+			if(possibleLink.getEndpointNorth() == id1 && possibleLink.getEndpointSouth() == id2 || 
+				possibleLink.getEndpointNorth() == id2 && possibleLink.getEndpointSouth() == id1)
+				id = possibleLink.getId();
+		}
+		return id;
+	}
+	
+	/**
+	 * Setup function for the minimum spanning tree. Requires that fog device, puddlehead, end device, and link lists be set up beforehand.
+	 */
+	private void setMST(){
 		// Set up the minimum spanning tree
 		int maxIndex = 0;
 		int minIndex = puddleHeadIds.get(0);
@@ -125,7 +145,7 @@ public class GlobalBroker extends FogBroker {
 			else if (puddleHeadId < minIndex)
 				minIndex = puddleHeadId;
 		}
-		for(int fogNodeId : nodeIn){
+		for(int fogNodeId : fogDeviceIds){
 			if (fogNodeId > maxIndex)
 				maxIndex = fogNodeId;
 			else if (fogNodeId < minIndex)
@@ -138,7 +158,7 @@ public class GlobalBroker extends FogBroker {
 				minIndex = endDeviceId;
 		}
 		
-		int dimensions = puddleHeadIn.size()+nodeIn.size()+endDeviceIds.size();
+		int dimensions = puddleHeadIds.size()+fogDeviceIds.size()+endDeviceIds.size();
 		if(dimensions == 0)
 			throw new IllegalArgumentException("Error: Puddleheads + Nodes == 0");
 		MST = new KruskalAlgorithm(maxIndex);
@@ -152,18 +172,6 @@ public class GlobalBroker extends FogBroker {
 			adjacencyMatrix[link.getEndpointSouth()][link.getEndpointNorth()] = 1;
 		}
 		MST.kruskalAlgorithm(adjacencyMatrix);
-	}
-	
-	public int getLinkIdBetweenTwoDevices(int id1, int id2){
-		int id = -1;
-		Logger.debug(LOG_TAG, "Finding link between: "+id1+"<->"+id2);
-		for(Integer linkId : linkIds){
-			Link possibleLink = (Link)CloudSim.getEntity(linkId);
-			if(possibleLink.getEndpointNorth() == id1 && possibleLink.getEndpointSouth() == id2 || 
-				possibleLink.getEndpointNorth() == id2 && possibleLink.getEndpointSouth() == id1)
-				id = possibleLink.getId();
-		}
-		return id;
 	}
 	
 	@Override
@@ -358,53 +366,7 @@ public class GlobalBroker extends FogBroker {
 	 * <p><b>-1 if no node.
 	 */
 	public int nextNodeInMST(int sourceId, int destinationId){
-		boolean found = false;
-		int nextEntityId = -1;
-		int numberOfVertices = MST.getNumberOfVertices();
-			
-		Logger.debug(LOG_TAG, "Finding path between: "+sourceId+"->"+destinationId);
-		
-		LinkedList<LinkedList<Integer>> paths = new LinkedList<LinkedList<Integer>>();
-		LinkedList path = new LinkedList();
-		path.add(sourceId);
-		
-		paths.add(path);
-		Logger.debug(LOG_TAG, "Starting at node: "+paths.getLast().getFirst());
-		
-		int [][] spanningTree = new int[numberOfVertices+1][numberOfVertices+1];
-		int [][] visited = new int[numberOfVertices+1][numberOfVertices+1];
-		spanningTree = MST.getSpanning_tree();
-		for(int i=0; i<numberOfVertices; i++){
-			for(int j=0; j<numberOfVertices; j++)
-				visited[i][j] = 0;
-		}
-		while(!found){
-			for(int i = 0; i <= numberOfVertices; i++){
-				if(spanningTree[i][paths.getLast().getFirst()] == 1 && visited[i][paths.getLast().getFirst()] != 1){
-					Logger.debug(LOG_TAG, "Found link between: " + i + "<->" + paths.getLast().getFirst());
-					visited[i][paths.getLast().getFirst()] = 1;
-					Logger.debug(LOG_TAG, "Adding path: " + paths.getLast().getFirst() + "->" + i);
-					LinkedList<Integer> newPath = (LinkedList<Integer>) paths.getLast().clone();
-					newPath.addFirst(i);
-					paths.addFirst(newPath);
-
-					if(i == destinationId){
-						nextEntityId = paths.getFirst().get(paths.getLast().size()-1);
-						Logger.debug(LOG_TAG, "Path " + sourceId + "->" + nextEntityId);
-						found = true;
-						break;
-					}
-				}
-				else
-					Logger.debug(LOG_TAG, "No link between "+i+" and "+paths.getLast().getFirst());
-				visited[i][paths.getLast().getFirst()] = 1;
-			}
-			paths.removeLast();
-			if(paths.isEmpty())
-				found = true;
-		}
-		Logger.debug(LOG_TAG, "Go from "+sourceId+" to "+nextEntityId+" to get to "+destinationId);
-		return nextEntityId;
+		return MST.nextNodeInMST(sourceId, destinationId);
 	}
 	
 

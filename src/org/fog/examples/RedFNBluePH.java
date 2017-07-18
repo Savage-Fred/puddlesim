@@ -71,6 +71,10 @@ public class RedFNBluePH {
 		Logger.enableTag("FOG_NODE");
 		Logger.enableTag("SWITCH");
 		Logger.enableTag("LINK");
+		Logger.enableTag("END_DEVICE");
+		Logger.enableTag("ACTUATOR");
+		Logger.enableTag("SENSOR");
+		//Logger.enableTag("GLOBAL_BROKER");
 		
 		try {
 			Log.disable();

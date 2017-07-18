@@ -460,8 +460,6 @@ public class FogDevice extends PowerDatacenter {
 			updateCloudTraffic();
 		}
 
-		Logger.debug(LOG_TAG, getName(), "Received tuple "+tuple.getCloudletId()+"with tupleType = "+tuple.getTupleType()+"\t| Source : "+
-				CloudSim.getEntityName(ev.getSource())+"|Dest : "+CloudSim.getEntityName(ev.getDestination()));
 		send(ev.getSource(), CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ACK);
 
 		if (getHost().getVm(tuple.getVmId(), tuple.getUserId()) == null) {

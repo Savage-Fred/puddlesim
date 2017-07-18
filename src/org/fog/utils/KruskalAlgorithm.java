@@ -1,3 +1,4 @@
+
 package org.fog.utils;
 
 import java.util.Collections;
@@ -6,8 +7,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
-
+/**
+ * 
+ * @author baseev @ https://github.com/baseev
+ * @source https://github.com/baseev/Utils/blob/master/src/com/baseev/coding/interview/graph/kruskal/KruskalAlgorithm.java
+ */
 public class KruskalAlgorithm {
+	
+	/**
+	 * Used for debugging purposes. Adds a label onto the output. Note, only used in Logger.debug
+	 */
+	private static String LOG_TAG = "END_DEVICE";
+	
 	private List<Edge> edges;
 	private int numberOfVertices;
 	public static final int MAX_VALUE = 999;
@@ -86,6 +97,62 @@ public class KruskalAlgorithm {
 		return spanning_tree;
 	}
 
+	/**
+	 * Gets the next node in a minimum spanning tree towards the destination from the source.</p>
+	 * Used for module routing.
+	 * @author Avi Rynderman
+	 * @param sourceId the id of the entity requesting the next node id. 
+	 * @param destinationId the id of the entity the module must eventually be sent to.
+	 * @return Integer indicating the next node/entity a module should be sent to.
+	 * <p><b>-1 if no node.
+	 */
+	public int nextNodeInMST(int sourceId, int destinationId){
+		boolean found = false;
+		int nextEntityId = -1;
+			
+		Logger.debug(LOG_TAG, "Finding path between: "+sourceId+"->"+destinationId);
+		
+		LinkedList<LinkedList<Integer>> paths = new LinkedList<LinkedList<Integer>>();
+		LinkedList path = new LinkedList();
+		path.add(sourceId);
+		
+		paths.add(path);
+		Logger.debug(LOG_TAG, "Starting at node: "+paths.getLast().getFirst());
+		
+		int [][] visited = new int[numberOfVertices+1][numberOfVertices+1];
+		
+		for(int i=0; i<numberOfVertices; i++){
+			for(int j=0; j<numberOfVertices; j++)
+				visited[i][j] = 0;
+		}
+		while(!found){
+			for(int i = 0; i <= numberOfVertices; i++){
+				if(spanning_tree[i][paths.getLast().getFirst()] == 1 && visited[i][paths.getLast().getFirst()] != 1){
+					Logger.debug(LOG_TAG, "Found link between: " + i + "<->" + paths.getLast().getFirst());
+					visited[i][paths.getLast().getFirst()] = 1;
+					Logger.debug(LOG_TAG, "Adding path: " + paths.getLast().getFirst() + "->" + i);
+					LinkedList<Integer> newPath = (LinkedList<Integer>) paths.getLast().clone();
+					newPath.addFirst(i);
+					paths.addFirst(newPath);
+					if(i == destinationId){
+						nextEntityId = paths.getFirst().get(paths.getLast().size()-1);
+						Logger.debug(LOG_TAG, "Path " + sourceId + "->" + nextEntityId);
+						found = true;
+						break;
+					}
+				}
+				else
+					Logger.debug(LOG_TAG, "No link between "+i+" and "+paths.getLast().getFirst());
+				visited[i][paths.getLast().getFirst()] = 1;
+			}
+			paths.removeLast();
+			if(paths.isEmpty())
+				found = true;
+		}
+		Logger.debug(LOG_TAG, "Go from "+sourceId+" to "+nextEntityId+" to get to "+destinationId);
+		return nextEntityId;
+	}
+	
 	public static void main(String... arg) {
 		int adjacency_matrix[][];
 		int number_of_vertices;
