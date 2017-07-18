@@ -306,7 +306,7 @@ public class RedFNBluePH {
 		Point location7 = new Point(12, 5);
 		PuddleHead ph7 = SimulationArchitecture.createPuddleHead("PUDDLEHEAD7", areaOfCoverage7, location7, 1);
 		////////////////////////////////////////////////////////////////////////////////////////////////////////
-		EndDevice dev = new EndDevice("DEV");
+		EndDevice dev = new EndDevice("DEV", new Rectangle(10, 10), new Point(1,2), new Vector(0.23), false);
 		int transmissionInterval = 5000;
 		Sensor sensor = new Sensor("s-0", "SENSED_DATA", userId, appId, new DeterministicDistribution(transmissionInterval), application); // inter-transmission time of EEG sensor follows a deterministic distribution
 		Actuator actuator = new Actuator("a-0", userId, appId, "ACTION", application);

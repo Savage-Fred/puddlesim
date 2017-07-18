@@ -89,7 +89,7 @@ public class GlobalBroker extends FogBroker {
 	 */
 	public GlobalBroker(String name) throws Exception {
 		super(name);
-		System.out.println("Creating GlobalBroker with name " + name + " ID: " + this.getId());
+		Logger.debug(LOG_TAG, "Creating GlobalBroker with name " + name + " ID: " + this.getId());
 		setPuddleHeadIds(new ArrayList<Integer>());
 		setPuddleHeadsByLevel(new HashMap<Integer, List<Integer>>());
 		setFogDeviceIds(new ArrayList<Integer>());
@@ -138,20 +138,32 @@ public class GlobalBroker extends FogBroker {
 				minIndex = endDeviceId;
 		}
 		
-		int dimensions = puddleHeadIn.size()+nodeIn.size();
+		int dimensions = puddleHeadIn.size()+nodeIn.size()+endDeviceIds.size();
 		if(dimensions == 0)
 			throw new IllegalArgumentException("Error: Puddleheads + Nodes == 0");
 		MST = new KruskalAlgorithm(maxIndex);
 		int [][] adjacencyMatrix = new int[maxIndex+1][maxIndex+1];
 		Link link;
 		for(Integer linkId : linkIds){
-			link = (Link) CloudSim.getEntity(linkId);
-			System.out.println("Link: " + link.getId());
+			link = (Link)CloudSim.getEntity(linkId);
+			Logger.debug(LOG_TAG, "Link: " + link.getId());
 			// Make a connection between the 2. Links are bi-directional.
 			adjacencyMatrix[link.getEndpointNorth()][link.getEndpointSouth()] = 1;
 			adjacencyMatrix[link.getEndpointSouth()][link.getEndpointNorth()] = 1;
 		}
 		MST.kruskalAlgorithm(adjacencyMatrix);
+	}
+	
+	public int getLinkIdBetweenTwoDevices(int id1, int id2){
+		int id = -1;
+		Logger.debug(LOG_TAG, "Finding link between: "+id1+"<->"+id2);
+		for(Integer linkId : linkIds){
+			Link possibleLink = (Link)CloudSim.getEntity(linkId);
+			if(possibleLink.getEndpointNorth() == id1 && possibleLink.getEndpointSouth() == id2 || 
+				possibleLink.getEndpointNorth() == id2 && possibleLink.getEndpointSouth() == id1)
+				id = possibleLink.getId();
+		}
+		return id;
 	}
 	
 	@Override
@@ -350,14 +362,14 @@ public class GlobalBroker extends FogBroker {
 		int nextEntityId = -1;
 		int numberOfVertices = MST.getNumberOfVertices();
 			
-		System.out.println("Finding path between: "+sourceId+"->"+destinationId);
+		Logger.debug(LOG_TAG, "Finding path between: "+sourceId+"->"+destinationId);
 		
 		LinkedList<LinkedList<Integer>> paths = new LinkedList<LinkedList<Integer>>();
 		LinkedList path = new LinkedList();
 		path.add(sourceId);
 		
 		paths.add(path);
-		System.out.println("Starting at node: "+paths.getLast().getFirst());
+		Logger.debug(LOG_TAG, "Starting at node: "+paths.getLast().getFirst());
 		
 		int [][] spanningTree = new int[numberOfVertices+1][numberOfVertices+1];
 		int [][] visited = new int[numberOfVertices+1][numberOfVertices+1];
@@ -369,30 +381,29 @@ public class GlobalBroker extends FogBroker {
 		while(!found){
 			for(int i = 0; i <= numberOfVertices; i++){
 				if(spanningTree[i][paths.getLast().getFirst()] == 1 && visited[i][paths.getLast().getFirst()] != 1){
-					System.out.println("Found link between: " + i + "<->" + paths.getLast().getFirst());
+					Logger.debug(LOG_TAG, "Found link between: " + i + "<->" + paths.getLast().getFirst());
+					visited[i][paths.getLast().getFirst()] = 1;
+					Logger.debug(LOG_TAG, "Adding path: " + paths.getLast().getFirst() + "->" + i);
+					LinkedList<Integer> newPath = (LinkedList<Integer>) paths.getLast().clone();
+					newPath.addFirst(i);
+					paths.addFirst(newPath);
+
 					if(i == destinationId){
-						System.out.println("Path " + sourceId + "->" + nextEntityId);
-						nextEntityId = paths.getLast().getLast();
+						nextEntityId = paths.getFirst().get(paths.getLast().size()-1);
+						Logger.debug(LOG_TAG, "Path " + sourceId + "->" + nextEntityId);
 						found = true;
-					}
-					else {
-						visited[i][paths.getLast().getFirst()] = 1;
-						System.out.println("Adding path: " + paths.getLast().getFirst() + "->" + i);
-						LinkedList<Integer> newPath = (LinkedList<Integer>) paths.getLast().clone();
-						newPath.addFirst(i);
-						paths.addFirst(newPath);
+						break;
 					}
 				}
 				else
-					System.out.println("No link between "+i+" and "+paths.getLast().getFirst());
+					Logger.debug(LOG_TAG, "No link between "+i+" and "+paths.getLast().getFirst());
 				visited[i][paths.getLast().getFirst()] = 1;
-				
 			}
 			paths.removeLast();
 			if(paths.isEmpty())
 				found = true;
 		}
-		System.out.println("Go from "+sourceId+" to "+nextEntityId+" to get to "+destinationId);
+		Logger.debug(LOG_TAG, "Go from "+sourceId+" to "+nextEntityId+" to get to "+destinationId);
 		return nextEntityId;
 	}
 	
@@ -497,7 +508,7 @@ public class GlobalBroker extends FogBroker {
 	/**
 	 * @param linkIDs the linkIDs to set
 	 */
-	public void setLinkIds(List<Integer> linkIDd) {
+	public void setLinkIds(List<Integer> linkIds) {
 		this.linkIds = linkIds;
 	}
 

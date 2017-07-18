@@ -43,15 +43,9 @@ public class EndDevice extends SimEntity {
 	private GeoLocation geoLocation;
 	
 	// Puddlesim addition:
-	public EndDevice(String name, Rectangle bounds, Point coordinates, double movementMagnitude, boolean isMobile) {
+	public EndDevice(String name, Rectangle bounds, Point coordinates, Vector vector, boolean isMobile) {
 		super(name);
-		this.mobile = new Mobility(bounds, coordinates, movementMagnitude, isMobile);
-		setSensors(new ArrayList<Sensor>());
-		setActuators(new ArrayList<Actuator>());
-	}
-	
-	public EndDevice(String name) {
-		super(name);
+		this.mobile = new Mobility(bounds, coordinates, vector, isMobile);
 		setSensors(new ArrayList<Sensor>());
 		setActuators(new ArrayList<Actuator>());
 	}
@@ -149,6 +143,7 @@ public class EndDevice extends SimEntity {
 		
 		switch(tag) {
 		case FogEvents.TUPLE_ARRIVAL:
+			Logger.debug(LOG_TAG, "Tuple arrived.");
 			processTupleArrival(ev);
 			break;
 		case FogEvents.UPDATE_LOCATION:
@@ -230,6 +225,9 @@ public class EndDevice extends SimEntity {
 	}
 	public void setEdgeSwitchId(int edgeSwitchId) {
 		this.edgeSwitchId = edgeSwitchId;
+		for(Actuator actuator : actuators){
+			actuator.setGatewayDeviceId(edgeSwitchId);
+		}
 	}
 	public int getLinkId() {
 		return linkId;

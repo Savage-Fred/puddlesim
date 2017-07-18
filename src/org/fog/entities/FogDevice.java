@@ -219,10 +219,10 @@ public class FogDevice extends PowerDatacenter {
 		send(getLinkId(), CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
 	}
 
-	protected void sendTuple(Tuple tuple, int actuatorId) {
-		Logger.debug(LOG_TAG, getName(), "Sending to actuator "+ CloudSim.getEntityName(actuatorId)+" via Link ID : "+getLinkId());
-		tuple.setDestinationDeviceId(actuatorId);
-		send(actuatorId, CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
+	protected void sendTuple(Tuple tuple, int linkId) {
+		Logger.debug(LOG_TAG, getName(), "Sending to actuator "+ CloudSim.getEntityName(tuple.getDestinationDeviceId())+" via Link ID : "+getLinkId());
+		//tuple.setDestinationDeviceId(actuatorId);
+		send(linkId, CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
 		//send(getLinkId(), CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ARRIVAL, tuple);
 	}
 
@@ -233,8 +233,10 @@ public class FogDevice extends PowerDatacenter {
 			}
 		} else {
 			for (Integer actuatorId : module.getActuatorSubscriptions().get(resTuple.getTupleType())) {
-				((GlobalBroker)CloudSim.getEntity("globalbroker")).nextNodeInMST(this.getId(), ((Actuator)CloudSim.getEntity(actuatorId)).getGatewayDeviceId());
-				sendTuple(resTuple, actuatorId);
+				int nextNetworkDevice = ((GlobalBroker)CloudSim.getEntity("globalbroker")).nextNodeInMST(this.getId(), ((Actuator)CloudSim.getEntity(actuatorId)).getEndDeviceId());
+				int linkId = ((GlobalBroker)CloudSim.getEntity("globalbroker")).getLinkIdBetweenTwoDevices(nextNetworkDevice, this.getId());
+				resTuple.setDestinationDeviceId(actuatorId);
+				sendTuple(resTuple, linkId);
 			}
 		}
 		updateTimingsOnSending(resTuple);
