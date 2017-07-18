@@ -33,7 +33,7 @@ import org.fog.utils.KruskalAlgorithm;
  * The GlobalBroker should contain information about every device in the network. It is used to send events between different devices
  * and track their movement in relation to each other. 
  * 
- * Note: It should have the name 'broker' for the capabilities to work with mobility and updating between devices.
+ * Note: It should have the name 'globalbroker' for the capabilities to work with mobility and updating between devices.
  * (If this name would like to be changed, code in the FogNode function processUpdateLocation needs to reflect the change).
  *
  */
@@ -60,12 +60,12 @@ public class GlobalBroker extends FogBroker {
 	/**
 	 * List of IDs of all sensors in the network.
 	 */
-	protected List<Integer> sensorIds;
+//	protected List<Integer> sensorIds;
 	
 	/**
 	 * List of IDs of all actuators in the network. 
 	 */
-	protected List<Integer> actuatorIds; 
+//	protected List<Integer> actuatorIds; 
 	
 	/**
 	 * List of all link IDs that have been created.
@@ -83,7 +83,7 @@ public class GlobalBroker extends FogBroker {
 	KruskalAlgorithm MST= null;
 	
 	/**
-	 * Constructor of a GlobalBroker. The input name should be 'broker' for use with PuddleSim capabilities. (See Note above)
+	 * Constructor of a GlobalBroker. The input name should be 'globalbroker' for use with PuddleSim capabilities. (See Note above)
 	 * @param name
 	 * @throws Exception
 	 */
@@ -177,9 +177,6 @@ public class GlobalBroker extends FogBroker {
 	@Override
 	public void processEvent(SimEvent ev){
 		switch(ev.getTag()){
-		case FogEvents.PROCESS_NODE_MOVE:
-			processNodeMove(ev); 
-			break;
 		case FogEvents.APP_SUBMIT:
 			deployApplication(ev.getData().toString());
 			break;
@@ -188,6 +185,9 @@ public class GlobalBroker extends FogBroker {
 			break;
 		case CloudSimTags.RESOURCE_CHARACTERISTICS:
 			processResourceCharacteristics(ev);
+			break;
+		case FogEvents.PROCESS_NODE_MOVE:
+			processNodeMove(ev); 
 			break;
 		}
 	}
@@ -403,16 +403,16 @@ public class GlobalBroker extends FogBroker {
 	/**
 	 * @return the sensorIds
 	 */
-	public List<Integer> getSensorIds() {
-		return sensorIds;
-	}
-
-	/**
-	 * @param sensorIds the sensorIds to set
-	 */
-	public void setSensorIds(List<Integer> sensorIds) {
-		this.sensorIds = sensorIds;
-	}
+//	public List<Integer> getSensorIds() {
+//		return sensorIds;
+//	}
+//
+//	/**
+//	 * @param sensorIds the sensorIds to set
+//	 */
+//	public void setSensorIds(List<Integer> sensorIds) {
+//		this.sensorIds = sensorIds;
+//	} 
 	
 	/**
 	 * Add a single sensor.
@@ -433,16 +433,16 @@ public class GlobalBroker extends FogBroker {
 	/**
 	 * @return the actuatorIds
 	 */
-	public List<Integer> getActuatorIds() {
-		return actuatorIds;
-	}
-
-	/**
-	 * @param actuatorIds the actuatorIds to set
-	 */
-	public void setActuatorIds(List<Integer> actuatorIds) {
-		this.actuatorIds = actuatorIds;
-	}
+//	public List<Integer> getActuatorIds() {
+//		return actuatorIds;
+//	}
+//
+//	/**
+//	 * @param actuatorIds the actuatorIds to set
+//	 */
+//	public void setActuatorIds(List<Integer> actuatorIds) {
+//		this.actuatorIds = actuatorIds;
+//	}
 	
 	/**
 	 * Add a single actuator

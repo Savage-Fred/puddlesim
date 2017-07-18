@@ -345,6 +345,25 @@ public class RedFNBluePH {
 		
 		SimulationArchitecture.getInstance().addEndDevice(dev);
 
+//		fogDevices.add(fd0);
+//		fogDevices.add(fd1);
+//		fogDevices.add(fn0);
+//		fogDevices.add(fn1);
+//		fogDevices.add(fn2);
+//		fogDevices.add(fn3);
+//		fogDevices.add(fn4);
+//		fogDevices.add(fn5);
+//		fogDevices.add(fn6);
+//		fogDevices.add(fn7);
+//		fogDevices.add(fn8);
+//		fogDevices.add(fn9);
+//		fogDevices.add(fn10);
+//		fogDevices.add(fn11);
+//		fogDevices.add(fn12);
+//		fogDevices.add(fn13);
+//		fogDevices.add(fn14);
+//		fogDevices.add(fn15);
+		
 		// Now connecting entities with Links
 		SimulationArchitecture.getInstance().addLink(dev.getId(), fn0.getId(), 2, 1000);
 		

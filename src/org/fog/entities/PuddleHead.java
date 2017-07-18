@@ -278,7 +278,7 @@ public class PuddleHead extends SimEntity {
 	public void addNodetoPuddleHead(int newNodeId){
 		FogNode node = (FogNode) CloudSim.getEntity(newNodeId);
 		
-		node.setPuddleHeadId(getId());
+		node.setPuddleHeadId(this.getId());
 		
 		for(int i = 0; i < puddleDevices.size(); i++){
 			int buddyId = puddleDevices.get(i);
