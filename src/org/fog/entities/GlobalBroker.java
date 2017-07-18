@@ -111,7 +111,7 @@ public class GlobalBroker extends FogBroker {
 		setFogDeviceIds(nodeIn);
 		setLinkIds(linkIds);
 		setEndDeviceIds(endDeviceIds);
-		setMST();
+		//setMST();
 		for(int puddleHeadId : puddleHeadIds){
 			PuddleHead puddleHead = (PuddleHead) CloudSim.getEntity(puddleHeadId);
 			addPuddleHeadByLevel(puddleHeadId, puddleHead.getLevel());

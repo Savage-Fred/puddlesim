@@ -17,7 +17,7 @@ public class KruskalAlgorithm {
 	/**
 	 * Used for debugging purposes. Adds a label onto the output. Note, only used in Logger.debug
 	 */
-	private static String LOG_TAG = "END_DEVICE";
+	private static String LOG_TAG = "KRUSKALS";
 	
 	private List<Edge> edges;
 	private int numberOfVertices;
@@ -27,12 +27,14 @@ public class KruskalAlgorithm {
 
 	public KruskalAlgorithm(int numberOfVertices) {
 		this.numberOfVertices = numberOfVertices;
+		Logger.debug(LOG_TAG, "Creating tree with "+numberOfVertices+" nodes.");
 		edges = new LinkedList<Edge>();
 		visited = new int[this.numberOfVertices + 1];
 		spanning_tree = new int[numberOfVertices + 1][numberOfVertices + 1];
 	}
 
 	public void kruskalAlgorithm(int adjacencyMatrix[][]) {
+		Logger.debug(LOG_TAG, "Creating MST with "+numberOfVertices+" nodes.");
 		boolean finished = false;
 		for (int source = 1; source <= numberOfVertices; source++) {
 			for (int destination = 1; destination <= numberOfVertices; destination++) {
@@ -70,6 +72,7 @@ public class KruskalAlgorithm {
 			if (finished)
 				break;
 		}
+		/*
 		System.out.println("The spanning tree is ");
 		for (int i = 1; i <= numberOfVertices; i++)
 			System.out.print("\t" + i);
@@ -81,6 +84,7 @@ public class KruskalAlgorithm {
 			}
 			System.out.println();
 		}
+		*/
 	}
 
 	/**
