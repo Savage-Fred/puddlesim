@@ -49,6 +49,13 @@ public class EndDevice extends SimEntity {
 		setSensors(new ArrayList<Sensor>());
 		setActuators(new ArrayList<Actuator>());
 	}
+	
+	public EndDevice(String name){
+		super(name);
+		this.mobile = new Mobility(new Rectangle(10,10), new Point(0,0), new Vector(0.1), false); 
+		setSensors(new ArrayList<Sensor>());
+		setActuators(new ArrayList<Actuator>());
+	}
 
 	/**
 	 * Updates the location and latency continually

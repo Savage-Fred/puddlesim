@@ -37,7 +37,7 @@ import org.fog.utils.Rectangle;
 import org.fog.utils.Vector;
 
 /**
- * @author Avi Rynderman
+ * @author Avi Rynderman and Jessica Knezha
  * @version PuddleSim 1.0
  * @since REU Summer 2017 - Parallel and Distributed Computing
  * 
