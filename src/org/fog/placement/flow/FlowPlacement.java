@@ -30,8 +30,7 @@ public class FlowPlacement {
      * @param LinkIDList a list of the link ID's 
      * @param numberOfNodes - the number of nodes in the graph 
      */
-    FlowPlacement(List<Link> linkList, int numOfNodes)
-    {
+    FlowPlacement(List<Link> linkList, int numOfNodes) {
         setNumberOfNodes(numOfNodes);
         flowNet = new FlowNetwork(numberOfNodes);
         for (Link temp : linkList)
@@ -48,8 +47,7 @@ public class FlowPlacement {
      * @param t sink
      * @return a network with only the edges corresponding to the maximum flow 
      */
-    public FlowNetwork getMaxFlow(int s, int t)
-    {
+    public FlowNetwork getMaxFlow(int s, int t) {
          maxflow = new FordFulkerson(flowNet, s, t);
          maxFlowNetwork = new FlowNetwork(numberOfNodes);
          for (int v = 0; v < G.V(); v++) {
@@ -78,14 +76,14 @@ public class FlowPlacement {
     //    }
     //}
 
+
     /**
      * Estimate the number of waiting jobs at the northern node
      *  This is a very rough estimation that shouldn't be used for anything 
      * @param  link the link we want to estimate  
      * @return integer value for the number of waiting jobs.
      */
-    private int estimateOccupancyNorth(Link link)
-    {
+    private int estimateOccupancyNorth(Link link) {
      return link.getNorthTupleQueue().size();
     }
 
@@ -95,8 +93,7 @@ public class FlowPlacement {
      * @param  link the link we want to estimate  
      * @return integer value for the number of waiting jobs.
      */
-    private int estimateOccupancySouth(Link link)
-    {
+    private int estimateOccupancySouth(Link link) {
      return link.getSouthTupleQueue().size();
     }
 
@@ -104,13 +101,14 @@ public class FlowPlacement {
     /**
      * @return value - returns the value of the max flow. 
      */
-    public double getMaxFlowValue()
+    public double getMaxFlowValue() {
+        return maxFlowValue;
+    }
 
     /**
      * @param n number of edges 
      */
-    private void setNumberOfNodes(int n)
-    {
+    private void setNumberOfNodes(int n) {
         this.numberOfNodes = n;
     }
 
