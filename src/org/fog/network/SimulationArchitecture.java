@@ -141,7 +141,8 @@ public class SimulationArchitecture extends PhysicalTopology{
 	 * File is assumed to be a list where each line is type, dx, dy, level, xcoordinate, ycoordinate. 
 	 * Any subsequent line with the same information for the first four values adds the new xcoordinate
 	 * and ycoordinate to the polygon which is the area of coverage for the PuddleHead. If there are 
-	 * multiple lines for the same node, the additional lines are ignored. 
+	 * multiple lines for the same node, the additional lines are ignored. It only handles up to 5 levels of 
+	 * Fog Nodes. Any higher levels are currently unhandled. 
 	 * 
 	 * @param fileName of the CSV file with the Voronoi information
 	 */
@@ -174,6 +175,12 @@ public class SimulationArchitecture extends PhysicalTopology{
 		                int numNodes = getInstance().getFogNodeIDs().size();
 		                String name = "FN" + numNodes;
 		                
+//		                FogNode node = createFogNode(name, false, 102400, 
+//								4000, 0.01, 103, 83.25, 10000000,
+//								1000000, 3.0, 0.05, 0.001, 0.0,
+//								new Rectangle(1001, 1001), location, new Vector(1), level);
+//		                getInstance().addFogNode(node);
+//		                
 		                //TODO: NEED INFO FOR EACH LEVEL. Currently all the same 
 		                //mips, ram, ratePerMips, busyPower, idlePower, storage, bw, costProcessing, costPerMem, costPerStorage, costPerBw, bounds, (coordinates-Point), (level)
 		                switch(level){
@@ -182,7 +189,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		                	FogNode newNode1 = createFogNode(name, false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1001, 1001), location, new Vector(0.1), 1);
+									new Rectangle(10001, 10001), location, new Vector(0.1), 1);
 		                	getInstance().addFogNode(newNode1);
 		                	break;
 		                case 2:
@@ -190,7 +197,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		                	FogNode newNode2 = createFogNode(name, false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1001, 1001), location, new Vector(0.1), 2 );
+									new Rectangle(10001, 10001), location, new Vector(0.1), 2);
 		                	getInstance().addFogNode(newNode2);
 		                	break;
 		                case 3:
@@ -198,7 +205,7 @@ public class SimulationArchitecture extends PhysicalTopology{
 		                	FogNode newNode3 = createFogNode(name, false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1001, 1001), location, new Vector(0.1), 3);
+									new Rectangle(10001, 10001), location, new Vector(0.1), 3);
 		                	getInstance().addFogNode(newNode3);
 		                	break;
 		                case 4:
@@ -206,14 +213,14 @@ public class SimulationArchitecture extends PhysicalTopology{
 		                	FogNode newNode4 = createFogNode(name, false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1001, 1001), location, new Vector(0.1), 4);
+									new Rectangle(10001, 10001), location, new Vector(0.1), 4);
 		                	getInstance().addFogNode(newNode4);
 		                	break;
 		                case 5:
 		                	FogNode newNode5 = createFogNode(name, false, 102400, 
 									4000, 0.01, 103, 83.25, 10000000,
 									1000000, 3.0, 0.05, 0.001, 0.0,
-									new Rectangle(1001, 1001), location, new Vector(0.1), 4);
+									new Rectangle(10001, 10001), location, new Vector(0.1), 5);
 		                	getInstance().addFogNode(newNode5);
 		                	break;
 		                default:
