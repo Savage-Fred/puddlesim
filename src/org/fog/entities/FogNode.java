@@ -310,7 +310,7 @@ public class FogNode extends FogDevice {
 				Logger.debug(LOG_TAG, "'globalbroker' is not a defined entity");
 			}
 		}
-		Logger.debug(LOG_TAG, getName(), "Completed execution of move");
+		//Logger.debug(LOG_TAG, getName(), "Completed execution of move");
 	}
 
 	@Override

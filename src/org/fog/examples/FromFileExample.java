@@ -88,7 +88,7 @@ public class FromFileExample {
 			application.setUserId(broker.getId());
 			
 			// Create Architecture/Topology
-			String fileName = "trial2.csv";
+			String fileName = "basictest.csv";
 			createSimulationArchitecture(fileName, broker.getId(), appId, application);
 			
 //			String nodeFile = "points_nodes2.csv";
