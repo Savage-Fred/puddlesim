@@ -20,24 +20,63 @@ import java.util.Iterator;
 public class FlowPlacement {
 
     private int numberOfNodes;
-
-
+    private FlowNetwork flowNet;
+    private FlowNetwork maxFlowNetwork;
+    private FlowNetwork minCutEdgeNetwork;
 
     /**
      * @param LinkIDList a list of the link ID's 
      * @param numberOfNodes - the number of nodes in the graph 
      */
-    FlowPlacement(List<Link> LinkList, int numOfNodes)
+    FlowPlacement(List<Link> linkList, int numOfNodes)
     {
         setNumberOfNodes(numOfNodes);
-        FlowNetwork flowNet = new FlowNetwork(numberOfNodes);
-
-        for (Link temp : LinkList)
+        flowNet = new FlowNetwork(numberOfNodes);
+        for (Link temp : linkList)
         {
             FlowEdge edge = new FlowEdge(temp.getEndpointSouth(), temp.getEndpointNorth(), temp.getBandwidth());
             flowNet.addEdge(edge);
         }
+
+
     }
+
+
+    /**
+     * Function to calculate the max flow.
+     * @param s source  
+     * @param t sink
+     * @return a network with only the edges corresponding to the maximum flow 
+     */
+    public FlowNetwork getMaxFlow(int s, int t)
+    {
+         FordFulkerson maxflow = new FordFulkerson(flowNet, s, t);
+         maxFlowNetwork = new FlowNetwork(numberOfNodes);
+         for (int v = 0; v < G.V(); v++) {
+             for (FlowEdge e : G.adj(v)) {
+                 if ((v == e.from()) && e.flow() > 0)
+                     maxFlowNetwork.addEdge(e);
+             }
+         }
+
+         return maxFlowNetwork;
+    }
+
+    /**
+     * Function to generate min cut 
+     * @param s source
+     * @param v sink
+     * @return FlowNetwork 
+     * @TODO make this work
+     */
+    //public FlowNetwork getMinCut(int s, int t)
+    //{    
+    //    FordFulkerson maxflow = new FordFulkerson(flowNet, s, t);
+    //    for (int v = 0; v < flowNet.V(); v++) {
+    //        if (maxflow.inCut(v)) {
+    //        }
+    //    }
+    //}
 
     /**
      * Estimate the number of waiting jobs at the northern node
@@ -63,7 +102,6 @@ public class FlowPlacement {
 
 
     /**
-     * 
      * @param n number of edges 
      */
     private void setNumberOfNodes(int n)
