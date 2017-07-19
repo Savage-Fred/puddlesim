@@ -16,6 +16,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.network.Link;
+import org.fog.utils.AdjacencyList;
 import org.fog.utils.FogEvents;
 import org.fog.utils.Logger;
 import org.fog.utils.Point;
@@ -83,6 +84,13 @@ public class GlobalBroker extends FogBroker {
 	KruskalAlgorithm MST= null;
 	
 	/**
+	 * Adjacency List object used for MST
+	 */
+	AdjacencyList adjacencyList = null;
+	
+	int numberOfNodes = 0;
+	
+	/**
 	 * Constructor of a GlobalBroker. The input name should be 'globalbroker' for use with PuddleSim capabilities. (See Note above)
 	 * @param name
 	 * @throws Exception
@@ -111,15 +119,48 @@ public class GlobalBroker extends FogBroker {
 		setFogDeviceIds(nodeIn);
 		setLinkIds(linkIds);
 		setEndDeviceIds(endDeviceIds);
-		//setMST();
+		
 		for(int puddleHeadId : puddleHeadIds){
 			PuddleHead puddleHead = (PuddleHead) CloudSim.getEntity(puddleHeadId);
 			addPuddleHeadByLevel(puddleHeadId, puddleHead.getLevel());
 		}
 		
-		
+		numberOfNodes = endDeviceIds.size() + puddleHeadIn.size() + nodeIn.size();
+		adjacencyList = new AdjacencyList(getHighestDeviceId()+1);
+		setAdjacencyList();
+		//setGraph();
+		//setMST();
 	}
 	
+	private void setAdjacencyList() {
+		int linkId = 0;
+		for(int i = 0; i < linkIds.size(); i++){
+			linkId = linkIds.get(i);
+			Link link = (Link)CloudSim.getEntity(linkId);
+			adjacencyList.addEdge(link.getEndpointNorth(), link.getEndpointSouth(), 1);
+			adjacencyList.addEdge(link.getEndpointSouth(), link.getEndpointNorth(), 1);
+			Logger.debug(LOG_TAG, "Creating edge "+linkId);
+		}
+		adjacencyList.printAdjacencyList();
+	}
+
+	private int getHighestDeviceId() {
+		int maxIndex = 0;
+		for(int puddleHeadId : puddleHeadIds){
+			if (puddleHeadId > maxIndex)
+				maxIndex = puddleHeadId;
+		}
+		for(int fogNodeId : fogDeviceIds){
+			if (fogNodeId > maxIndex)
+				maxIndex = fogNodeId;
+		}
+		for(int endDeviceId : endDeviceIds){
+			if (endDeviceId > maxIndex)
+				maxIndex = endDeviceId;
+		}
+		return maxIndex;
+	}
+
 	public int getLinkIdBetweenTwoDevices(int id1, int id2){
 		int id = -1;
 		Logger.debug(LOG_TAG, "Finding link between: "+id1+"<->"+id2);
@@ -132,47 +173,60 @@ public class GlobalBroker extends FogBroker {
 		return id;
 	}
 	
-	/**
-	 * Setup function for the minimum spanning tree. Requires that fog device, puddlehead, end device, and link lists be set up beforehand.
-	 */
-	private void setMST(){
-		// Set up the minimum spanning tree
-		int maxIndex = 0;
-		int minIndex = puddleHeadIds.get(0);
-		for(int puddleHeadId : puddleHeadIds){
-			if (puddleHeadId > maxIndex)
-				maxIndex = puddleHeadId;
-			else if (puddleHeadId < minIndex)
-				minIndex = puddleHeadId;
-		}
-		for(int fogNodeId : fogDeviceIds){
-			if (fogNodeId > maxIndex)
-				maxIndex = fogNodeId;
-			else if (fogNodeId < minIndex)
-				minIndex = fogNodeId;
-		}
-		for(int endDeviceId : endDeviceIds){
-			if (endDeviceId > maxIndex)
-				maxIndex = endDeviceId;
-			else if (endDeviceId < minIndex)
-				minIndex = endDeviceId;
-		}
-		
-		int dimensions = puddleHeadIds.size()+fogDeviceIds.size()+endDeviceIds.size();
-		if(dimensions == 0)
-			throw new IllegalArgumentException("Error: Puddleheads + Nodes == 0");
-		MST = new KruskalAlgorithm(maxIndex);
-		int [][] adjacencyMatrix = new int[maxIndex+1][maxIndex+1];
-		Link link;
-		for(Integer linkId : linkIds){
-			link = (Link)CloudSim.getEntity(linkId);
-			Logger.debug(LOG_TAG, "Link: " + link.getId());
-			// Make a connection between the 2. Links are bi-directional.
-			adjacencyMatrix[link.getEndpointNorth()][link.getEndpointSouth()] = 1;
-			adjacencyMatrix[link.getEndpointSouth()][link.getEndpointNorth()] = 1;
-		}
-		MST.kruskalAlgorithm(adjacencyMatrix);
-	}
+//	/**
+//	 * Setup function for the minimum spanning tree. Requires that fog device, puddlehead, end device, and link lists be set up beforehand.
+//	 */
+//	private void setGraph(){
+//		int linkId = 0;
+//		for(int i = 0; i < linkIds.size(); i++){
+//			linkId = linkIds.get(i);
+//			Link link = (Link)CloudSim.getEntity(linkId);
+//			graph.edge[i].src = link.getEndpointNorth();
+//			graph.edge[i].dest = link.getEndpointSouth();
+//			graph.edge[i].weight = 1;
+//			Logger.debug(LOG_TAG, "Creating edge "+linkId);
+//		}
+//		graph.KruskalMST();
+//	}
+//	
+//	private void setMST(){
+//		// Set up the minimum spanning tree
+//		int maxIndex = 0;
+//		int minIndex = puddleHeadIds.get(0);
+//		for(int puddleHeadId : puddleHeadIds){
+//			if (puddleHeadId > maxIndex)
+//				maxIndex = puddleHeadId;
+//			else if (puddleHeadId < minIndex)
+//				minIndex = puddleHeadId;
+//		}
+//		for(int fogNodeId : fogDeviceIds){
+//			if (fogNodeId > maxIndex)
+//				maxIndex = fogNodeId;
+//			else if (fogNodeId < minIndex)
+//				minIndex = fogNodeId;
+//		}
+//		for(int endDeviceId : endDeviceIds){
+//			if (endDeviceId > maxIndex)
+//				maxIndex = endDeviceId;
+//			else if (endDeviceId < minIndex)
+//				minIndex = endDeviceId;
+//		}
+//		
+//		int dimensions = puddleHeadIds.size()+fogDeviceIds.size()+endDeviceIds.size();
+//		if(dimensions == 0)
+//			throw new IllegalArgumentException("Error: Puddleheads + Nodes == 0");
+//		MST = new KruskalAlgorithm(maxIndex);
+//		int [][] adjacencyMatrix = new int[maxIndex+1][maxIndex+1];
+//		Link link;
+//		for(Integer linkId : linkIds){
+//			link = (Link)CloudSim.getEntity(linkId);
+//			Logger.debug(LOG_TAG, "Link: " + link.getId());
+//			// Make a connection between the 2. Links are bi-directional.
+//			adjacencyMatrix[link.getEndpointNorth()][link.getEndpointSouth()] = 1;
+//			adjacencyMatrix[link.getEndpointSouth()][link.getEndpointNorth()] = 1;
+//		}
+//		MST.kruskalAlgorithm(adjacencyMatrix);
+//	}
 	
 	@Override
 	public void processEvent(SimEvent ev){
@@ -357,16 +411,20 @@ public class GlobalBroker extends FogBroker {
 		}
 	}
 
-	/**
-	 * Gets the next node in a minimum spanning tree towards the destination from the source.</p>
-	 * Used for module routing.
-	 * @param sourceId the id of the entity requesting the next node id. 
-	 * @param destinationId the id of the entity the module must eventually be sent to.
-	 * @return Integer indicating the next node/entity a module should be sent to.
-	 * <p><b>-1 if no node.
-	 */
-	public int nextNodeInMST(int sourceId, int destinationId){
-		return MST.nextNodeInMST(sourceId, destinationId);
+//	/**
+//	 * Gets the next node in a minimum spanning tree towards the destination from the source.</p>
+//	 * Used for module routing.
+//	 * @param sourceId the id of the entity requesting the next node id. 
+//	 * @param destinationId the id of the entity the module must eventually be sent to.
+//	 * @return Integer indicating the next node/entity a module should be sent to.
+//	 * <p><b>-1 if no node.
+//	 */
+//	public int nextNodeInMST(int sourceId, int destinationId){
+//		return MST.nextNodeInMST(sourceId, destinationId);
+//	}
+	
+	public int getNextNodeInPath(int sourceId, int destinationId){
+		return this.adjacencyList.pathFindingUsingBFS(sourceId, destinationId).getFirst();
 	}
 	
 

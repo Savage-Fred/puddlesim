@@ -130,7 +130,9 @@ public class KruskalAlgorithm {
 				visited[i][j] = 0;
 		}
 		while(!found){
+			// Iterate over all the edged leading from sourceId
 			for(int i = 0; i <= numberOfVertices; i++){
+				// If we haven't already traversed this edge, add it to the path and return the path to the queue.
 				if(spanning_tree[i][paths.getLast().getFirst()] == 1 && visited[i][paths.getLast().getFirst()] != 1){
 					Logger.debug(LOG_TAG, "Found link between: " + i + "<->" + paths.getLast().getFirst());
 					visited[i][paths.getLast().getFirst()] = 1;
@@ -138,6 +140,8 @@ public class KruskalAlgorithm {
 					LinkedList<Integer> newPath = (LinkedList<Integer>) paths.getLast().clone();
 					newPath.addFirst(i);
 					paths.addFirst(newPath);
+					// If the node node we just examined was the node we're searching for then we've finished.
+					// Check after adding to the list because I want to return the list.
 					if(i == destinationId){
 						nextEntityId = paths.getFirst().get(paths.getLast().size()-1);
 						Logger.debug(LOG_TAG, "Path " + sourceId + "->" + nextEntityId);

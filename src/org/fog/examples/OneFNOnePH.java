@@ -75,6 +75,8 @@ public class OneFNOnePH {
 		Logger.enableTag("SWITCH");
 		Logger.enableTag("LINK");
 		Logger.enableTag("SENSOR");
+		Logger.enableTag("GLOBAL_BROKER");
+		Logger.enableTag("ADJACENCY_LIST");
 		
 		try {
 			Log.disable();
