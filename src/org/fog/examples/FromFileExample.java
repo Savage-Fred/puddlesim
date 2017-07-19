@@ -71,6 +71,7 @@ public class FromFileExample {
 		Logger.enableTag("SENSOR");
 		Logger.enableTag("ACTUATOR");
 		Logger.enableTag("ADJACENCY_LIST");
+		Logger.enableTag("GLOBAL_BROKER");
 		
 		try {
 			Log.disable();
@@ -88,7 +89,7 @@ public class FromFileExample {
 			application.setUserId(broker.getId());
 			
 			// Create Architecture/Topology
-			String fileName = "trail3.csv";
+			String fileName = "basictest.csv";
 			createSimulationArchitecture(fileName, broker.getId(), appId, application);
 			
 //			String nodeFile = "points_nodes2.csv";

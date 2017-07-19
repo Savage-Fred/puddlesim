@@ -28,8 +28,14 @@ public class AdjacencyList {
     }
     
     // Appends a new Edge to the linked list
-    public void addEdge(int startVertex, int endVertex, int weight) {
+    public void addDirectedEdge(int startVertex, int endVertex, int weight) {
         adjacencyList[startVertex].add(new Pair<>(endVertex, weight));
+    }
+    
+    // Appends a new Edge to the linked list
+    public void addUndirectedEdge(int startVertex, int endVertex, int weight) {
+        adjacencyList[startVertex].add(new Pair<>(endVertex, weight));
+        adjacencyList[endVertex].add(new Pair<>(startVertex, weight));
     }
      
     // Returns number of vertices
@@ -96,9 +102,10 @@ public class AdjacencyList {
 		
 		while(!found){
 			// Iterate over all the edges leading from sourceId
-			for(Pair<Integer, Integer> pair : this.getEdgesFromVertex(paths.getLast().getLast())){
+			for(Pair<Integer, Integer> pair : this.getEdgesFromVertex(paths.getLast().getFirst())){
+				Logger.debug(LOG_TAG, "Continuing at node: "+paths.getLast().getFirst());
 				// If we haven't already traversed this edge, add it to the path and return the path to the queue.
-				if(!paths.getLast().contains(pair)){
+				if(pair.getKey() != paths.getLast().getFirst() && !paths.getLast().contains(pair.getKey())){
 					Logger.debug(LOG_TAG, "Found link between: " + pair.getKey() + "<->" + paths.getLast().getFirst());
 					Logger.debug(LOG_TAG, "Adding path: " + paths.getLast().getFirst() + "->" + pair.getKey());
 					LinkedList<Integer> newPath = (LinkedList<Integer>) paths.getLast().clone();
@@ -114,41 +121,38 @@ public class AdjacencyList {
 					}
 				}
 				else
-					Logger.debug(LOG_TAG, "No link between "+pair.getKey()+" and "+paths.getLast().getFirst());
+					Logger.debug(LOG_TAG, "Already visited link between "+pair.getKey()+"<->"+paths.getLast().getFirst());
 			}
 			paths.removeLast();
 			if(paths.isEmpty())
-				found = true;
+				break;
 		}
-		Logger.debug(LOG_TAG, "Go from "+sourceId+" to "+nextEntityId+" to get to "+destinationId);
-		return paths.getFirst();
+		if(found){
+			Logger.debug(LOG_TAG, "Go from "+sourceId+" to "+nextEntityId+" to get to "+destinationId);
+//			for(Integer step : paths.getFirst()){
+//				System.out.print(""+step+"<-");
+//			}
+//			System.out.println("");
+			return paths.getFirst();
+		}
+		Logger.debug(LOG_TAG, "No path from "+sourceId+" to "+destinationId);
+		return path;
 	}
 }
  
 class testGraph
 {
     public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
+    	Logger.enableTag("ADJACENCY_LIST");
+    	
+    	AdjacencyList adjacencyList = new AdjacencyList(7);
          
-        int vertices = s.nextInt();
-        int edges = s.nextInt();
-        int u, v, weight;
-         
-        AdjacencyList adjacencyList = new AdjacencyList(vertices);
-         
-        int i = 0;
-         
-        while (i < edges) {
-            u = s.nextInt() - 1;
-            v = s.nextInt() - 1;
-            weight= s.nextInt();
-             
-            adjacencyList.addEdge(u, v, weight);
-            ++i;
-        }
-         
+    	adjacencyList.addUndirectedEdge(1, 6, 1);
+    	 
         adjacencyList.printAdjacencyList();
-        adjacencyList.removeEdge(0, new Pair<>(1, 1));
-        adjacencyList.printAdjacencyList();
+        
+        adjacencyList.pathFindingUsingBFS(1, 1);
+        //adjacencyList.removeEdge(0, new Pair<>(1, 1));
+        //adjacencyList.printAdjacencyList();
     }
 }
