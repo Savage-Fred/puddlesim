@@ -71,6 +71,7 @@ public class FromFileExample {
 		Logger.enableTag("SENSOR");
 		Logger.enableTag("ACTUATOR");
 		Logger.enableTag("ADJACENCY_LIST");
+		Logger.enableTag("GLOBAL_BROKER");
 		
 		try {
 			Log.disable();

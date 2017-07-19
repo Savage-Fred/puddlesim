@@ -137,8 +137,7 @@ public class GlobalBroker extends FogBroker {
 		for(int i = 0; i < linkIds.size(); i++){
 			linkId = linkIds.get(i);
 			Link link = (Link)CloudSim.getEntity(linkId);
-			adjacencyList.addEdge(link.getEndpointNorth(), link.getEndpointSouth(), 1);
-			adjacencyList.addEdge(link.getEndpointSouth(), link.getEndpointNorth(), 1);
+			adjacencyList.addUndirectedEdge(link.getEndpointNorth(), link.getEndpointSouth(), 1);
 			Logger.debug(LOG_TAG, "Creating edge "+linkId);
 		}
 		adjacencyList.printAdjacencyList();
