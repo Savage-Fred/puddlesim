@@ -69,7 +69,8 @@ public class FromFileExample {
 		Logger.enableTag("SWITCH");
 		Logger.enableTag("LINK");
 		Logger.enableTag("SENSOR");
-		Logger.enableTag("KRUSKALS");
+		Logger.enableTag("ACTUATOR");
+		Logger.enableTag("ADJACENCY_LIST");
 		
 		try {
 			Log.disable();
@@ -148,7 +149,7 @@ public class FromFileExample {
 			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
 	}
@@ -177,7 +178,7 @@ public class FromFileExample {
 			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
 	}
@@ -233,7 +234,7 @@ public class FromFileExample {
 			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
 		

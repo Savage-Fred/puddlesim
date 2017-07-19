@@ -201,7 +201,7 @@ public class SimArchExample1 {
 			SimulationArchitecture.getInstance().setUpEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
 		
