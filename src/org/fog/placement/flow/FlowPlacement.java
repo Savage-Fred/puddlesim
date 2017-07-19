@@ -19,10 +19,12 @@ import java.util.Iterator;
  */
 public class FlowPlacement {
 
-    private int numberOfNodes;
-    private FlowNetwork flowNet;
-    private FlowNetwork maxFlowNetwork;
-    private FlowNetwork minCutEdgeNetwork;
+    private int             numberOfNodes;
+    private double          maxFlowValue;
+    private FlowNetwork     flowNet;
+    private FlowNetwork     maxFlowNetwork;
+    private FlowNetwork     minCutEdgeNetwork;
+    private FordFulkerson   maxFlow;
 
     /**
      * @param LinkIDList a list of the link ID's 
@@ -37,8 +39,6 @@ public class FlowPlacement {
             FlowEdge edge = new FlowEdge(temp.getEndpointSouth(), temp.getEndpointNorth(), temp.getBandwidth());
             flowNet.addEdge(edge);
         }
-
-
     }
 
 
@@ -50,7 +50,7 @@ public class FlowPlacement {
      */
     public FlowNetwork getMaxFlow(int s, int t)
     {
-         FordFulkerson maxflow = new FordFulkerson(flowNet, s, t);
+         maxflow = new FordFulkerson(flowNet, s, t);
          maxFlowNetwork = new FlowNetwork(numberOfNodes);
          for (int v = 0; v < G.V(); v++) {
              for (FlowEdge e : G.adj(v)) {
@@ -100,6 +100,11 @@ public class FlowPlacement {
      return link.getSouthTupleQueue().size();
     }
 
+
+    /**
+     * @return value - returns the value of the max flow. 
+     */
+    public double getMaxFlowValue()
 
     /**
      * @param n number of edges 
