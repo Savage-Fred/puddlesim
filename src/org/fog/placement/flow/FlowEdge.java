@@ -3,9 +3,6 @@ package org.fog.placement.flow;
 import java.lang.Math;
 import java.lang.String;
 /******************************************************************************
- *  Compilation:  javac FlowEdge.java
- *  Execution:    java FlowEdge
- *  Dependencies: StdOut.java
  *
  *  Capacitated edge with a flow in a flow network.
  *
@@ -193,16 +190,5 @@ public class FlowEdge {
     public String toString() {
         return v + "->" + w + " " + flow + "/" + capacity;
     }
-
-
-   /**
-     * Unit tests the {@code FlowEdge} data type.
-     *
-     * @param args the command-line arguments
-     */
-    //public static void main(String[] args) {
-    //    FlowEdge e = new FlowEdge(12, 23, 4.56);
-    //    StdOut.println(e);
-    //}
 
 }

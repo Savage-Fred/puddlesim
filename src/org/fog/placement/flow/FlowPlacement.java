@@ -4,16 +4,18 @@ import org.fog.placement.flow.*;
 import org.fog.utils.*;
 import org.fog.utils.Bag;
 import org.fog.utils.Config;        // DEFAULT_FLOW_CAPACITY
+import org.fog.utils.Queue;
 import org.fog.entities.*;
+import org.fog.entities.Tuple;
 import org.fog.network.Link;
 import java.util.List;
 import java.util.Iterator;
 
 /**
- *
- *
- *
- *
+ * A class to analyze min cut / max flows on Fog networks 
+ * @class   FlowPlacement 
+ * @author  William McCarty
+ * @email   wpm0002@auburn.edu
  */
 public class FlowPlacement {
 
@@ -36,6 +38,29 @@ public class FlowPlacement {
             flowNet.addEdge(edge);
         }
     }
+
+    /**
+     * Estimate the number of waiting jobs at the northern node
+     *  This is a very rough estimation that shouldn't be used for anything 
+     * @param  link the link we want to estimate  
+     * @return integer value for the number of waiting jobs.
+     */
+    private int estimateOccupancyNorth(Link link)
+    {
+     return link.getNorthTupleQueue().size();
+    }
+
+    /**
+     * Estimate the number of waiting jobs at the southern node
+     *  This is a very rough estimation that shouldn't be used for anything 
+     * @param  link the link we want to estimate  
+     * @return integer value for the number of waiting jobs.
+     */
+    private int estimateOccupancySouth(Link link)
+    {
+     return link.getSouthTupleQueue().size();
+    }
+
 
     /**
      * 
