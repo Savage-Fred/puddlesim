@@ -25,7 +25,7 @@ import org.fog.utils.Graph;
 import org.fog.utils.KruskalAlgorithm;
 
 /**
- * @author Jessica Knezha
+ * @author Jessica Knezha and Avi Rynderman
  * @version PuddleSim 1.0
  * @since June 29, 2017
  * 
