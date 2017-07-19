@@ -149,7 +149,7 @@ public class FromFileExample {
 			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
 	}
@@ -178,7 +178,7 @@ public class FromFileExample {
 			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
 	}
@@ -234,7 +234,7 @@ public class FromFileExample {
 			SimulationArchitecture.getInstance().setUpPuddlesimEntities();
 			
 		} else {
-			System.out.println("Topology validation UNsuccessful");
+			System.out.println("Topology validation Unsuccessful");
 			System.exit(1);
 		}
 		
